@@ -1,20 +1,20 @@
 import { createBrowserRouter } from 'react-router-dom'
 import App from '../App'
 import ErrorPage from '../pages/ErrorPage'
-import StudentLayout from '../components/Applicant/Layout'
-import { LoginContextProvider } from '../context/Login/LoginContext'
+import Home from '../pages/Student/Home/Home'
+import { AuthContextProvider } from '../context/Auth/AuthContext'
 
 export const router = createBrowserRouter([
     {
         path: '/',
-        element: <LoginContextProvider>
+        element: <AuthContextProvider>
                     <App />
-                </LoginContextProvider>,
+                </AuthContextProvider>,
         errorElement: <ErrorPage />
     },
     {
-        path: 'student',
-        element: <StudentLayout />,
+        path: 'home',
+        element: <Home />,
         errorElement: <ErrorPage />
     }
 ])

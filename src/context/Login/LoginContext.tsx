@@ -15,7 +15,6 @@ export const LoginContextProvider = ({children}: LoginContextProviderProps) => {
         agreed: false,
         open: true,
         closeModal: () => setContext((prevState) => ({...prevState, open: false })),
-        openModal: () => setContext((prevState) => ({...prevState, open: true })),
         setAgreed: () => setContext((prevState) => ({...prevState, agreed: true, open: false })),
     })
     return(

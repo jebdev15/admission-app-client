@@ -1,6 +1,6 @@
 import { Box, CircularProgress } from '@mui/material'
 import React from 'react'
-import Login from '../../pages/Student/Login/Login'
+import Authentication from '../../pages/Student/Auth/Auth'
 const Header: React.LazyExoticComponent<() => JSX.Element> = React.lazy(() => import('./Header'))
 // const DrawerComponent = React.lazy(() => import('../DrawerComponent'))
 
@@ -16,7 +16,7 @@ const Layout = () => {
                  }}
             >
                 <Header />
-                <Login />
+                <Authentication />
                 {/* <DrawerComponent /> */}
             </Box>
         </React.Suspense>
