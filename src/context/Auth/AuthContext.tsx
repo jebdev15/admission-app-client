@@ -1,6 +1,6 @@
 import React from 'react'
 import { AuthContextInterface, AuthContextProviderProps } from './type'
-import { useNavigate } from 'react-router-dom'
+import { useCookies } from 'react-cookie'
 
 // Create and export the LoginContext with default values
 export const AuthContext = React.createContext<AuthContextInterface>({
@@ -43,7 +43,7 @@ export const AuthContext = React.createContext<AuthContextInterface>({
 })
 
 export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
-    const navigate = useNavigate()
+    const [,setCookies] = useCookies()
     const [context, setContext] = React.useState<AuthContextInterface>({
         agreed: false, // If the user has agreed to the privacy policy
         open: true, // If the modal is open
@@ -89,7 +89,7 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
                             } 
                         }
                     ))
-                    setTimeout(() => navigate('/home'), 1000)
+                    setCookies('token', 'test', { path: '/' })
                 },
                 handleChange: (event: React.ChangeEvent<HTMLInputElement>) => setContext((prevState: AuthContextInterface) => (
                     {

@@ -337,22 +337,23 @@ const Login = () => {
                             />
                         </FormControl>
                         <FormControl fullWidth>
-    
                         <Button 
-                        type='submit' 
-                        variant="contained" 
-                        color="primary" 
-                        disabled={disableFormContent || !email || !password} 
-                        fullWidth>
+                            type='submit' 
+                            variant="contained" 
+                            color="primary" 
+                            disabled={disableFormContent || !email || !password} 
+                            fullWidth
+                        >
                             Log in
                         </Button>
                         <Divider>or</Divider>
                         <Button 
-                        variant="text" 
-                        color="primary" 
-                        disabled={disableFormContent} 
-                        onClick={changeFormToRegister}
-                        fullWidth>
+                            variant="text" 
+                            color="primary" 
+                            disabled={disableFormContent} 
+                            onClick={changeFormToRegister}
+                            fullWidth
+                        >
                             Register
                         </Button>
                         </FormControl>

@@ -1,8 +1,11 @@
+import { CircularProgress } from '@mui/material'
 import React from 'react'
 
 const Home = () => {
   return (
-    <div>Home</div>
+    <React.Suspense fallback={<CircularProgress />}>
+        <h1>Home</h1>
+    </React.Suspense>
   )
 }
 
