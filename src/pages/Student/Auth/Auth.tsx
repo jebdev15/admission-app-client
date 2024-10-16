@@ -1,7 +1,9 @@
 import React from 'react'
 import { AccountCircle, ArrowBack, Lock as LockIcon, Person, Visibility, VisibilityOff, Email as EmailIcon } from '@mui/icons-material'
-import { Box, FormControl, InputAdornment, Paper, TextField, Typography, Button, Divider, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, IconButton, Tooltip } from '@mui/material'
+import { Box, FormControl, InputAdornment, Paper, TextField, Typography, Button, Divider, Dialog, DialogTitle, DialogContent, CircularProgress, IconButton, Tooltip } from '@mui/material'
 import { AuthContext } from '../../../context/Auth/AuthContext'
+import CustomCircularProgress from '../../../components/CustomCircularProgress'
+import { useNavigate } from 'react-router'
 
 const DataPrivacyPolicyModal = () => {
     const { open, setAgreed } = React.useContext(AuthContext)
@@ -80,10 +82,11 @@ const DataPrivacyPolicyModal = () => {
             contact details and address using our support form. Further instructions
             will be given.
             </Typography>
+            <Divider />
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                <Button variant='contained' onClick={setAgreed}>Agree & Continue</Button>
+            </Box>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={setAgreed}>Agree & Continue</Button>
-      </DialogActions>
     </Dialog>
     )
 }
@@ -366,9 +369,16 @@ const Login = () => {
 }
 
 const Authentication = () => {
-    const { defaultForm } = React.useContext(AuthContext)
+    const { defaultForm, isAuthenticated } = React.useContext(AuthContext)
+    const navigate = useNavigate()
+    React.useEffect(() => {
+        if(isAuthenticated) {
+            navigate('/home')
+            console.log('is authenticated')
+        }
+    },[isAuthenticated])
     return (
-        <React.Suspense fallback={<CircularProgress />}>
+        <React.Suspense fallback={<CustomCircularProgress />}>
             {defaultForm ? <Login /> : <Register />}
         </React.Suspense>
     )

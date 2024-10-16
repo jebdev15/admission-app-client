@@ -39,16 +39,17 @@ export const AuthContext = React.createContext<AuthContextInterface>({
             submitForm: () => {},
             handleChange: () => {}
         }
-    }
+    },
+    isAuthenticated: false
 })
 
 export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
-    const [,setCookies] = useCookies()
+    const [cookie,setCookies] = useCookies(['token'])
     const [context, setContext] = React.useState<AuthContextInterface>({
         agreed: false, // If the user has agreed to the privacy policy
         open: true, // If the modal is open
         disableFormContent: true, // If the form content should be disabled
-        defaultForm: true, // If the default form should be shown
+        defaultForm: true, // If the default is true, login form should be shown
         closeModal: () => setContext((prevState) => ({...prevState, open: false, disableFormContent: false })), // Function to close the data privacy policy modal
         setAgreed: () => setContext((prevState) => ({...prevState, agreed: true, open: false, disableFormContent: false })), // Function to set the agreed state
         changeFormToLogin: () => setContext((prevState) => ({...prevState, defaultForm: true })), // Function to change the form to the login form
@@ -89,7 +90,12 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
                             } 
                         }
                     ))
-                    setCookies('token', 'test', { path: '/' })
+                    const data = {
+                        token: 'test',
+                    }
+                    Object.entries(data).forEach((value) => setCookies(value[0],value[1], { path: '/'}))
+                    // Object.entries(data).forEach((value) => console.log({key: value[0],value: value[1]}))
+                    // setCookies('token', 'test', { path: '/' })
                 },
                 handleChange: (event: React.ChangeEvent<HTMLInputElement>) => setContext((prevState: AuthContextInterface) => (
                     {
@@ -142,10 +148,12 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
                     }
                 ))
             }
-        } 
+        },
+        isAuthenticated: false
     })
+    const isAuthenticated = !!cookie.token
     return(
-        <AuthContext.Provider value={context}>
+        <AuthContext.Provider value={{ ...context, isAuthenticated }}>
             {children}
         </AuthContext.Provider>
     )

@@ -34,6 +34,7 @@ export interface AuthContextInterface {
             handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void
         }
     }
+    isAuthenticated: boolean
 }
 
 export interface AuthContextProviderProps {
