@@ -31,14 +31,61 @@ export interface HomeContextType {
         submitForm: (event: React.FormEvent<HTMLFormElement>) => void
     },
     addressDetails: {
-        streetAndBarangay: string,
-        city: string,
-        province: string,
-        isSameAsHomeAddress: string,
-        currentAddressStreetAndBarangay: string,
-        currentAddressCity: string,
-        currentAddressProvince: string,
-        handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void,
+        region: string
+        regionCode: string
+        regionName: string
+        regionRegionName: string
+        province: string
+        provinceCode: string
+        provinceName: string
+        city: string
+        cityCode: string
+        cityName: string
+        barangay: string
+        barangayCode: string
+        barangayName: string
+        isSameAsHomeAddress: string
+        currentAddressRegionCode: string
+        currentAddressRegionName: string
+        currentAddressRegionRegionName: string
+        currentAddressProvinceCode: string
+        currentAddressProvinceName: string
+        currentAddressCityCode: string
+        currentAddressCityName: string
+        currentAddressBarangayCode: string
+        currentAddressBarangayName: string
+        handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
+        handleChangeSelect: (event: React.ChangeEvent<HTMLSelectElement>) => void
+        submitForm: (event: React.FormEvent<HTMLFormElement>) => void
+    },
+    parentProfile: {
+        fatherHEA: string
+        fatherOccupation: string
+        motherHEA: string
+        motherOccupation: string
+        livingWithGuardian: string
+        handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
+        submitForm: (event: React.FormEvent<HTMLFormElement>) => void
+    },
+    homeAndFamilyBackground: {
+        noOfSiblingsGainfullyEmployed: number
+        whoFinancesYourSchooling: string
+        isFourPsBeneficiary: string
+        fourPsIdNumber: string
+        isFirstGenStudent: string
+        houseHoldMonthlyIncome: string
+        natureOfResidence: string
+        handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
+        submitForm: (event: React.FormEvent<HTMLFormElement>) => void
+    },
+    health: {
+        isPWD: string
+        pwdIdNumber: string
+        isSPED: string
+        specifySPED: string
+        hasSiblingsStudyingInCHMSU: string
+        hasRelativesWorkingInCHMSU: string
+        handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
         submitForm: (event: React.FormEvent<HTMLFormElement>) => void
     }
 }

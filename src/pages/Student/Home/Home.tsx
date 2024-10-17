@@ -8,15 +8,15 @@ const HomeAndFamilyBackground = React.lazy(() => import('../Section/HomeAndFamil
 const Health = React.lazy(() => import('../Section/Health/Health'))
 
 const Home = () => {
-  const { personalInformation, addressDetails, parentProfile, familyBackground, health } = React.useContext(HomeContext).filledOutForm
+  const { personalInformation, addressDetails, parentProfile, homeAndFamilyBackground, health } = React.useContext(HomeContext).filledOutForm
   const currentForm = () => {
     if (!personalInformation) {
       return <PersonalInformation />
-    } else if (!addressDetails) {
+    } else if (!addressDetails ) {
       return <AddressDetails />
     } else if (!parentProfile) {
       return <ParentProfile />
-    } else if (!familyBackground) {
+    } else if (!homeAndFamilyBackground) {
       return <HomeAndFamilyBackground />
     } else if (!health) {
       return <Health />

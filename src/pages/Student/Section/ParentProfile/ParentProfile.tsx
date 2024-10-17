@@ -1,23 +1,19 @@
-import { ArrowBack, Person, Place } from '@mui/icons-material'
-import { Box, Button, CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, TextField, Typography, FormLabel, FormHelperText } from '@mui/material'
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { ArrowBack, School, Work } from '@mui/icons-material'
+import { Box, Button, CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, TextField, Typography } from '@mui/material'
 import React from 'react'
 import { HomeContext } from '../../Home/HomeContext'
 
 const ParentProfile = () => {
     const context = React.useContext(HomeContext)
     const {
-        streetAndBarangay,
-        city,
-        province,
-        isSameAsHomeAddress,
-        currentAddressStreetAndBarangay,
-        currentAddressCity,
-        currentAddressProvince,
+        fatherHEA,
+        fatherOccupation,
+        motherHEA,
+        motherOccupation,
+        livingWithGuardian,
         handleChange,
         submitForm
-    } = context.addressDetails
+    } = context.parentProfile
     return (
       <React.Suspense fallback={<CircularProgress />}>
               <Box
@@ -46,120 +42,83 @@ const ParentProfile = () => {
                               width: { xs: '320px', md: '678px'},
                               padding: '1rem',
                               gap: 1
-                          }}
-                          onSubmit={submitForm}
+                            }}
+                            onSubmit={submitForm}
                     >
-                      <Place />
+                        <Box>
+                            <School />
+                            <Work />
+                        </Box>
                       <Typography variant="body1" color="initial">Parent Profile</Typography>
                         <FormControl fullWidth>
-                            <InputLabel id="label-select-province">Province</InputLabel>
+                            <InputLabel id="label-select-fatherHEA">Father's Highest Educational Attainment</InputLabel>
                             <Select
-                                labelId="label-select-province"
-                                id="select-province"
-                                name="province"
-                                value={province}
+                                labelId="label-select-fatherHEA"
+                                id="select-fatherHEA"
+                                name="fatherHEA"
+                                value={fatherHEA}
                                 onChange={handleChange}
                                 required
                             >
                             <MenuItem value=""></MenuItem>
-                            <MenuItem value="Male">Male</MenuItem>
-                            <MenuItem value="Female">Female</MenuItem>
+                            <MenuItem value="Post Graduate">Post Graduate</MenuItem>
+                            <MenuItem value="College">College</MenuItem>
+                            <MenuItem value="High School">High School</MenuItem>
+                            <MenuItem value="Elementary">Elementary</MenuItem>
                             </Select>
                         </FormControl>
                         <FormControl fullWidth>
-                            <InputLabel id="label-select-city">City</InputLabel>
+                            <TextField
+                                id="fatherOccupation"
+                                name="fatherOccupation"
+                                label="Father's Occupation"
+                                value={fatherOccupation}
+                                onChange={handleChange}
+                                required
+                            />
+                        </FormControl>
+                        <FormControl fullWidth>
+                            <InputLabel id="label-select-motherHEA">Mother's Highest Educational Attainment</InputLabel>
                             <Select
-                                labelId="label-select-city"
-                                id="select-city"
-                                name="city"
-                                value={city}
+                                labelId="label-select-motherHEA"
+                                id="select-motherHEA"
+                                name="motherHEA"
+                                value={motherHEA}
                                 onChange={handleChange}
                                 required
                             >
                             <MenuItem value=""></MenuItem>
-                            <MenuItem value="Male">Male</MenuItem>
-                            <MenuItem value="Female">Female</MenuItem>
+                            <MenuItem value="Post Graduate">Post Graduate</MenuItem>
+                            <MenuItem value="College">College</MenuItem>
+                            <MenuItem value="High School">High School</MenuItem>
+                            <MenuItem value="Elementary">Elementary</MenuItem>
                             </Select>
                         </FormControl>
                         <FormControl fullWidth>
-                            <InputLabel id="label-select-streetAndBarangay">Street and Barangay</InputLabel>
+                            <TextField
+                                id="motherOccupation"
+                                name="motherOccupation"
+                                label="Mother's Occupation"
+                                value={motherOccupation}
+                                onChange={handleChange}
+                                required
+                            />
+                        </FormControl>
+                        <FormControl fullWidth>
+                            <InputLabel id="label-select-withGuardian">Are you living with a Guardian</InputLabel>
                             <Select
-                                labelId="label-select-streetAndBarangay"
-                                id="select-streetAndBarangay"
-                                name="streetAndBarangay"
-                                value={streetAndBarangay}
+                                labelId="label-select-livingWithGuardian"
+                                id="select-livingWithGuardian"
+                                name="livingWithGuardian"
+                                value={livingWithGuardian}
                                 onChange={handleChange}
                                 required
                             >
                                 <MenuItem value=""></MenuItem>
-                                <MenuItem value="Male">Male</MenuItem>
-                                <MenuItem value="Female">Female</MenuItem>
+                                <MenuItem value="Yes">Yes</MenuItem>
+                                <MenuItem value="No">No</MenuItem>
                             </Select>
                         </FormControl>
-                        <FormControl fullWidth>
-                            <InputLabel id="label-select-isSameAsHomeAddress">Current Address</InputLabel>
-                            <Select
-                                labelId="label-select-isSameAsHomeAddress"
-                                id="select-isSameAsHomeAddress"
-                                name="isSameAsHomeAddress"
-                                value={isSameAsHomeAddress}
-                                onChange={handleChange}
-                                required
-                            >
-                            <MenuItem value=""></MenuItem>
-                            <MenuItem value="Same as Home Address">Same as Home Address</MenuItem>
-                            <MenuItem value="Other">Other</MenuItem>
-                            </Select>
-                        </FormControl>
-                        { isSameAsHomeAddress === 'Other' && (
-                            <>
-                            <FormControl fullWidth>
-                                <InputLabel id="label-select-currentAddressProvince">Province</InputLabel>
-                                <Select
-                                    labelId="label-select-currentAddressProvince"
-                                    id="select-currentAddressProvince"
-                                    name="currentAddressProvince"
-                                    value={currentAddressProvince}
-                                    onChange={handleChange}
-                                    required
-                                >
-                                <MenuItem value=""></MenuItem>
-                                <MenuItem value="Male">Male</MenuItem>
-                                <MenuItem value="Female">Female</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <FormControl fullWidth>
-                                <InputLabel id="label-select-currentAddressCity">City</InputLabel>
-                                <Select
-                                    labelId="label-select-currentAddressCity"
-                                    id="select-currentAddressCity"
-                                    name="currentAddressCity"
-                                    value={currentAddressCity}
-                                    onChange={handleChange}
-                                    required
-                                >
-                                <MenuItem value=""></MenuItem>
-                                <MenuItem value="Male">Male</MenuItem>
-                                <MenuItem value="Female">Female</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <FormControl fullWidth>
-                                <InputLabel id="label-select-currentAddressStreetAndBarangay">Street and Barangay</InputLabel>
-                                <Select
-                                    labelId="label-select-currentAddressStreetAndBarangay"
-                                    id="select-currentAddressStreetAndBarangay"
-                                    name="currentAddressStreetAndBarangay"
-                                    value={currentAddressStreetAndBarangay}
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <MenuItem value=""></MenuItem>
-                                    <MenuItem value="Male">Male</MenuItem>
-                                    <MenuItem value="Female">Female</MenuItem>
-                                </Select>
-                            </FormControl>
-                            </>
-                        )}
                         <FormControl fullWidth>
                             <Button 
                                 type='submit'

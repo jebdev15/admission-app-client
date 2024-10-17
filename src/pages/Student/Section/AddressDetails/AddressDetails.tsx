@@ -1,23 +1,43 @@
-import { ArrowBack, Person, Place } from '@mui/icons-material'
-import { Box, Button, CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, TextField, Typography, FormLabel, FormHelperText } from '@mui/material'
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { ArrowBack, Place } from '@mui/icons-material'
+import { Box, Button, CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, TextField, Typography } from '@mui/material'
 import React from 'react'
 import { HomeContext } from '../../Home/HomeContext'
+import regions from './AddressJson/regions.json'
+import provinces from './AddressJson/provinces.json'
+import cities from './AddressJson/cities.json'
+import barangays from './AddressJson/barangays.json'
 
 const AddressDetails = () => {
     const context = React.useContext(HomeContext)
     const {
-        streetAndBarangay,
-        city,
-        province,
+        regionCode,
+        regionName,
+        regionRegionName,
+        provinceCode,
+        provinceName,
+        cityCode,
+        cityName,
+        barangayCode,
+        barangayName,
         isSameAsHomeAddress,
-        currentAddressStreetAndBarangay,
-        currentAddressCity,
-        currentAddressProvince,
-        handleChange,
+        currentAddressRegionCode,
+        currentAddressRegionName,
+        currentAddressRegionRegionName,
+        currentAddressProvinceCode,
+        currentAddressProvinceName,
+        currentAddressCityCode,
+        currentAddressCityName,
+        currentAddressBarangayCode,
+        currentAddressBarangayName,
+        handleChangeSelect,
         submitForm
     } = context.addressDetails
+    const filteredProvinces = provinces.filter((province) => province.regionCode === regionCode)
+    const filteredCities = cities.filter((city) => city.provinceCode === provinceCode)
+    const filteredBarangays = barangays.filter((barangay) => barangay.cityCode === cityCode)
+    React.useEffect(() => {
+        console.log({regions, filteredProvinces, filteredCities, filteredBarangays})
+    }, [regions, filteredProvinces, filteredCities, filteredBarangays])
     return (
       <React.Suspense fallback={<CircularProgress />}>
               <Box
@@ -51,49 +71,73 @@ const AddressDetails = () => {
                     >
                       <Place />
                       <Typography variant="body1" color="initial">Address Details</Typography>
+                      <FormControl fullWidth>
+                            <InputLabel id="label-select-region">Region</InputLabel>
+                            <Select
+                                labelId="label-select-region"
+                                id="select-region"
+                                name="region"
+                                value={regionCode}
+                                onChange={handleChangeSelect}
+                                required
+                            >
+                            <MenuItem value=""></MenuItem>
+                            {regions.length > 0 && regions.map((region) => (
+                                <MenuItem key={region.code} value={region}>{`${region.regionName}(${region.name})`}</MenuItem>
+                            ))}
+                            </Select>
+                            <TextField value={regionCode} />
+                            <TextField value={regionName} />
+                            <TextField value={regionRegionName} />
+                        </FormControl>
                         <FormControl fullWidth>
                             <InputLabel id="label-select-province">Province</InputLabel>
                             <Select
                                 labelId="label-select-province"
-                                id="select-province"
+                                id="select-provinceCode"
                                 name="province"
-                                value={province}
-                                onChange={handleChange}
+                                value={provinceCode}
+                                onChange={handleChangeSelect}
                                 required
                             >
                             <MenuItem value=""></MenuItem>
-                            <MenuItem value="Male">Male</MenuItem>
-                            <MenuItem value="Female">Female</MenuItem>
+                            {filteredProvinces.length > 0 && filteredProvinces.map((province) => (
+                                <MenuItem key={province.code} value={province}>{province.name}</MenuItem>
+                            ))}
                             </Select>
+                            <TextField value={provinceCode} />
+                            <TextField value={provinceName} />
                         </FormControl>
                         <FormControl fullWidth>
                             <InputLabel id="label-select-city">City</InputLabel>
                             <Select
                                 labelId="label-select-city"
                                 id="select-city"
-                                name="city"
-                                value={city}
-                                onChange={handleChange}
+                                name="cityCode"
+                                value={cityCode}
+                                onChange={handleChangeSelect}
                                 required
                             >
                             <MenuItem value=""></MenuItem>
-                            <MenuItem value="Male">Male</MenuItem>
-                            <MenuItem value="Female">Female</MenuItem>
+                            {filteredCities.length > 0 && filteredCities.map((city) => (
+                                <MenuItem key={city.code} value={city.code}>{city.name}</MenuItem>
+                            ))}
                             </Select>
                         </FormControl>
                         <FormControl fullWidth>
-                            <InputLabel id="label-select-streetAndBarangay">Street and Barangay</InputLabel>
+                            <InputLabel id="label-select-barangay">Barangay</InputLabel>
                             <Select
-                                labelId="label-select-streetAndBarangay"
-                                id="select-streetAndBarangay"
-                                name="streetAndBarangay"
-                                value={streetAndBarangay}
-                                onChange={handleChange}
+                                labelId="label-select-barangay"
+                                id="select-barangay"
+                                name="barangayCode"
+                                value={barangayCode}
+                                onChange={handleChangeSelect}
                                 required
                             >
                                 <MenuItem value=""></MenuItem>
-                                <MenuItem value="Male">Male</MenuItem>
-                                <MenuItem value="Female">Female</MenuItem>
+                                {filteredBarangays.length > 0 && filteredBarangays.map((barangay: any) => (
+                                    <MenuItem key={barangay.code} value={barangay.code}>{barangay.name}</MenuItem>
+                                ))}
                             </Select>
                         </FormControl>
                         <FormControl fullWidth>
@@ -103,7 +147,7 @@ const AddressDetails = () => {
                                 id="select-isSameAsHomeAddress"
                                 name="isSameAsHomeAddress"
                                 value={isSameAsHomeAddress}
-                                onChange={handleChange}
+                                onChange={handleChangeSelect}
                                 required
                             >
                             <MenuItem value=""></MenuItem>
@@ -120,7 +164,7 @@ const AddressDetails = () => {
                                     id="select-currentAddressProvince"
                                     name="currentAddressProvince"
                                     value={currentAddressProvince}
-                                    onChange={handleChange}
+                                    onChange={handleChangeSelect}
                                     required
                                 >
                                 <MenuItem value=""></MenuItem>
@@ -135,7 +179,7 @@ const AddressDetails = () => {
                                     id="select-currentAddressCity"
                                     name="currentAddressCity"
                                     value={currentAddressCity}
-                                    onChange={handleChange}
+                                    onChange={handleChangeSelect}
                                     required
                                 >
                                 <MenuItem value=""></MenuItem>
@@ -144,13 +188,13 @@ const AddressDetails = () => {
                                 </Select>
                             </FormControl>
                             <FormControl fullWidth>
-                                <InputLabel id="label-select-currentAddressStreetAndBarangay">Street and Barangay</InputLabel>
+                                <InputLabel id="label-select-currentAddressBarangay">Street and Barangay</InputLabel>
                                 <Select
-                                    labelId="label-select-currentAddressStreetAndBarangay"
-                                    id="select-currentAddressStreetAndBarangay"
-                                    name="currentAddressStreetAndBarangay"
-                                    value={currentAddressStreetAndBarangay}
-                                    onChange={handleChange}
+                                    labelId="label-select-currentAddressBarangay"
+                                    id="select-currentAddressBarangay"
+                                    name="currentAddressBarangay"
+                                    value={currentAddress.barangay.code}
+                                    onChange={handleChangeSelect}
                                     required
                                 >
                                     <MenuItem value=""></MenuItem>

@@ -1,24 +1,24 @@
-import { ArrowBack, Place } from '@mui/icons-material'
-import { Box, Button, CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, Typography } from '@mui/material'
+import { ArrowBack, House, People, Place } from '@mui/icons-material'
+import { Box, Button, CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, Typography, FormLabel, FormHelperText, TextField } from '@mui/material'
 import React from 'react'
 import { HomeContext } from '../../Home/HomeContext'
 
 const HomeAndFamilyBackground = () => {
     const context = React.useContext(HomeContext)
     const {
-        streetAndBarangay,
-        city,
-        province,
-        isSameAsHomeAddress,
-        currentAddressStreetAndBarangay,
-        currentAddressCity,
-        currentAddressProvince,
+        noOfSiblingsGainfullyEmployed,
+        whoFinancesYourSchooling,
+        isFourPsBeneficiary,
+        fourPsIdNumber,
+        isFirstGenStudent,
+        houseHoldMonthlyIncome,
+        natureOfResidence,
         handleChange,
         submitForm
-    } = context.addressDetails
+    } = context.homeAndFamilyBackground
     return (
       <React.Suspense fallback={<CircularProgress />}>
-              <Box
+            <Box
                   sx={{ 
                       display: 'flex', 
                       flexDirection: 'column',
@@ -29,12 +29,12 @@ const HomeAndFamilyBackground = () => {
                       width: { xs: '320px', md: '678px'},
                       gap: 1
                   }}
-              >
-                  <Paper>
-                      <IconButton aria-label="" onClick={() => context.setFilledOutForm({ ...context.filledOutForm, parentProfile: false })}>
-                          <ArrowBack />
-                      </IconButton>
-                      <Box
+            >
+                <Paper>
+                    <IconButton aria-label="" onClick={() => context.setFilledOutForm({ ...context.filledOutForm, parentProfile: false })}>
+                         <ArrowBack />
+                    </IconButton>
+                    <Box
                           component="form"
                           sx={{ 
                               display: 'flex', 
@@ -47,117 +47,91 @@ const HomeAndFamilyBackground = () => {
                           }}
                           onSubmit={submitForm}
                     >
-                      <Place />
-                      <Typography variant="body1" color="initial">Parent Profile</Typography>
+                        <Box>
+                            <House />
+                            <People />
+                        </Box>
+                        <Typography variant="body1" color="initial">Home and Family Background</Typography>
                         <FormControl fullWidth>
-                            <InputLabel id="label-select-province">Province</InputLabel>
-                            <Select
-                                labelId="label-select-province"
-                                id="select-province"
-                                name="province"
-                                value={province}
+                            <TextField
+                                name="noOfSiblingsGainfullyEmployed"
+                                type='number'
+                                label="Number of Siblings gainfully employed"
+                                value={noOfSiblingsGainfullyEmployed}
                                 onChange={handleChange}
                                 required
-                            >
-                            <MenuItem value=""></MenuItem>
-                            <MenuItem value="Male">Male</MenuItem>
-                            <MenuItem value="Female">Female</MenuItem>
-                            </Select>
+                            />
                         </FormControl>
                         <FormControl fullWidth>
-                            <InputLabel id="label-select-city">City</InputLabel>
+                            <InputLabel id="label-select-whoFinancesYourSchooling">Are you living with a Guardian</InputLabel>
                             <Select
-                                labelId="label-select-city"
-                                id="select-city"
-                                name="city"
-                                value={city}
-                                onChange={handleChange}
-                                required
-                            >
-                            <MenuItem value=""></MenuItem>
-                            <MenuItem value="Male">Male</MenuItem>
-                            <MenuItem value="Female">Female</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <InputLabel id="label-select-streetAndBarangay">Street and Barangay</InputLabel>
-                            <Select
-                                labelId="label-select-streetAndBarangay"
-                                id="select-streetAndBarangay"
-                                name="streetAndBarangay"
-                                value={streetAndBarangay}
+                                labelId="label-select-whoFinancesYourSchooling"
+                                id="select-whoFinancesYourSchooling"
+                                name="whoFinancesYourSchooling"
+                                value={whoFinancesYourSchooling}
                                 onChange={handleChange}
                                 required
                             >
                                 <MenuItem value=""></MenuItem>
-                                <MenuItem value="Male">Male</MenuItem>
-                                <MenuItem value="Female">Female</MenuItem>
+                                <MenuItem value="Yes">Yes</MenuItem>
+                                <MenuItem value="No">No</MenuItem>
                             </Select>
                         </FormControl>
                         <FormControl fullWidth>
-                            <InputLabel id="label-select-isSameAsHomeAddress">Current Address</InputLabel>
+                            <InputLabel id="label-select-isFourPsBeneficiary">Are you a 4P's Beneficiary?</InputLabel>
                             <Select
-                                labelId="label-select-isSameAsHomeAddress"
-                                id="select-isSameAsHomeAddress"
-                                name="isSameAsHomeAddress"
-                                value={isSameAsHomeAddress}
+                                labelId="label-select-isFourPsBeneficiary"
+                                id="select-isFourPsBeneficiary"
+                                name="isFourPsBeneficiary"
+                                value={isFourPsBeneficiary}
                                 onChange={handleChange}
                                 required
                             >
-                            <MenuItem value=""></MenuItem>
-                            <MenuItem value="Same as Home Address">Same as Home Address</MenuItem>
-                            <MenuItem value="Other">Other</MenuItem>
+                                <MenuItem value=""></MenuItem>
+                                <MenuItem value="Yes">Yes</MenuItem>
+                                <MenuItem value="No">No</MenuItem>
                             </Select>
                         </FormControl>
-                        { isSameAsHomeAddress === 'Other' && (
-                            <>
-                            <FormControl fullWidth>
-                                <InputLabel id="label-select-currentAddressProvince">Province</InputLabel>
-                                <Select
-                                    labelId="label-select-currentAddressProvince"
-                                    id="select-currentAddressProvince"
-                                    name="currentAddressProvince"
-                                    value={currentAddressProvince}
-                                    onChange={handleChange}
-                                    required
-                                >
+                        <FormControl fullWidth>
+                            <InputLabel id="label-select-houseHoldMonthlyIncome">Household Monthly Income</InputLabel>
+                            <Select
+                                labelId="label-select-houseHoldMonthlyIncome"
+                                id="select-houseHoldMonthlyIncome"
+                                name="houseHoldMonthlyIncome"
+                                value={houseHoldMonthlyIncome}
+                                onChange={handleChange}
+                                required
+                            >
                                 <MenuItem value=""></MenuItem>
-                                <MenuItem value="Male">Male</MenuItem>
-                                <MenuItem value="Female">Female</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <FormControl fullWidth>
-                                <InputLabel id="label-select-currentAddressCity">City</InputLabel>
-                                <Select
-                                    labelId="label-select-currentAddressCity"
-                                    id="select-currentAddressCity"
-                                    name="currentAddressCity"
-                                    value={currentAddressCity}
-                                    onChange={handleChange}
-                                    required
-                                >
+                                <MenuItem value="Less than Php 10,957">Less than Php 10,957</MenuItem>
+                                <MenuItem value="Php 10,958 - Php 21,193">Php 10,958 - Php 21,193</MenuItem>
+                                <MenuItem value="Php 21,194 - Php 43,823">Php 21,194 - Php 43,823</MenuItem>
+                                <MenuItem value="Php 43,824 - Php 76,668">Php 43,824 - Php 76,668</MenuItem>
+                                <MenuItem value="Php 76,669 - Php 131,483">Php 76,669 - Php 131,483</MenuItem>
+                                <MenuItem value="Php 131,484 - Php 219,139">Php 131,484 - Php 219,139</MenuItem>
+                                <MenuItem value="Php 219,140 and above">Php 219,140 and above</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth>
+                            <InputLabel id="label-select-natureOfResidence">Nature of residence while attending school</InputLabel>
+                            <Select
+                                labelId="label-select-natureOfResidence"
+                                id="select-natureOfResidence"
+                                name="natureOfResidence"
+                                value={natureOfResidence}
+                                onChange={handleChange}
+                                required
+                            >
                                 <MenuItem value=""></MenuItem>
-                                <MenuItem value="Male">Male</MenuItem>
-                                <MenuItem value="Female">Female</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <FormControl fullWidth>
-                                <InputLabel id="label-select-currentAddressStreetAndBarangay">Street and Barangay</InputLabel>
-                                <Select
-                                    labelId="label-select-currentAddressStreetAndBarangay"
-                                    id="select-currentAddressStreetAndBarangay"
-                                    name="currentAddressStreetAndBarangay"
-                                    value={currentAddressStreetAndBarangay}
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <MenuItem value=""></MenuItem>
-                                    <MenuItem value="Male">Male</MenuItem>
-                                    <MenuItem value="Female">Female</MenuItem>
-                                </Select>
-                            </FormControl>
-                            </>
-                        )}
+                                <MenuItem value="Family Home">Family Home</MenuItem>
+                                <MenuItem value="Rented Apartment">Rented Apartment</MenuItem>
+                                <MenuItem value="Boarding House">Boarding House</MenuItem>
+                                <MenuItem value="Dorm">Dorm</MenuItem>
+                                <MenuItem value="Rented Room">Rented Room</MenuItem>
+                                <MenuItem value="House of Married Sibling">House of Married Sibling</MenuItem>
+                                <MenuItem value="Relative's House">Relative's House</MenuItem>
+                            </Select>
+                        </FormControl>
                         <FormControl fullWidth>
                             <Button 
                                 type='submit'
@@ -168,10 +142,10 @@ const HomeAndFamilyBackground = () => {
                                 Next
                             </Button>
                         </FormControl>
-                      </Box>
-                  </Paper>
-              </Box>
-          </React.Suspense>
+                    </Box>
+                </Paper>
+            </Box>
+        </React.Suspense>
     )
 }
 

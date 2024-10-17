@@ -33,13 +33,60 @@ export const HomeContext = React.createContext<HomeContextType>({
         submitForm: () => {}
     },
     addressDetails: {
-        streetAndBarangay: '',
-        city: '',
+        region: '',
+        regionCode: '',
+        regionName: '',
+        regionRegionName: '',
         province: '',
+        provinceCode: '',
+        provinceName: '',
+        city: '',
+        cityCode: '',
+        cityName: '',
+        barangay: '',
+        barangayCode: '',
+        barangayName: '',
         isSameAsHomeAddress: '',
-        currentAddressStreetAndBarangay: '',
-        currentAddressCity: '',
-        currentAddressProvince: '',
+        currentAddressRegionCode: '',
+        currentAddressRegionName: '',
+        currentAddressRegionRegionName: '',
+        currentAddressProvinceCode: '',
+        currentAddressProvinceName: '',
+        currentAddressCityCode: '',
+        currentAddressCityName: '',
+        currentAddressBarangayCode: '',
+        currentAddressBarangayName: '',
+        handleChange: () => {},
+        handleChangeSelect: () => {},
+        submitForm: () => {}
+    },
+    parentProfile: {
+        fatherHEA: '',
+        fatherOccupation: '',
+        motherHEA: '',
+        motherOccupation: '',
+        livingWithGuardian: '',
+        handleChange: () => {},
+        submitForm: () => {}
+    },
+    homeAndFamilyBackground: {
+        noOfSiblingsGainfullyEmployed: 0,
+        whoFinancesYourSchooling: '',
+        isFourPsBeneficiary: '',
+        fourPsIdNumber: '',
+        isFirstGenStudent: '',
+        houseHoldMonthlyIncome: '',
+        natureOfResidence: '',
+        handleChange: () => {},
+        submitForm: () => {}
+    },
+    health: {
+        isPWD: '',
+        pwdIdNumber: '',
+        isSPED: '',
+        specifySPED: '',
+        hasSiblingsStudyingInCHMSU: '',
+        hasRelativesWorkingInCHMSU: '',
         handleChange: () => {},
         submitForm: () => {}
     }
@@ -48,7 +95,7 @@ export const HomeContext = React.createContext<HomeContextType>({
 export const HomeContextProvider = ({children}: HomeContextProviderProps) => {
     const [filledOutForm, setFilledOutForm] = React.useState<HomeContextType['filledOutForm']>({
         personalInformation: true,
-        addressDetails: false,
+        addressDetails: true,
         parentProfile: false,
         homeAndFamilyBackground: false,
         health: false
@@ -86,14 +133,54 @@ export const HomeContextProvider = ({children}: HomeContextProviderProps) => {
         }
     })
     const [addressDetails, setAddressDetails] = React.useState<HomeContextType['addressDetails']>({
-        streetAndBarangay: '',
-        city: '',
+        region: '',
+        regionCode: '',
+        regionName: '',
+        regionRegionName: '',
         province: '',
-        isSameAsHomeAddress: 'Yes',
-        currentAddressStreetAndBarangay: '',
-        currentAddressCity: '',
-        currentAddressProvince: '',
+        provinceCode: '',
+        provinceName: '',
+        city: '',
+        cityCode: '',
+        cityName: '',
+        barangay: '',
+        barangayCode: '',
+        barangayName: '',
+        isSameAsHomeAddress: '',
+        currentAddressRegionCode: '',
+        currentAddressRegionName: '',
+        currentAddressRegionRegionName: '',
+        currentAddressProvinceCode: '',
+        currentAddressProvinceName: '',
+        currentAddressCityCode: '',
+        currentAddressCityName: '',
+        currentAddressBarangayCode: '',
+        currentAddressBarangayName: '',
         handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setAddressDetails((prevState: HomeContextType['addressDetails']) => ({...prevState, [event?.target.name]: event?.target.value })),
+        handleChangeSelect: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+            const { name, value } = event.target
+            if(name === 'region') {
+                console.log(value)
+                setAddressDetails((prevState: HomeContextType['addressDetails']) => (
+                    {
+                        ...prevState, 
+                        regionCode: value?.code,
+                        regionName: value?.name,
+                        regionRegionName: value?.regionName
+
+                    }
+                ))
+            } else {
+                console.log(name, value?.code, value?.name)
+                setAddressDetails((prevState: HomeContextType['addressDetails']) => (
+                    {
+                        ...prevState, 
+                        [name+'Code']: value?.code,
+                        [name+'Name']: value?.name,
+                    }
+                ))
+            }
+        },
         submitForm: (event: React.FormEvent<HTMLFormElement>) => {
             event.preventDefault()
             const formData = new FormData(event.currentTarget)
@@ -107,13 +194,81 @@ export const HomeContextProvider = ({children}: HomeContextProviderProps) => {
             }))
         }
     })
+    const [parentProfile, setParentProfile] = React.useState<HomeContextType['parentProfile']>({
+        fatherHEA: '',
+        fatherOccupation: '',
+        motherHEA: '',
+        motherOccupation: '',
+        livingWithGuardian: '',
+        handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> ) => {
+            setParentProfile((prevState: HomeContextType['parentProfile']) => ({...prevState, [event?.target.name]: event?.target.value }))
+        },
+        submitForm: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault()
+            const formData = new FormData(event.currentTarget)
+            const data = Object.fromEntries(formData.entries())
+            for (const [key, value] of Object.entries(data)) {
+                console.log(`${key}: ${value}`)
+            }
+            setFilledOutForm((prevState) => ({
+                ...prevState,
+                parentProfile: true
+            }))
+        }
+    })
+    const [homeAndFamilyBackground, setHomeAndFamilyBackground] = React.useState<HomeContextType['homeAndFamilyBackground']>({
+        noOfSiblingsGainfullyEmployed: 0,
+        whoFinancesYourSchooling: '',
+        isFourPsBeneficiary: '',
+        fourPsIdNumber: '',
+        isFirstGenStudent: '',
+        houseHoldMonthlyIncome: '',
+        natureOfResidence: '',
+        handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> ) => setHomeAndFamilyBackground((prevState: HomeContextType['homeAndFamilyBackground']) => ({...prevState, [event?.target.name]: event?.target.value })),
+        submitForm: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault()
+            const formData = new FormData(event.currentTarget)
+            const data = Object.fromEntries(formData.entries())
+            for (const [key, value] of Object.entries(data)) {
+                console.log(`${key}: ${value}`)
+            }
+            setFilledOutForm((prevState) => ({
+                ...prevState,
+                homeAndFamilyBackground: true
+            }))
+        }
+    })
+    const [health, setHealth] = React.useState<HomeContextType['health']>({
+        isPWD: '',
+        pwdIdNumber: '',
+        isSPED: '',
+        specifySPED: '',
+        hasSiblingsStudyingInCHMSU: '',
+        hasRelativesWorkingInCHMSU: '',
+        handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> ) => setHealth((prevState: HomeContextType['health']) => ({...prevState, [event?.target.name]: event?.target.value })),
+        submitForm: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault()
+            const formData = new FormData(event.currentTarget)
+            const data = Object.fromEntries(formData.entries())
+            for (const [key, value] of Object.entries(data)) {
+                console.log(`${key}: ${value}`)
+            }
+            setFilledOutForm((prevState) => ({
+                ...prevState,
+                health: true
+            }))
+        }
+    })
     return (
         <HomeContext.Provider
             value={{
                 filledOutForm,
                 setFilledOutForm,
                 personalInformation,
-                addressDetails
+                addressDetails,
+                parentProfile,
+                homeAndFamilyBackground,
+                health
             }}
         >
             {children}
