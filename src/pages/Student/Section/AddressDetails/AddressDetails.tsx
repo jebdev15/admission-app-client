@@ -1,5 +1,5 @@
 import { ArrowBack, Place } from '@mui/icons-material'
-import { Box, Button, CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, TextField, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, Typography } from '@mui/material'
 import React from 'react'
 import { HomeContext } from '../../Home/HomeContext'
 import regions from './AddressJson/regions.json'
@@ -11,25 +11,15 @@ const AddressDetails = () => {
     const context = React.useContext(HomeContext)
     const {
         regionCode,
-        regionName,
-        regionRegionName,
         provinceCode,
-        provinceName,
         cityCode,
-        cityName,
         barangayCode,
-        barangayName,
         isSameAsHomeAddress,
         currentAddressRegionCode,
-        currentAddressRegionName,
-        currentAddressRegionRegionName,
         currentAddressProvinceCode,
-        currentAddressProvinceName,
         currentAddressCityCode,
-        currentAddressCityName,
         currentAddressBarangayCode,
-        currentAddressBarangayName,
-        handleChangeSelect,
+        handleChange,
         submitForm
     } = context.addressDetails
     const filteredProvinces = provinces.filter((province) => province.regionCode === regionCode)
@@ -76,28 +66,25 @@ const AddressDetails = () => {
                             <Select
                                 labelId="label-select-region"
                                 id="select-region"
-                                name="region"
+                                name="regionCode"
                                 value={regionCode}
-                                onChange={handleChangeSelect}
+                                onChange={handleChange}
                                 required
                             >
                             <MenuItem value=""></MenuItem>
                             {regions.length > 0 && regions.map((region) => (
-                                <MenuItem key={region.code} value={region}>{`${region.regionName}(${region.name})`}</MenuItem>
+                                <MenuItem key={region.code} value={region.code}>{`${region.regionName}(${region.name})`}</MenuItem>
                             ))}
                             </Select>
-                            <TextField value={regionCode} />
-                            <TextField value={regionName} />
-                            <TextField value={regionRegionName} />
                         </FormControl>
                         <FormControl fullWidth>
                             <InputLabel id="label-select-province">Province</InputLabel>
                             <Select
                                 labelId="label-select-province"
                                 id="select-provinceCode"
-                                name="province"
+                                name="provinceCode"
                                 value={provinceCode}
-                                onChange={handleChangeSelect}
+                                onChange={handleChange}
                                 required
                             >
                             <MenuItem value=""></MenuItem>
@@ -105,8 +92,6 @@ const AddressDetails = () => {
                                 <MenuItem key={province.code} value={province}>{province.name}</MenuItem>
                             ))}
                             </Select>
-                            <TextField value={provinceCode} />
-                            <TextField value={provinceName} />
                         </FormControl>
                         <FormControl fullWidth>
                             <InputLabel id="label-select-city">City</InputLabel>
@@ -115,7 +100,7 @@ const AddressDetails = () => {
                                 id="select-city"
                                 name="cityCode"
                                 value={cityCode}
-                                onChange={handleChangeSelect}
+                                onChange={handleChange}
                                 required
                             >
                             <MenuItem value=""></MenuItem>
@@ -131,7 +116,7 @@ const AddressDetails = () => {
                                 id="select-barangay"
                                 name="barangayCode"
                                 value={barangayCode}
-                                onChange={handleChangeSelect}
+                                onChange={handleChange}
                                 required
                             >
                                 <MenuItem value=""></MenuItem>
@@ -147,7 +132,7 @@ const AddressDetails = () => {
                                 id="select-isSameAsHomeAddress"
                                 name="isSameAsHomeAddress"
                                 value={isSameAsHomeAddress}
-                                onChange={handleChangeSelect}
+                                onChange={handleChange}
                                 required
                             >
                             <MenuItem value=""></MenuItem>
@@ -158,13 +143,28 @@ const AddressDetails = () => {
                         { isSameAsHomeAddress === 'Other' && (
                             <>
                             <FormControl fullWidth>
+                                <InputLabel id="label-select-currentAddressRegionCode">Region</InputLabel>
+                                <Select
+                                    labelId="label-select-currentAddressRegionCode"
+                                    id="select-currentAddressRegionCode"
+                                    name="currentAddressRegionCode"
+                                    value={currentAddressRegionCode}
+                                    onChange={handleChange}
+                                    required
+                                >
+                                <MenuItem value=""></MenuItem>
+                                <MenuItem value="Male">Male</MenuItem>
+                                <MenuItem value="Female">Female</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <FormControl fullWidth>
                                 <InputLabel id="label-select-currentAddressProvince">Province</InputLabel>
                                 <Select
                                     labelId="label-select-currentAddressProvince"
                                     id="select-currentAddressProvince"
-                                    name="currentAddressProvince"
-                                    value={currentAddressProvince}
-                                    onChange={handleChangeSelect}
+                                    name="currentAddressProvinceCode"
+                                    value={currentAddressProvinceCode}
+                                    onChange={handleChange}
                                     required
                                 >
                                 <MenuItem value=""></MenuItem>
@@ -179,7 +179,7 @@ const AddressDetails = () => {
                                     id="select-currentAddressCity"
                                     name="currentAddressCity"
                                     value={currentAddressCity}
-                                    onChange={handleChangeSelect}
+                                    onChange={handleChange}
                                     required
                                 >
                                 <MenuItem value=""></MenuItem>
@@ -188,13 +188,13 @@ const AddressDetails = () => {
                                 </Select>
                             </FormControl>
                             <FormControl fullWidth>
-                                <InputLabel id="label-select-currentAddressBarangay">Street and Barangay</InputLabel>
+                                <InputLabel id="label-select-currentAddressBarangayCode">Barangay</InputLabel>
                                 <Select
-                                    labelId="label-select-currentAddressBarangay"
-                                    id="select-currentAddressBarangay"
-                                    name="currentAddressBarangay"
-                                    value={currentAddress.barangay.code}
-                                    onChange={handleChangeSelect}
+                                    labelId="label-select-currentAddressBarangayCode"
+                                    id="select-currentAddressBarangayCode"
+                                    name="currentAddressBarangayCode"
+                                    value={currentAddressBarangayCode}
+                                    onChange={handleChange}
                                     required
                                 >
                                     <MenuItem value=""></MenuItem>

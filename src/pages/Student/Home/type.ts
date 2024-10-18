@@ -55,7 +55,6 @@ export interface HomeContextType {
         currentAddressBarangayCode: string
         currentAddressBarangayName: string
         handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
-        handleChangeSelect: (event: React.ChangeEvent<HTMLSelectElement>) => void
         submitForm: (event: React.FormEvent<HTMLFormElement>) => void
     },
     parentProfile: {

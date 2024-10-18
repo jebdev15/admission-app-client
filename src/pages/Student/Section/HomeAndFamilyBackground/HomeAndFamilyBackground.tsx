@@ -63,7 +63,7 @@ const HomeAndFamilyBackground = () => {
                             />
                         </FormControl>
                         <FormControl fullWidth>
-                            <InputLabel id="label-select-whoFinancesYourSchooling">Are you living with a Guardian</InputLabel>
+                            <InputLabel id="label-select-whoFinancesYourSchooling">Who finances your schooling?</InputLabel>
                             <Select
                                 labelId="label-select-whoFinancesYourSchooling"
                                 id="select-whoFinancesYourSchooling"
@@ -73,8 +73,12 @@ const HomeAndFamilyBackground = () => {
                                 required
                             >
                                 <MenuItem value=""></MenuItem>
-                                <MenuItem value="Yes">Yes</MenuItem>
-                                <MenuItem value="No">No</MenuItem>
+                                <MenuItem value="Parents">Parents</MenuItem>
+                                <MenuItem value="Spouse">Spouse</MenuItem>
+                                <MenuItem value="Sibling(s)">Sibling(s)</MenuItem>
+                                <MenuItem value="Relative">Relative</MenuItem>
+                                <MenuItem value="Scholarship">Scholarship</MenuItem>
+                                <MenuItem value="Self-supporting / working student">Self-supporting / working student</MenuItem>
                             </Select>
                         </FormControl>
                         <FormControl fullWidth>
@@ -84,6 +88,30 @@ const HomeAndFamilyBackground = () => {
                                 id="select-isFourPsBeneficiary"
                                 name="isFourPsBeneficiary"
                                 value={isFourPsBeneficiary}
+                                onChange={handleChange}
+                                required
+                            >
+                                <MenuItem value=""></MenuItem>
+                                <MenuItem value="Yes">Yes</MenuItem>
+                                <MenuItem value="No">No</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth>
+                            <TextField
+                                id="select-fourPsIdNumber"
+                                name="fourPsIdNumber"
+                                label="If Yes, Please enter your 4P's ID Number"
+                                value={fourPsIdNumber}
+                                onChange={handleChange}
+                            />
+                        </FormControl>
+                        <FormControl fullWidth>
+                            <InputLabel id="label-select-isFirstGenStudent">Are you the First person in your family to enter college?</InputLabel>
+                            <Select
+                                labelId="label-select-isFirstGenStudent"
+                                id="select-isFirstGenStudent"
+                                name="isFirstGenStudent"
+                                value={isFirstGenStudent}
                                 onChange={handleChange}
                                 required
                             >

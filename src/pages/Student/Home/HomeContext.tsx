@@ -57,7 +57,6 @@ export const HomeContext = React.createContext<HomeContextType>({
         currentAddressBarangayCode: '',
         currentAddressBarangayName: '',
         handleChange: () => {},
-        handleChangeSelect: () => {},
         submitForm: () => {}
     },
     parentProfile: {
@@ -157,30 +156,6 @@ export const HomeContextProvider = ({children}: HomeContextProviderProps) => {
         currentAddressBarangayCode: '',
         currentAddressBarangayName: '',
         handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setAddressDetails((prevState: HomeContextType['addressDetails']) => ({...prevState, [event?.target.name]: event?.target.value })),
-        handleChangeSelect: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-            const { name, value } = event.target
-            if(name === 'region') {
-                console.log(value)
-                setAddressDetails((prevState: HomeContextType['addressDetails']) => (
-                    {
-                        ...prevState, 
-                        regionCode: value?.code,
-                        regionName: value?.name,
-                        regionRegionName: value?.regionName
-
-                    }
-                ))
-            } else {
-                console.log(name, value?.code, value?.name)
-                setAddressDetails((prevState: HomeContextType['addressDetails']) => (
-                    {
-                        ...prevState, 
-                        [name+'Code']: value?.code,
-                        [name+'Name']: value?.name,
-                    }
-                ))
-            }
-        },
         submitForm: (event: React.FormEvent<HTMLFormElement>) => {
             event.preventDefault()
             const formData = new FormData(event.currentTarget)
