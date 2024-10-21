@@ -2,6 +2,7 @@ import { Box, CircularProgress } from '@mui/material'
 import React from 'react'
 import { HomeContext } from './HomeContext';
 import Summary from '../Section/Summary';
+import CascadingSelect from '../CascadingSelect';
 const PersonalInformation = React.lazy(() => import('../Section/PersonalInformation/PersonalInformation'))
 const AddressDetails = React.lazy(() => import('../Section/AddressDetails/AddressDetails'))
 const ParentProfile = React.lazy(() => import('../Section/ParentProfile/ParentProfile'))
@@ -39,6 +40,7 @@ const Home = () => {
         }}
       >
         {currentForm()}
+        {/* <CascadingSelect /> */}
       </Box>
     </React.Suspense>
   )

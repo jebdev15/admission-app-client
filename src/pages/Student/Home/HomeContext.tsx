@@ -1,5 +1,5 @@
-import dayjs from 'dayjs'
 import React from 'react'
+import dayjs from 'dayjs'
 import { HomeContextType, HomeContextProviderProps } from './type'
 
 export const HomeContext = React.createContext<HomeContextType>({
@@ -155,7 +155,29 @@ export const HomeContextProvider = ({children}: HomeContextProviderProps) => {
         currentAddressCityName: '',
         currentAddressBarangayCode: '',
         currentAddressBarangayName: '',
-        handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setAddressDetails((prevState: HomeContextType['addressDetails']) => ({...prevState, [event?.target.name]: event?.target.value })),
+        handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+            const { name, value } = event.target;
+          
+            if (name === 'regionCode') {
+                // Handle the specific logic for 'regionCode' here if needed.
+                setAddressDetails((prevState: HomeContextType['addressDetails']) => (
+                    { 
+                        ...prevState, 
+                        [name]: value,
+                        provinceCode: '',
+                        cityCode: '',
+                        barangayCode: '',
+                    }
+                ));
+            } else {
+                setAddressDetails((prevState: HomeContextType['addressDetails']) => (
+                    { 
+                        ...prevState, 
+                        [name]: value,
+                    }
+                ));
+            }
+        },
         submitForm: (event: React.FormEvent<HTMLFormElement>) => {
             event.preventDefault()
             const formData = new FormData(event.currentTarget)
