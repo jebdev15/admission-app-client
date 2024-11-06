@@ -1,6 +1,9 @@
 import React from 'react'
-import dayjs from 'dayjs'
 import { HomeContextType, HomeContextProviderProps } from './type'
+import axiosInstance from '../../../api'
+import { useParams } from 'react-router'
+import { SelectChangeEvent } from '@mui/material'
+import dayjs, { Dayjs } from 'dayjs'
 
 export const HomeContext = React.createContext<HomeContextType>({
     filledOutForm: {
@@ -12,50 +15,52 @@ export const HomeContext = React.createContext<HomeContextType>({
     },
     setFilledOutForm: () => {},
     personalInformation: {
-        firstName: '',
-        middleName: '',
-        lastName: '',
-        mobileNumber: '',
+        first_name: '',
+        middle_name: '',
+        last_name: '',
+        mobile_no: '',
         lrn: '',
-        dateOfBirth: dayjs('2000-01-01'),
+        date_of_birth: dayjs('2000-01-01'),  // Set a default date as a `dayjs` object,
         gender: '',
-        civilStatus: '',
+        civil_status: '',
         religion: '',
-        otherReligion: '',
-        soloParent: '',
-        isIndigenousGroup: '',
-        indigenousGroup: '',
-        schoolLastAttended: '',
-        typeOfSchool: '',
-        hasScholarshipOrFinancialAid: '',
-        scholarshipOrFinancialAid: '',
+        other_religion: '',
+        is_solo_parent: '',
+        is_indigenous_group: '',
+        indigenous_group: '',
+        school_last_attended: '',
+        type_of_school: '',
+        has_scholarship_or_financial_aid: '',
+        scholarship_or_financial_aid: '',
         handleChange: () => {},
+        handleChangeSelect: () => {},
+        handleChangeDate: () => {},
         submitForm: () => {}
     },
     addressDetails: {
         region: '',
-        regionCode: '',
-        regionName: '',
-        regionRegionName: '',
+        region_code: '',
+        region_name: '',
+        regione_region_name: '',
         province: '',
-        provinceCode: '',
-        provinceName: '',
+        province_code: '',
+        province_name: '',
         city: '',
-        cityCode: '',
-        cityName: '',
+        city_code: '',
+        city_name: '',
         barangay: '',
-        barangayCode: '',
-        barangayName: '',
-        isSameAsHomeAddress: '',
-        currentAddressRegionCode: '',
-        currentAddressRegionName: '',
-        currentAddressRegionRegionName: '',
-        currentAddressProvinceCode: '',
-        currentAddressProvinceName: '',
-        currentAddressCityCode: '',
-        currentAddressCityName: '',
-        currentAddressBarangayCode: '',
-        currentAddressBarangayName: '',
+        barangay_code: '',
+        barangay_name: '',
+        is_same_as_home_address: '',
+        current_address_region_code: '',
+        current_address_region_name: '',
+        current_address_region_region_name: '',
+        current_address_province_code: '',
+        current_address_province_name: '',
+        current_address_city_code: '',
+        current_address_city_name: '',
+        current_address_barangay_name: '',
+        current_address_street: '',
         handleChange: () => {},
         submitForm: () => {}
     },
@@ -92,39 +97,43 @@ export const HomeContext = React.createContext<HomeContextType>({
 })
 
 export const HomeContextProvider = ({children}: HomeContextProviderProps) => {
+    const { uuid } = useParams<{uuid: string}>()
     const [filledOutForm, setFilledOutForm] = React.useState<HomeContextType['filledOutForm']>({
-        personalInformation: true,
-        addressDetails: true,
+        personalInformation: false,
+        addressDetails: false,
         parentProfile: false,
         homeAndFamilyBackground: false,
         health: false
     })
     const [personalInformation, setPersonalInformation] = React.useState<HomeContextType['personalInformation']>({
-        firstName: '',
-        middleName: '',
-        lastName: '',
-        mobileNumber: '',
+        first_name: '',
+        middle_name: '',
+        last_name: '',
+        mobile_no: '',
         lrn: '',
-        dateOfBirth: dayjs('2000-01-01'),
+        date_of_birth: dayjs('2000-01-01'),  // Set a default date as a `dayjs` object,
         gender: '',
-        civilStatus: '',
+        civil_status: '',
         religion: '',
-        otherReligion: '',
-        soloParent: '',
-        isIndigenousGroup: '',
-        indigenousGroup: '',
-        schoolLastAttended: '',
-        typeOfSchool: '',
-        hasScholarshipOrFinancialAid: '',
-        scholarshipOrFinancialAid: '',
-        handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> ) => setPersonalInformation((prevState: HomeContextType['personalInformation']) => ({...prevState, [event?.target.name]: event?.target.value })),
-        submitForm: (event: React.FormEvent<HTMLFormElement>) => {
+        other_religion: '',
+        is_solo_parent: '',
+        is_indigenous_group: '',
+        indigenous_group: '',
+        school_last_attended: '',
+        type_of_school: '',
+        has_scholarship_or_financial_aid: '',
+        scholarship_or_financial_aid: '',
+        handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> ) => setPersonalInformation((prevState: HomeContextType['personalInformation']) => ({...prevState, [event?.target.name]: event?.target.value })),
+        handleChangeSelect: (event: SelectChangeEvent<string>) => setPersonalInformation((prevState: HomeContextType['personalInformation']) => ({...prevState, [event?.target.name]: event?.target.value })),
+        handleChangeDate: (newValue: Dayjs | null) => 
+            setPersonalInformation((prevState) => ({ ...prevState, date_of_birth: newValue ?? dayjs() })),  // Update date_of_birth in `dayjs` format
+        submitForm: async (event: React.FormEvent<HTMLFormElement>) => {
             event.preventDefault()
+            
             const formData = new FormData(event.currentTarget)
-            const data = Object.fromEntries(formData.entries())
-            for (const [key, value] of Object.entries(data)) {
-                console.log(`${key}: ${value}`)
-            }
+            formData.append('uuid', uuid)
+            const { data, status } = await axiosInstance.post('/personal-information/create', formData)
+            console.log(data, status)
             setFilledOutForm((prevState) => ({
                 ...prevState,
                 personalInformation: true
@@ -133,28 +142,28 @@ export const HomeContextProvider = ({children}: HomeContextProviderProps) => {
     })
     const [addressDetails, setAddressDetails] = React.useState<HomeContextType['addressDetails']>({
         region: '',
-        regionCode: '',
-        regionName: '',
-        regionRegionName: '',
+        region_code: '',
+        region_name: '',
+        regione_region_name: '',
         province: '',
-        provinceCode: '',
-        provinceName: '',
+        province_code: '',
+        province_name: '',
         city: '',
-        cityCode: '',
-        cityName: '',
+        city_code: '',
+        city_name: '',
         barangay: '',
-        barangayCode: '',
-        barangayName: '',
-        isSameAsHomeAddress: '',
-        currentAddressRegionCode: '',
-        currentAddressRegionName: '',
-        currentAddressRegionRegionName: '',
-        currentAddressProvinceCode: '',
-        currentAddressProvinceName: '',
-        currentAddressCityCode: '',
-        currentAddressCityName: '',
-        currentAddressBarangayCode: '',
-        currentAddressBarangayName: '',
+        barangay_code: '',
+        barangay_name: '',
+        is_same_as_home_address: '',
+        current_address_region_code: '',
+        current_address_region_name: '',
+        current_address_region_region_name: '',
+        current_address_province_code: '',
+        current_address_province_name: '',
+        current_address_city_code: '',
+        current_address_city_name: '',
+        current_address_barangay_name: '',
+        current_address_street: '',
         handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
             const { name, value } = event.target;
           

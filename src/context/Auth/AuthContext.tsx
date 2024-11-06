@@ -1,6 +1,7 @@
 import React from 'react'
 import { AuthContextInterface, AuthContextProviderProps } from './type'
-import { useCookies } from 'react-cookie'
+import axiosInstance from '../../api/index'
+import { useNavigate } from 'react-router'
 
 // Create and export the LoginContext with default values
 export const AuthContext = React.createContext<AuthContextInterface>({
@@ -8,31 +9,16 @@ export const AuthContext = React.createContext<AuthContextInterface>({
     agreed: false, 
     open: true, 
     disableFormContent: true, 
-    defaultForm: true, 
     closeModal: () => {}, 
     setAgreed: () => {}, 
-    changeFormToLogin: () => {}, 
-    changeFormToRegister: () => {}, 
-    login: {
-        passwordVisibility: false,
-        data:{
-            email: '',
-            password: ''
-        },
-        actions: {
-            togglePasswordVisibility: () => {},
-            submitForm: () => {},
-            handleChange: () => {}
-        }
-    },
     register: {
         passwordVisibility: false,
+        loadingButton: false,
         data:{
-            firstName: '',
-            middleName: '',
-            lastName: '',
             email: '',
-            password: '',
+            campus: '',
+            college: '',
+            course: ''
         },
         actions: {
             togglePasswordVisibility: () => {},
@@ -40,85 +26,24 @@ export const AuthContext = React.createContext<AuthContextInterface>({
             handleChange: () => {}
         }
     },
-    isAuthenticated: false
 })
 
 export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
-    const [cookie,setCookies] = useCookies(['token'])
+    const navigate = useNavigate()
     const [context, setContext] = React.useState<AuthContextInterface>({
         agreed: false, // If the user has agreed to the privacy policy
         open: true, // If the modal is open
         disableFormContent: true, // If the form content should be disabled
-        defaultForm: true, // If the default is true, login form should be shown
         closeModal: () => setContext((prevState) => ({...prevState, open: false, disableFormContent: false })), // Function to close the data privacy policy modal
         setAgreed: () => setContext((prevState) => ({...prevState, agreed: true, open: false, disableFormContent: false })), // Function to set the agreed state
-        changeFormToLogin: () => setContext((prevState) => ({...prevState, defaultForm: true })), // Function to change the form to the login form
-        changeFormToRegister: () => setContext((prevState) => ({...prevState, defaultForm: false })), // Function to change the form to the register form
-        login: {
-            passwordVisibility: false,
-            data:{
-                email: '',
-                password: ''
-            },
-            actions: {
-                togglePasswordVisibility: () => setContext((prevState: AuthContextInterface) => (
-                    {
-                        ...prevState, 
-                        login: 
-                            {
-                                ...prevState.login, 
-                                passwordVisibility: !prevState.login.passwordVisibility,
-                            }
-                    }
-                )),
-                submitForm: (event: React.FormEvent<HTMLFormElement>) => {
-                    event.preventDefault(); 
-                    const formData = new FormData(event.currentTarget)
-                    for(const [key, value] of formData.entries()) {
-                        console.log(`${key}: ${value}`)
-                    }
-                    setContext((prevState: AuthContextInterface) => (
-                        {
-                            ...prevState, 
-                            login: {
-                                ...prevState.login, 
-                                data: { 
-                                    ...prevState.login.data, 
-                                    email: '', 
-                                    password: ''
-                                } 
-                            } 
-                        }
-                    ))
-                    const data = {
-                        token: 'test',
-                    }
-                    Object.entries(data).forEach((value) => setCookies(value[0],value[1], { path: '/'}))
-                    // Object.entries(data).forEach((value) => console.log({key: value[0],value: value[1]}))
-                    // setCookies('token', 'test', { path: '/' })
-                },
-                handleChange: (event: React.ChangeEvent<HTMLInputElement>) => setContext((prevState: AuthContextInterface) => (
-                    {
-                        ...prevState,
-                        login: {
-                            ...prevState.login,
-                            data: {
-                                ...prevState.login.data,
-                                [event.target.name]: event.target.value
-                            }
-                        }
-                    }
-                ))
-            }
-        },
         register: {
             passwordVisibility: false,
+            loadingButton: false,
             data:{
-                firstName: '',
-                middleName: '',
-                lastName: '',
                 email: '',
-                password: '',
+                campus: '',
+                college: '',
+                course: '',
             },
             actions: {
                 togglePasswordVisibility: () => setContext((prevState: AuthContextInterface) => (
@@ -131,9 +56,41 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
                             }
                     }
                 )),
-                submitForm: (event: React.FormEvent) => {
+                submitForm: async (event: React.FormEvent<HTMLFormElement>) => {
                     event.preventDefault(); 
-                    console.log('submitted register form')
+                    // setContext((prevState: AuthContextInterface) => (
+                    //     {
+                    //         ...prevState, 
+                    //         register: {
+                    //             ...prevState.register, 
+                    //             loadingButton: true
+                    //         }
+                    //     }
+                    // ))
+                    const formData = new FormData(event.currentTarget)
+                    const { data, status } = await axiosInstance.post('/auth/register', formData)
+                    // if(data.status === 200) {
+                    //     setContext((prevState: AuthContextInterface) => (
+                    //         {
+                    //             ...prevState, 
+                    //             data: {
+                    //                 ...prevState.data, 
+                    //                 email: '', 
+                    //                 campus: '',
+                    //                 college: '',
+                    //                 course: ''
+                    //             },
+                    //             register: {
+                    //                 ...prevState.register, 
+                    //                 loadingButton: false
+                    //             }
+                    //         }
+                    //     ))
+                    // }
+                    alert(data.message)
+                    if(status === 201) {
+                        navigate(`/home/${data.uuid}`)
+                    }
                 },
                 handleChange: (event) => setContext((prevState: AuthContextInterface) => (
                     {
@@ -149,11 +106,9 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
                 ))
             }
         },
-        isAuthenticated: false
     })
-    const isAuthenticated = !!cookie.token
     return(
-        <AuthContext.Provider value={{ ...context, isAuthenticated }}>
+        <AuthContext.Provider value={{ ...context }}>
             {children}
         </AuthContext.Provider>
     )

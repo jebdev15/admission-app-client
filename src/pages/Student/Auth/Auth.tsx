@@ -1,10 +1,31 @@
 import React from 'react'
-import { AccountCircle, ArrowBack, Lock as LockIcon, Person, Visibility, VisibilityOff, Email as EmailIcon } from '@mui/icons-material'
-import { Box, FormControl, InputAdornment, Paper, TextField, Typography, Button, Divider, Dialog, DialogTitle, DialogContent, CircularProgress, IconButton, Tooltip } from '@mui/material'
+import { Person } from '@mui/icons-material'
+import { Box, FormControl, Paper, TextField, Typography, Button, Divider, Dialog, DialogTitle, DialogContent, CircularProgress, SelectChangeEvent, Select, InputLabel, MenuItem, Alert, AlertTitle } from '@mui/material'
 import { AuthContext } from '../../../context/Auth/AuthContext'
 import CustomCircularProgress from '../../../components/CustomCircularProgress'
-import { useNavigate } from 'react-router'
+import campusesJson from '../campuses.json';
+// Define types for the JSON structure
+interface Course {
+  course_code: string;
+  course_description: string;
+}
 
+interface College {
+  college_code: string;
+  college_description: string;
+  courses: Course[];
+}
+
+interface CampusData {
+  colleges: College[];
+}
+
+interface Data {
+  [campus: string]: CampusData;
+}
+
+// Sample JSON Data
+const data: Data = campusesJson ;
 const DataPrivacyPolicyModal = () => {
     const { open, setAgreed } = React.useContext(AuthContext)
     return(
@@ -93,10 +114,45 @@ const DataPrivacyPolicyModal = () => {
 
 const Register = () => {
     const context = React.useContext(AuthContext)
-    const { disableFormContent, changeFormToLogin } = context
-    const { passwordVisibility } = context.register
-    const { togglePasswordVisibility, submitForm, handleChange } = context.register.actions
-    const { firstName, middleName, lastName, email, password } = context.register.data
+    const { disableFormContent } = context
+    const { submitForm, handleChange } = context.register.actions
+    const { email } = context.register.data
+    const { loadingButton } = context.register
+
+    const [selectedCampus, setSelectedCampus] = React.useState<string>('');
+    const [selectedCampusToTakeExam, setSelectedCampusToTakeExam] = React.useState<string>('');
+    const [selectedCollege, setSelectedCollege] = React.useState<string>('');
+    const [selectedCourse, setSelectedCourse] = React.useState<string>('');
+
+    const handleCampusChange = (event: SelectChangeEvent<string>) => {
+        setSelectedCampus(event.target.value);
+        setSelectedCollege('');  // Reset the selected college when campus changes
+        setSelectedCourse('');   // Reset the selected course when campus changes
+    };
+
+    const handleCampusToTakeExamChange = (event: SelectChangeEvent<string>) => {
+        setSelectedCampusToTakeExam(event.target.value);
+    };
+
+    const handleCollegeChange = (event: SelectChangeEvent<string>) => {
+        setSelectedCollege(event.target.value);
+        setSelectedCourse('');   // Reset the selected course when college changes
+    };
+
+    const handleCourseChange = (event: SelectChangeEvent<string>) => {
+        setSelectedCourse(event.target.value);
+    };
+
+    const campuses = Object.keys(data); // Extract the list of campuses
+
+    // Get the list of colleges based on the selected campus
+    const colleges = selectedCampus ? data[selectedCampus].colleges : [];
+
+    // Get the list of courses based on the selected college
+    const courses = selectedCollege ? colleges.find(c => c.college_code === selectedCollege)?.courses || [] : [];
+    const selectedCollegeDescription = selectedCollege ? data[selectedCampus].colleges.find(c => c.college_code === selectedCollege)?.college_description : '';
+    const selectCourseDescription = selectedCourse ? courses.find(c => c.course_code === selectedCourse)?.course_description : '';
+    
     return (
         <React.Suspense fallback={<CircularProgress />}>
             <Box
@@ -106,14 +162,12 @@ const Register = () => {
                     justifyContent: 'center', 
                     alignItems: 'center', 
                     height: '100dvh',
+                    width: '100%',
                     padding: '1rem',
                     gap: 1
                 }}
             >
                 <Paper>
-                    <IconButton aria-label="" onClick={changeFormToLogin}>
-                        <ArrowBack />
-                    </IconButton>
                     <Box
                         component="form"
                         sx={{ 
@@ -127,68 +181,17 @@ const Register = () => {
                         }}
                         onSubmit={submitForm}
                     >
-                    <Person />
-                    <Typography variant="body1" color="initial">Registration Form</Typography>
-                        <FormControl fullWidth>
-                            <TextField
-                                name="firstName"
-                                label="First Name"
-                                type="text"
-                                value={firstName}
-                                onChange={handleChange}
-                                variant="standard"
-                                slotProps={{ 
-                                    input: {
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <AccountCircle />
-                                            </InputAdornment>
-                                        )
-                                    }
-                                }}
-                                disabled={disableFormContent}
-                            />
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <TextField
-                                name="middleName"
-                                label="Middle Name"
-                                type="text"
-                                value={middleName}
-                                onChange={handleChange}
-                                variant="standard"
-                                slotProps={{ 
-                                    input: {
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <AccountCircle />
-                                            </InputAdornment>
-                                        )
-                                    }
-                                }}
-                                disabled={disableFormContent}
-                            />
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <TextField
-                                name="lastName"
-                                label="Last Name"
-                                type="text"
-                                value={lastName}
-                                onChange={handleChange}
-                                variant="standard"
-                                slotProps={{ 
-                                    input: {
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <AccountCircle />
-                                            </InputAdornment>
-                                        )
-                                    }
-                                }}
-                                disabled={disableFormContent}
-                            />
-                        </FormControl>
+                    <Typography variant="h5" color="primary">Welcome to CHMSU ADMISSION SYSTEM</Typography>
+                    <Alert severity="info" sx={{ width: '100%', padding: 0 }}>
+                        <AlertTitle>Information</AlertTitle>
+                        <ul>
+                            <li>Please fill up the form below</li>
+                            <li>Use your active email address</li>
+                        </ul>
+                        <Typography variant="caption" color="initial"></Typography>
+                    </Alert> 
+                    <Person sx={{ color: 'primary.main' }} />
+                    <Typography variant="body1" color="primary">Registration Form</Typography>
                         <FormControl fullWidth>
                             <TextField
                                 name="email"
@@ -197,166 +200,103 @@ const Register = () => {
                                 value={email}
                                 onChange={handleChange}
                                 variant="standard"
-                                slotProps={{ 
-                                    input: {
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <EmailIcon />
-                                            </InputAdornment>
-                                        )
-                                    }
-                                }}
                                 disabled={disableFormContent}
                             />
                         </FormControl>
-                        <FormControl fullWidth>
-                            <TextField
-                                name="password"
-                                label="Password"
-                                type={passwordVisibility ? 'text' : 'password'}
-                                value={password}
-                                onChange={handleChange}
+                        {/* Campus Select */}
+                        <FormControl fullWidth margin="normal">
+                            <InputLabel id="campus-label">Campus To Enroll</InputLabel>
+                            <Select
+                                labelId="campus-label"
+                                name='campus_to_enroll'
+                                value={selectedCampus}
+                                onChange={handleCampusChange}
+                                label="Campus"
                                 variant="standard"
-                                slotProps={{ 
-                                    input: {
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <LockIcon />
-                                            </InputAdornment>
-                                        ),
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <Tooltip title={passwordVisibility ? "hide password" : "show password"}>
-                                                    <IconButton aria-label="" onClick={togglePasswordVisibility}>
-                                                        {passwordVisibility ? <Visibility /> : <VisibilityOff />}
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </InputAdornment>
-                                        )
-                                    }
-                                }}
-                                disabled={disableFormContent}
+                                required
+                            >
+                            {campuses.map((campus) => (
+                                <MenuItem key={campus} value={campus}>
+                                {campus}
+                                </MenuItem>
+                            ))}
+                            </Select>
+                        </FormControl>
+                        {/* Campus Select */}
+                        <FormControl fullWidth margin="normal">
+                                <InputLabel id="campus-t-take-exam-label">Campus To Take Exam</InputLabel>
+                                <Select
+                                    labelId="campus-t-take-exam-label"
+                                    name='campus_to_take_exam'
+                                    value={selectedCampusToTakeExam}
+                                    onChange={handleCampusToTakeExamChange}
+                                    label="Campus"
+                                    variant="standard"
+                                    required
+                                >
+                                {campuses.map((campus) => (
+                                    <MenuItem key={campus} value={campus}>
+                                    {campus}
+                                    </MenuItem>
+                                ))}
+                                </Select>
+                            </FormControl>
+                        {/* College Select */}
+                        <FormControl fullWidth margin="normal" disabled={!selectedCampus}>
+                            <InputLabel id="college-label">College</InputLabel>
+                            <Select
+                                labelId="college-label"
+                                value={selectedCollege}
+                                onChange={handleCollegeChange}
+                                label="College"
+                                variant="standard"
+                                required
+                            >
+                            {colleges.map((college) => (
+                                <MenuItem key={college.college_code} value={college.college_code}>
+                                {college.college_description}
+                                </MenuItem>
+                            ))}
+                            </Select>
+                            <TextField
+                                name="college_description"
+                                value={selectedCollegeDescription}
+                                variant="standard"
+                                sx={{ display: 'none' }}
+                            />
+                        </FormControl>
+
+                        {/* Course Select */}
+                        <FormControl fullWidth margin="normal" disabled={!selectedCollege}>
+                            <InputLabel id="course-label">Course</InputLabel>
+                            <Select
+                                labelId="course-label"
+                                value={selectedCourse}
+                                onChange={handleCourseChange}
+                                label="Course"
+                                variant="standard"
+                                required
+                            >
+                            {courses.map((course) => (
+                                <MenuItem key={course.course_code} value={course.course_code}>
+                                {course.course_description}
+                                </MenuItem>
+                            ))}
+                            </Select>
+                            <TextField
+                                name="course_description"
+                                value={selectCourseDescription}
+                                variant="standard"
+                                sx={{ display: 'none' }}
                             />
                         </FormControl>
                         <FormControl fullWidth>
                         <Button 
                         type='submit'
-                        variant="contained" 
+                        variant="outlined" 
                         color="primary" 
-                        disabled={disableFormContent || !email || !password || !firstName || !lastName } 
+                        disabled={disableFormContent || !email || !selectedCampus || !selectedCollege || !selectedCourse || loadingButton} 
                         fullWidth>
-                            Register
-                        </Button>
-                        </FormControl>
-                    </Box>
-                </Paper>
-            </Box>
-            <DataPrivacyPolicyModal />
-        </React.Suspense>
-    )
-}
-const Login = () => {
-    const context = React.useContext(AuthContext)
-    const { disableFormContent, changeFormToRegister } = context
-    const { passwordVisibility, data, actions } = context.login
-    const { email, password } = data
-    const { handleChange, submitForm, togglePasswordVisibility } = actions
-    return (
-        <React.Suspense fallback={<CircularProgress />}>
-            <Box
-                sx={{ 
-                    display: 'flex', 
-                    flexDirection: 'column',
-                    justifyContent: 'center', 
-                    alignItems: 'center', 
-                    height: '100dvh',
-                    padding: '1rem',
-                    gap: 1
-                }}
-            >
-                <Paper>
-                    <Box
-                        component="form"
-                        sx={{ 
-                            display: 'flex', 
-                            flexDirection: 'column',
-                            justifyContent: 'center', 
-                            alignItems: 'center', 
-                            minWidth: '500px',
-                            padding: '1rem',
-                            gap: 1
-                        }}
-                        onSubmit={submitForm}
-                    >
-                    <Person />
-                    <Typography variant="body1" color="initial">Log In</Typography>
-                        <FormControl fullWidth>
-                            <TextField
-                                name="email"
-                                label="Email Address"
-                                type="email"
-                                value={email}
-                                variant="standard"
-                                onChange={handleChange}
-                                slotProps={{ 
-                                    input: {
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <EmailIcon />
-                                            </InputAdornment>
-                                        )
-                                    }
-                                }}
-                                disabled={disableFormContent}
-                            />
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <TextField
-                                name="password"
-                                label="Password"
-                                type={passwordVisibility ? 'text' : 'password'}
-                                value={password}
-                                variant="standard"
-                                onChange={handleChange}
-                                slotProps={{ 
-                                    input: {
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <LockIcon />
-                                            </InputAdornment>
-                                        ),
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <Tooltip title={passwordVisibility ? "hide password" : "show password"}>
-                                                    <IconButton aria-label="" onClick={togglePasswordVisibility}>
-                                                        {passwordVisibility ? <Visibility /> : <VisibilityOff />}
-                                                    </IconButton>
-                                                </Tooltip>
-                                            </InputAdornment>
-                                        )
-                                    }
-                                }}
-                                disabled={disableFormContent}
-                            />
-                        </FormControl>
-                        <FormControl fullWidth>
-                        <Button 
-                            type='submit' 
-                            variant="contained" 
-                            color="primary" 
-                            disabled={disableFormContent || !email || !password} 
-                            fullWidth
-                        >
-                            Log in
-                        </Button>
-                        <Divider>or</Divider>
-                        <Button 
-                            variant="text" 
-                            color="primary" 
-                            disabled={disableFormContent} 
-                            onClick={changeFormToRegister}
-                            fullWidth
-                        >
                             Register
                         </Button>
                         </FormControl>
@@ -369,17 +309,9 @@ const Login = () => {
 }
 
 const Authentication = () => {
-    const { defaultForm, isAuthenticated } = React.useContext(AuthContext)
-    const navigate = useNavigate()
-    React.useEffect(() => {
-        if(isAuthenticated) {
-            navigate('/home')
-            console.log('is authenticated')
-        }
-    },[isAuthenticated])
     return (
         <React.Suspense fallback={<CustomCircularProgress />}>
-            {defaultForm ? <Login /> : <Register />}
+            <Register />
         </React.Suspense>
     )
 }

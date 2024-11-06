@@ -1,6 +1,5 @@
 import { CircularProgress } from '@mui/material'
 import React from 'react'
-import { useCookies } from 'react-cookie'
 import StudentLayout from './pages/Student/Layout'
 
 const App:React.FC = () => {

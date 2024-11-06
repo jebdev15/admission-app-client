@@ -2,31 +2,16 @@ export interface AuthContextInterface {
     agreed: boolean
     open: boolean
     disableFormContent: boolean
-    defaultForm: boolean
     closeModal?: () => void
     setAgreed?: () => void
-    changeFormToLogin?: () => void
-    changeFormToRegister?: () => void
-    login: {
-        passwordVisibility: boolean
-        data:{
-            email: string,
-            password: string
-        },
-        actions: {
-            togglePasswordVisibility: () => void
-            submitForm: (event: React.FormEvent<HTMLFormElement>) => void
-            handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void
-        }
-    },
     register: {
-        passwordVisibility: boolean
+        passwordVisibility: boolean,
+        loadingButton: boolean,
         data:{
-            firstName: string,
-            middleName: string,
-            lastName: string,
             email: string,
-            password: string,
+            campus: string,
+            college: string,
+            course: string
         },
         actions: {
             togglePasswordVisibility: () => void
@@ -34,7 +19,6 @@ export interface AuthContextInterface {
             handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void
         }
     }
-    isAuthenticated: boolean
 }
 
 export interface AuthContextProviderProps {

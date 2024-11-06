@@ -1,48 +1,33 @@
 // import React from 'react';
-import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import chmsuLogo from '../../assets/chmsu.png';
 
 
 export default function ButtonAppBar() {
   return (
-    <Box sx={{ flexGrow: 1, px: 'auto' }}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Box 
-            sx={{ 
-              display: 'flex', 
-              alignItems: 'center',
-            }}
-          >
-          <img 
-            src={chmsuLogo}
-            alt="chmsu logo"
-            width="50"
-            height="50"
-            loading='lazy'
-          />
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            CARLOS HILADO MEMORIAL STATE UNIVERSITY
+    <Box sx={{ 
+        display: {xs: 'colum', md: 'flex'}, 
+        alignContent: 'center', 
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+        paddingY: 1, 
+        paddingX: 5, 
+        flexGrow: 1, 
+        borderBottom: 3, 
+        borderColor: 'primary.main',
+        width: '100%', 
+        height: "clamp(80px, 100%, 120px)"
+      }}>
+        <Box sx={{ display: 'flex', alignContent: 'center', alignItems: 'center' }}>
+          <img src={chmsuLogo} alt="CHMSU Logo" width={50} height={50} />
+          <Typography variant="h6" component="div" color='primary'>
+              CARLOS HILADO MEMORIAL STATE UNIVERSITY
           </Typography>
-          </Box>
-          <Button color="inherit">Login</Button>
-        </Toolbar>
-      </AppBar>
+        </Box>
+        <Typography variant="h6" component="div" color='primary'>
+            A.Y 2025-2026
+        </Typography>
     </Box>
   );
 }

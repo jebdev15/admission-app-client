@@ -1,19 +1,10 @@
 import { Box, CircularProgress } from '@mui/material'
 import React from 'react'
-import { useCookies } from 'react-cookie'
-import { Outlet, useNavigate } from 'react-router'
+import { Outlet } from 'react-router'
+import Authentication from './Auth/Auth'
 const Header: React.LazyExoticComponent<() => JSX.Element> = React.lazy(() => import('./Header'))
 
 const Layout = () => {
-    const navigate = useNavigate()
-    const [cookie] = useCookies(['token'])
-    const isAuthenticated = !!cookie.token
-    React.useEffect(() => {
-        if(!isAuthenticated) {
-            navigate('/')
-            console.log('not authenticated')
-        }
-    }, [isAuthenticated, navigate])
     return(
         <React.Suspense fallback={<CircularProgress />}>
             <Box
@@ -25,7 +16,7 @@ const Layout = () => {
                  }}
             >
                 <Header />
-                <Outlet />
+                <Authentication />
             </Box>
         </React.Suspense>
     )
