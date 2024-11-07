@@ -1,113 +1,129 @@
 import { ArrowBack, Place } from '@mui/icons-material'
-import { Box, Button, CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, TextField, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField, Typography } from '@mui/material'
 import React from 'react'
 import regions from './AddressJson/regions.json'
 import provinces from './AddressJson/provinces.json'
 import cities from './AddressJson/cities.json'
 import barangays from './AddressJson/barangays.json'
 import { AddressDetailsType } from './type'
+import axiosInstance from '../../../../api'
+import { useNavigate, useParams } from 'react-router'
 
-const initialAddressDetails: AddressDetailsType['addressDetails'] = {
+const initialAddressDetails: AddressDetailsType = {
     region: '',
-    regionCode: '',
-    regionName: '',
-    regionRegionName: '',
+    region_code: '',
+    region_name: '',
+    regione_region_name: '',
     province: '',
-    provinceCode: '',
-    provinceName: '',
+    province_code: '',
+    province_name: '',
     city: '',
-    cityCode: '',
-    cityName: '',
+    city_code: '',
+    city_name: '',
     barangay: '',
-    barangayCode: '',
-    barangayName: '',
+    barangay_code: '',
+    barangay_name: '',
     street: '',
-    isSameAsHomeAddress: '',
-    currentAddressRegionCode: '',
-    currentAddressRegionName: '',
-    currentAddressRegionRegionName: '',
-    currentAddressProvinceCode: '',
-    currentAddressProvinceName: '',
-    currentAddressCityCode: '',
-    currentAddressCityName: '',
-    currentAddressBarangayCode: '',
-    currentAddressBarangayName: '',
+    is_same_as_home_address: '',
+    current_address_region_code: '',
+    current_address_region_name: '',
+    current_address_region_region_name: '',
+    current_address_province_code: '',
+    current_address_province_name: '',
+    current_address_city_code: '',
+    current_address_city_name: '',
+    current_address_barangay_name: '',
+    current_address_street: '',
 }
 const AddressDetails = () => {
-    // React.useEffect(() => {
-        //     console.log({regions, filteredProvinces, filteredCities, filteredBarangays})
-        // }, [regions, filteredProvinces, filteredCities, filteredBarangays])
-        const [addressDetails, setAddressDetails] = React.useState<AddressDetailsType['addressDetails']>(initialAddressDetails)
-        const handleChangeRegion = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-            const { name, value } = event.target
-            if(provinceCode) {
-                setAddressDetails((prevState: AddressDetailsType['addressDetails']) => ({
-                    ...prevState,
-                    [name]: value,
-                    provinceCode: '',
-                }))
-            } else if(cityCode) {
-                setAddressDetails((prevState: AddressDetailsType['addressDetails']) => ({
-                    ...prevState,
-                    [name]: value,
-                    provinceCode: '',
-                    cityCode: '',
-                }))
-            } else if(barangayCode) {
-                setAddressDetails((prevState: AddressDetailsType['addressDetails']) => ({
-                    ...prevState,
-                    [name]: value,
-                    provinceCode: '',
-                    cityCode: '',
-                    barangayCode: '',
-                }))
-            } else {
-                setAddressDetails((prevState: AddressDetailsType['addressDetails']) => ({
-                    ...prevState,
-                    [name]: value,
-                }))
-            }
-    }
-    const handleChangeProvince = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const navigate = useNavigate()
+    const { uuid } = useParams<{uuid: string}>()
+    const [addressDetails, setAddressDetails] = React.useState<AddressDetailsType>(initialAddressDetails)
+    const handleChangeRegion = (event: SelectChangeEvent<string>) => {
         const { name, value } = event.target
-        setAddressDetails((prevState: AddressDetailsType['addressDetails']) => ({
+        if(addressDetails.province_code) {
+            setAddressDetails((prevState: AddressDetailsType) => ({
+                ...prevState,
+                [name]: value,
+                provinceCode: '',
+            }))
+        } else if(addressDetails.city_code) {
+            setAddressDetails((prevState: AddressDetailsType) => ({
+                ...prevState,
+                [name]: value,
+                provinceCode: '',
+                cityCode: '',
+            }))
+        } else if(addressDetails.barangay_code) {
+            setAddressDetails((prevState: AddressDetailsType) => ({
+                ...prevState,
+                [name]: value,
+                provinceCode: '',
+                cityCode: '',
+                barangayCode: '',
+            }))
+        } else {
+            setAddressDetails((prevState: AddressDetailsType) => ({
+                ...prevState,
+                [name]: value,
+            }))
+        }
+    }
+    const handleChangeProvince = (event: SelectChangeEvent<string>) => {
+        const { name, value } = event.target
+        setAddressDetails((prevState: AddressDetailsType) => ({
             ...prevState,
             [name]: value,
-            cityCode: '',
+            city_code: '',
+            barangay_code: '',
+        }))
+    }
+    const handleChangeCity = (event: SelectChangeEvent<string>) => {
+        const { name, value } = event.target    
+        setAddressDetails((prevState: AddressDetailsType) => ({
+            ...prevState,
+            [name]: value,
             barangayCode: '',
         }))
     }
-    const handleChangeCity = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const handleChangeBarangay = (event: SelectChangeEvent<string>) => {
         const { name, value } = event.target    
-        setAddressDetails((prevState: AddressDetailsType['addressDetails']) => ({
+        setAddressDetails((prevState: AddressDetailsType) => ({
             ...prevState,
             [name]: value,
-            barangayCode: '',
+        }))
+    }
+    const handleChangeSelect = (event: SelectChangeEvent<string>) => {
+        const { name, value } = event.target    
+        setAddressDetails((prevState: AddressDetailsType) => ({
+            ...prevState,
+            [name]: value,
         }))
     }
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = event.target
-        setAddressDetails((prevState: AddressDetailsType['addressDetails']) => ({
+        setAddressDetails((prevState: AddressDetailsType) => ({
             ...prevState,
             [name]: value
         }))
     }
-    const {
-        regionCode,
-        provinceCode,
-        cityCode,
-        barangayCode,
-        street
-    } = addressDetails
-    const filteredProvinces = provinces.filter((province) => province.regionCode === regionCode)
-    const filteredCities = cities.filter((city) => city.provinceCode === provinceCode)
-    const filteredBarangays = barangays.filter((barangay) => barangay.cityCode === cityCode)
+    const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        const formData = new FormData(event.currentTarget)
+        formData.append('uuid', uuid ?? '')
+        const { data, status } = await axiosInstance.post('/address-details/create', formData)
+        console.log(data, status)
+        if([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
+    } 
+    const filteredProvinces = provinces.filter((province) => province.regionCode === addressDetails.region_code)
+    const filteredCities = cities.filter((city) => city.provinceCode === addressDetails.province_code)
+    const filteredBarangays = barangays.filter((barangay) => barangay.cityCode === addressDetails.city_code)
     
-    const regionName = regions.find((region) => region.code === regionCode)?.name
-    const regionRegionName = regions.find((region) => region.code === regionCode)?.regionName
-    const provinceName = filteredProvinces.find((province) => province.code === provinceCode)?.name
-    const cityName = filteredCities.find((city) => city.code === cityCode)?.name
-    const barangayName = filteredBarangays.find((barangay) => barangay.code === barangayCode)?.name
+    const regionName = regions.find((region) => region.code === addressDetails.region_code)?.name
+    const regionRegionName = regions.find((region) => region.code === addressDetails.region_code)?.regionName
+    const provinceName = filteredProvinces.find((province) => province.code === addressDetails.province_code)?.name
+    const cityName = filteredCities.find((city) => city.code === addressDetails.city_code)?.name
+    const barangayName = filteredBarangays.find((barangay) => barangay.code === addressDetails.barangay_code)?.name
     return (
       <React.Suspense fallback={<CircularProgress />}>
               <Box
@@ -123,9 +139,6 @@ const AddressDetails = () => {
                   }}
               >
                   <Paper>
-                      <IconButton aria-label="" onClick={() => context.setFilledOutForm({ ...context.filledOutForm, personalInformation: false })}>
-                          <ArrowBack />
-                      </IconButton>
                       <Box
                           component="form"
                           sx={{ 
@@ -137,6 +150,7 @@ const AddressDetails = () => {
                               padding: '1rem',
                               gap: 1
                           }}
+                          onSubmit={submitForm}
                     >
                       <Place />
                       <Typography variant="body1" color="initial">Address Details</Typography>
@@ -145,8 +159,8 @@ const AddressDetails = () => {
                             <Select
                                 labelId="label-select-region"
                                 id="select-region"
-                                name="regionCode"
-                                value={regionCode}
+                                name="region_code"
+                                value={addressDetails.region_code}
                                 onChange={handleChangeRegion}
                                 required
                             >
@@ -155,16 +169,16 @@ const AddressDetails = () => {
                                 <MenuItem key={region.code} value={region.code}>{`${region.regionName}(${region.name})`}</MenuItem>
                             ))}
                             </Select>
-                            <TextField name="regionName" value={regionName} />
-                            <TextField name="regionRegionName" value={regionRegionName} />
+                            <TextField name="region_name" value={regionName} />
+                            <TextField name="region_region_name" value={regionRegionName} />
                         </FormControl>
                         <FormControl fullWidth>
                             <InputLabel id="label-select-province">Province</InputLabel>
                             <Select
                                 labelId="label-select-province"
                                 id="select-provinceCode"
-                                name="provinceCode"
-                                value={provinceCode}
+                                name="province_code"
+                                value={addressDetails.province_code}
                                 onChange={handleChangeProvince}
                                 required
                             >
@@ -173,15 +187,15 @@ const AddressDetails = () => {
                                 <MenuItem key={province.code} value={province.code}>{province.name}</MenuItem>
                             ))}
                             </Select>
-                            <TextField name="provinceName" value={provinceCode ? provinceName : ''} />
+                            <TextField name="province_name" value={addressDetails.province_code ? provinceName : ''} />
                         </FormControl>
                         <FormControl fullWidth>
                             <InputLabel id="label-select-city">City</InputLabel>
                             <Select
                                 labelId="label-select-city"
                                 id="select-city"
-                                name="cityCode"
-                                value={cityCode}
+                                name="city_code"
+                                value={addressDetails.city_code}
                                 onChange={handleChangeCity}
                                 required
                             >
@@ -190,42 +204,42 @@ const AddressDetails = () => {
                                 <MenuItem key={city.code} value={city.code}>{city.name}</MenuItem>
                             ))}
                             </Select>
-                            <TextField name="cityName" value={cityCode ? cityName : ''} />
+                            <TextField name="city_name" value={addressDetails.city_code ? cityName : ''} />
                         </FormControl>
                         <FormControl fullWidth>
                             <InputLabel id="label-select-barangay">Barangay</InputLabel>
                             <Select
                                 labelId="label-select-barangay"
                                 id="select-barangay"
-                                name="barangayCode"
-                                value={barangayCode}
-                                onChange={handleChange}
+                                name="barangay_code"
+                                value={addressDetails.barangay_code}
+                                onChange={handleChangeBarangay}
                                 required
                             >
                                 <MenuItem value=""></MenuItem>
-                                {filteredBarangays.length > 0 && filteredBarangays.map((barangay: any) => (
+                                {filteredBarangays.length > 0 && filteredBarangays.map((barangay) => (
                                     <MenuItem key={barangay.code} value={barangay.code}>{barangay.name}</MenuItem>
                                 ))}
                             </Select>
-                            <TextField name="barangayName" value={barangayCode ? barangayName : ''} />
+                            <TextField name="barangay_name" value={addressDetails.barangay_code ? barangayName : ''} />
                         </FormControl>
                         <FormControl fullWidth>
                             <TextField
                                 id="textfield-street"
                                 label="Street"
-                                name="barangayCode"
-                                value={street}
+                                name="street"
+                                value={addressDetails.street}
                                 onChange={handleChange}
                             />
                         </FormControl>
-                        {/* <FormControl fullWidth>
+                        <FormControl fullWidth>
                             <InputLabel id="label-select-isSameAsHomeAddress">Current Address</InputLabel>
                             <Select
                                 labelId="label-select-isSameAsHomeAddress"
                                 id="select-isSameAsHomeAddress"
-                                name="isSameAsHomeAddress"
-                                value={isSameAsHomeAddress}
-                                onChange={handleChange}
+                                name="is_same_as_home_address"
+                                value={addressDetails.is_same_as_home_address}
+                                onChange={handleChangeSelect}
                                 required
                             >
                             <MenuItem value=""></MenuItem>
@@ -233,15 +247,15 @@ const AddressDetails = () => {
                             <MenuItem value="Other">Other</MenuItem>
                             </Select>
                         </FormControl>
-                        { isSameAsHomeAddress === 'Other' && (
+                        {/* { addressDetails.is_same_as_home_address === 'Other' && (
                             <>
                             <FormControl fullWidth>
-                                <InputLabel id="label-select-currentAddressRegionCode">Region</InputLabel>
+                                <InputLabel id="label-select-current_address_region_code">Region</InputLabel>
                                 <Select
-                                    labelId="label-select-currentAddressRegionCode"
-                                    id="select-currentAddressRegionCode"
-                                    name="currentAddressRegionCode"
-                                    value={currentAddressRegionCode}
+                                    labelId="label-select-current_address_region_code"
+                                    id="select-current_address_region_code"
+                                    name="current_address_region_code"
+                                    value={addressDetails.current_address_region_code}
                                     onChange={handleChange}
                                     required
                                 >

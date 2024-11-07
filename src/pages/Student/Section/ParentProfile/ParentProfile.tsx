@@ -1,19 +1,30 @@
-import { ArrowBack, School, Work } from '@mui/icons-material'
-import { Box, Button, CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, TextField, Typography } from '@mui/material'
+import { School, Work } from '@mui/icons-material'
+import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField, Typography } from '@mui/material'
 import React from 'react'
-import { HomeContext } from '../../Home/HomeContext'
+import { ParentProfileType } from './type'
+import { useNavigate, useParams } from 'react-router'
+import axiosInstance from '../../../../api'
 
 const ParentProfile = () => {
-    const context = React.useContext(HomeContext)
-    const {
-        fatherHEA,
-        fatherOccupation,
-        motherHEA,
-        motherOccupation,
-        livingWithGuardian,
-        handleChange,
-        submitForm
-    } = context.parentProfile
+    const navigate = useNavigate()
+    const { uuid } = useParams<{uuid: string | undefined}>()
+    const [parentProfile, setParentProfile] = React.useState<ParentProfileType>({
+        father_highest_educational_attainment: '',
+        father_occupation: '',
+        mother_highest_educational_attainment: '',
+        mother_occupation: '',
+        is_living_with_guardian: '',
+    })
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setParentProfile((prevState: ParentProfileType) => ({...prevState, [event?.target.name]: event?.target.value }))
+    const handleChangeSelect = (event: SelectChangeEvent<string>) => setParentProfile((prevState: ParentProfileType) => ({...prevState, [event?.target.name]: event?.target.value }))
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        const formData = new FormData(event.currentTarget)
+        formData.append('uuid', uuid ?? '')
+        const { data, status } = await axiosInstance.post('/parent-profiles/create', formData)
+        console.log(data, status)
+        if([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
+    }
     return (
       <React.Suspense fallback={<CircularProgress />}>
               <Box
@@ -29,9 +40,9 @@ const ParentProfile = () => {
                   }}
               >
                   <Paper>
-                      <IconButton aria-label="" onClick={() => context.setFilledOutForm({ ...context.filledOutForm, addressDetails: false })}>
+                      {/* <IconButton aria-label="" onClick={() => context.setFilledOutForm({ ...context.filledOutForm, addressDetails: false })}>
                           <ArrowBack />
-                      </IconButton>
+                      </IconButton> */}
                       <Box
                           component="form"
                           sx={{ 
@@ -43,7 +54,7 @@ const ParentProfile = () => {
                               padding: '1rem',
                               gap: 1
                             }}
-                            onSubmit={submitForm}
+                            onSubmit={handleSubmit}
                     >
                         <Box>
                             <School />
@@ -51,13 +62,13 @@ const ParentProfile = () => {
                         </Box>
                       <Typography variant="body1" color="initial">Parent Profile</Typography>
                         <FormControl fullWidth>
-                            <InputLabel id="label-select-fatherHEA">Father's Highest Educational Attainment</InputLabel>
+                            <InputLabel id="label-select-father_highest_educational_attainment">Father's Highest Educational Attainment</InputLabel>
                             <Select
-                                labelId="label-select-fatherHEA"
-                                id="select-fatherHEA"
-                                name="fatherHEA"
-                                value={fatherHEA}
-                                onChange={handleChange}
+                                labelId="label-select-father_highest_educational_attainment"
+                                id="select-father_highest_educational_attainment"
+                                name="father_highest_educational_attainment"
+                                value={parentProfile.father_highest_educational_attainment}
+                                onChange={handleChangeSelect}
                                 required
                             >
                             <MenuItem value=""></MenuItem>
@@ -69,22 +80,22 @@ const ParentProfile = () => {
                         </FormControl>
                         <FormControl fullWidth>
                             <TextField
-                                id="fatherOccupation"
-                                name="fatherOccupation"
+                                id="father_occupation"
+                                name="father_occupation"
                                 label="Father's Occupation"
-                                value={fatherOccupation}
+                                value={parentProfile.father_occupation}
                                 onChange={handleChange}
                                 required
                             />
                         </FormControl>
                         <FormControl fullWidth>
-                            <InputLabel id="label-select-motherHEA">Mother's Highest Educational Attainment</InputLabel>
+                            <InputLabel id="label-select-mother_highest_educational_attainment">Mother's Highest Educational Attainment</InputLabel>
                             <Select
-                                labelId="label-select-motherHEA"
-                                id="select-motherHEA"
-                                name="motherHEA"
-                                value={motherHEA}
-                                onChange={handleChange}
+                                labelId="label-select-mother_highest_educational_attainment"
+                                id="select-mother_highest_educational_attainment"
+                                name="mother_highest_educational_attainment"
+                                value={parentProfile.mother_highest_educational_attainment}
+                                onChange={handleChangeSelect}
                                 required
                             >
                             <MenuItem value=""></MenuItem>
@@ -96,10 +107,10 @@ const ParentProfile = () => {
                         </FormControl>
                         <FormControl fullWidth>
                             <TextField
-                                id="motherOccupation"
-                                name="motherOccupation"
+                                id="mother_occupation"
+                                name="mother_occupation"
                                 label="Mother's Occupation"
-                                value={motherOccupation}
+                                value={parentProfile.mother_occupation}
                                 onChange={handleChange}
                                 required
                             />
@@ -107,11 +118,11 @@ const ParentProfile = () => {
                         <FormControl fullWidth>
                             <InputLabel id="label-select-withGuardian">Are you living with a Guardian</InputLabel>
                             <Select
-                                labelId="label-select-livingWithGuardian"
-                                id="select-livingWithGuardian"
-                                name="livingWithGuardian"
-                                value={livingWithGuardian}
-                                onChange={handleChange}
+                                labelId="label-select-is_living_with_guardian"
+                                id="select-is_living_with_guardian"
+                                name="is_living_with_guardian"
+                                value={parentProfile.is_living_with_guardian}
+                                onChange={handleChangeSelect}
                                 required
                             >
                                 <MenuItem value=""></MenuItem>

@@ -1,36 +1,47 @@
 import { Person } from '@mui/icons-material'
-import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, TextField, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField, Typography } from '@mui/material'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import React from 'react'
-import { HomeContext } from '../../Home/HomeContext'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
+import { PersonalInformationType } from './type'
+import { useNavigate, useParams } from 'react-router'
+import axiosInstance from '../../../../api'
 
 const PersonalInformation = () => {
-    const context = React.useContext(HomeContext)
-    const {
-      first_name,
-      middle_name,
-      last_name,
-      mobile_no,
-      lrn,
-      date_of_birth,
-      gender,
-      civil_status,
-      religion,
-      other_religion,
-      is_solo_parent,
-      is_indigenous_group,
-      indigenous_group,
-      school_last_attended,
-      type_of_school,
-      has_scholarship_or_financial_aid,
-      scholarship_or_financial_aid,
-      handleChange,
-      handleChangeSelect,
-      handleChangeDate,
-      submitForm
-    } = context.personalInformation
+  const navigate = useNavigate()
+  const { uuid } = useParams<{uuid: string | undefined}>()
+    const [personalInformation, setPersonalInformation] = React.useState<PersonalInformationType>({
+      first_name: '',
+      middle_name: '',
+      last_name: '',
+      mobile_no: '',
+      lrn: '',
+      date_of_birth: dayjs('2000-01-01'),  // Set a default date as a `dayjs` object,
+      gender: '',
+      civil_status: '',
+      religion: '',
+      other_religion: '',
+      is_solo_parent: '',
+      is_indigenous_group: '',
+      indigenous_group: '',
+      school_last_attended: '',
+      type_of_school: '',
+      has_scholarship_or_financial_aid: '',
+      scholarship_or_financial_aid: '',
+  })
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> ) => setPersonalInformation((prevState: PersonalInformationType) => ({...prevState, [event?.target.name]: event?.target.value }))
+  const handleChangeSelect = (event: SelectChangeEvent<string>) => setPersonalInformation((prevState: PersonalInformationType) => ({...prevState, [event?.target.name]: event?.target.value }))
+  const handleChangeDate = (newValue: Dayjs | null) => setPersonalInformation((prevState) => ({ ...prevState, date_of_birth: newValue ?? dayjs() }))  // Update date_of_birth in `dayjs` format
+  const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
+          event.preventDefault()
+          
+          const formData = new FormData(event.currentTarget)
+          formData.append('uuid', uuid ?? '')
+          const { data, status } = await axiosInstance.post('/personal-information/create', formData)
+          console.log(data, status)
+          if([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
+      }
     return (
       <React.Suspense fallback={<CircularProgress />}>
               <Box
@@ -65,7 +76,7 @@ const PersonalInformation = () => {
                                     name="first_name"
                                     label="First Name"
                                     type="text"
-                                    value={first_name}
+                                    value={personalInformation.first_name}
                                     onChange={handleChange}
                                     required
                               />
@@ -75,7 +86,7 @@ const PersonalInformation = () => {
                                     name="middle_name"
                                     label="Middle Name"
                                     type="text"
-                                    value={middle_name}
+                                    value={personalInformation.middle_name}
                                     onChange={handleChange}
                               />
                           </FormControl>
@@ -84,7 +95,7 @@ const PersonalInformation = () => {
                                     name="last_name"
                                     label="Last Name"
                                     type="text"
-                                    value={last_name}
+                                    value={personalInformation.last_name}
                                     onChange={handleChange}
                                     required
                               />
@@ -94,7 +105,7 @@ const PersonalInformation = () => {
                                     name="lrn"
                                     label="Learner's Reference Number"
                                     type="text"
-                                    value={lrn}
+                                    value={personalInformation.lrn}
                                     onChange={handleChange}
                                     required
                               />
@@ -104,14 +115,14 @@ const PersonalInformation = () => {
                                     name="mobile_no"
                                     label="Mobile Number(09123456789)"
                                     type="number"
-                                    value={mobile_no}
+                                    value={personalInformation.mobile_no}
                                     onChange={handleChange}
                                     required
                               />
                           </FormControl>
                           <FormControl fullWidth>
                               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker name="date_of_birth" label="Date of Birth" value={date_of_birth ? dayjs(date_of_birth) : null} onChange={handleChangeDate} format="YYYY-MM-DD"/>
+                                <DatePicker name="date_of_birth" label="Date of Birth" value={personalInformation.date_of_birth ? dayjs(personalInformation.date_of_birth) : null} onChange={handleChangeDate} format="YYYY-MM-DD"/>
                               </LocalizationProvider>
                           </FormControl>
                           <FormControl fullWidth>
@@ -120,7 +131,7 @@ const PersonalInformation = () => {
                                 labelId="label-select-sex"
                                 id="select-sex"
                                 name="gender"
-                                value={gender}
+                                value={personalInformation.gender}
                                 onChange={handleChangeSelect}
                                 required
                               >
@@ -135,7 +146,7 @@ const PersonalInformation = () => {
                                 labelId="label-select-civilStatus"
                                 id="select-civilStatus"
                                 name="civil_status"
-                                value={civil_status}
+                                value={personalInformation.civil_status}
                                 onChange={handleChangeSelect}
                                 required
                               >
@@ -150,7 +161,7 @@ const PersonalInformation = () => {
                                 labelId="label-select-religion"
                                 id="select-religion"
                                 name="religion"
-                                value={religion}
+                                value={personalInformation.religion}
                                 onChange={handleChangeSelect}
                                 required
                               >
@@ -165,13 +176,13 @@ const PersonalInformation = () => {
                                   <MenuItem value="Others">Others</MenuItem>
                               </Select>
                           </FormControl>
-                          {religion === 'Others' && (
+                          {personalInformation.religion === 'Others' && (
                             <FormControl fullWidth>
                                 <TextField
                                     name="other_religion"
                                     label="Please specify"
                                     type="text"
-                                    value={other_religion}
+                                    value={personalInformation.other_religion}
                                     onChange={handleChange}
                                     required
                                 />
@@ -183,7 +194,7 @@ const PersonalInformation = () => {
                                 labelId="label-select-soloParent"
                                 id="select-soloParent"
                                 name="is_solo_parent"
-                                value={is_solo_parent}
+                                value={personalInformation.is_solo_parent}
                                 onChange={handleChangeSelect}
                                 required
                               >
@@ -198,7 +209,7 @@ const PersonalInformation = () => {
                                 labelId="label-select-isIndigenousGroup"
                                 id="select-isIndigenousGroup"
                                 name="is_indigenous_group"
-                                value={is_indigenous_group}
+                                value={personalInformation.is_indigenous_group}
                                 onChange={handleChangeSelect}
                                 required
                               >
@@ -207,13 +218,13 @@ const PersonalInformation = () => {
                                   <MenuItem value='No'>No</MenuItem>
                               </Select>
                           </FormControl>
-                          {is_indigenous_group === 'Yes' && (
+                          {personalInformation.is_indigenous_group === 'Yes' && (
                           <FormControl fullWidth>
                             <TextField
                                 name="indigenous_group"
                                 label="If Yes, please specify"
                                 type="text"
-                                value={indigenous_group}
+                                value={personalInformation.indigenous_group}
                                 onChange={handleChange}
                                 required
                               />
@@ -224,7 +235,7 @@ const PersonalInformation = () => {
                                 name="school_last_attended"
                                 label="School Last Attended"
                                 type="text"
-                                value={school_last_attended}
+                                value={personalInformation.school_last_attended}
                                 onChange={handleChange}
                                 required
                               />
@@ -235,7 +246,7 @@ const PersonalInformation = () => {
                                 labelId="label-select-typeOfSchool"
                                 id="select-typeOfSchool"
                                 name="type_of_school"
-                                value={type_of_school}
+                                value={personalInformation.type_of_school}
                                 type='text'
                                 onChange={handleChangeSelect}
                                 required
@@ -252,7 +263,7 @@ const PersonalInformation = () => {
                                 id="select-hasScholarshipOrFinancialAid"
                                 name="has_scholarship_or_financial_aid"
                                 type='text'
-                                value={has_scholarship_or_financial_aid}
+                                value={personalInformation.has_scholarship_or_financial_aid}
                                 onChange={handleChangeSelect}
                                 required
                               >
@@ -261,13 +272,13 @@ const PersonalInformation = () => {
                                   <MenuItem value='No'>No</MenuItem>
                               </Select>
                           </FormControl>
-                          {has_scholarship_or_financial_aid === 'Yes' && (
+                          {personalInformation.has_scholarship_or_financial_aid === 'Yes' && (
                             <FormControl fullWidth>
                                 <TextField
-                                    name="scholar_or_financial_aid"
+                                    name="scholarship_or_financial_aid"
                                     label="If Yes, please specify"
                                     type="text"
-                                    value={scholarship_or_financial_aid}
+                                    value={personalInformation.scholarship_or_financial_aid}
                                     onChange={handleChange}
                                     required
                                 />

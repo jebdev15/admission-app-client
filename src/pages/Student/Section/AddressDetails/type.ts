@@ -1,30 +1,26 @@
 export interface AddressDetailsType {
-    addressDetails: {
-        region: string
-        regionCode: string
-        regionName: string
-        regionRegionName: string
-        province: string
-        provinceCode: string
-        provinceName: string
-        city: string
-        cityCode: string
-        cityName: string
-        barangay: string
-        barangayCode: string
-        barangayName: string
-        street: string
-        isSameAsHomeAddress: string
-        currentAddressRegionCode: string
-        currentAddressRegionName: string
-        currentAddressRegionRegionName: string
-        currentAddressProvinceCode: string
-        currentAddressProvinceName: string
-        currentAddressCityCode: string
-        currentAddressCityName: string
-        currentAddressBarangayCode: string
-        currentAddressBarangayName: string
-        handleChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
-        submitForm: (event: React.FormEvent<HTMLFormElement>) => void
-    }
+    region: string
+    region_code: string
+    region_name: string
+    regione_region_name: string
+    province: string
+    province_code: string
+    province_name: string
+    city: string
+    city_code: string
+    city_name: string
+    barangay: string
+    barangay_code: string
+    barangay_name: string
+    street: string,
+    is_same_as_home_address: string
+    current_address_region_code: string
+    current_address_region_name: string
+    current_address_region_region_name: string
+    current_address_province_code: string
+    current_address_province_name: string
+    current_address_city_code: string
+    current_address_city_name: string
+    current_address_barangay_name: string
+    current_address_street: string
 }

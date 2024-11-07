@@ -12,11 +12,10 @@ const Health = React.lazy(() => import('../Section/Health/Health'))
 
 const Home = () => {
   const { validUUID, form_status } = useLoaderData()
-  const { personalInformation, addressDetails, parentProfile, homeAndFamilyBackground, health } = React.useContext(HomeContext).filledOutForm
   const currentForm = () => {
     if (!form_status.personal_information_status) {
       return <PersonalInformation />
-    } else if (!form_status.address_details_status) {
+    } else if (!form_status.address_detail_status) {
       return <AddressDetails />
     } else if (!form_status.parent_profile_status) {
       return <ParentProfile />
@@ -27,8 +26,8 @@ const Home = () => {
     }
   }
   React.useEffect(() => {
-    console.log(validUUID, form_status, personalInformation)
-  },[validUUID, form_status, personalInformation])
+    console.log(validUUID, form_status)
+  },[validUUID, form_status])
   return (
     <React.Suspense fallback={<CircularProgress />}>
       <Box

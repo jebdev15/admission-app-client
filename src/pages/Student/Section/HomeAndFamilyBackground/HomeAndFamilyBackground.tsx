@@ -1,21 +1,43 @@
-import { ArrowBack, House, People, Place } from '@mui/icons-material'
-import { Box, Button, CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, Typography, FormLabel, FormHelperText, TextField } from '@mui/material'
+import { House, People } from '@mui/icons-material'
+import { Box, Button, CircularProgress, FormControl,  InputLabel, MenuItem, Paper, Select, Typography, TextField, SelectChangeEvent } from '@mui/material'
 import React from 'react'
-import { HomeContext } from '../../Home/HomeContext'
+import { HomeAndFamilyBackgroundType } from './type'
+import axiosInstance from '../../../../api'
+import { useNavigate, useParams } from 'react-router'
 
+const initialHomeAndFamilyBackground: HomeAndFamilyBackgroundType = {
+    no_of_siblings_gainfully_employed: 0,
+    who_finances_your_schooling: '',
+    is_four_ps_beneficiary: '',
+    four_ps_id_no: '',
+    is_first_gen_student: '',
+    household_monthly_income: '',
+    nature_of_residence: '',
+}
 const HomeAndFamilyBackground = () => {
-    const context = React.useContext(HomeContext)
-    const {
-        noOfSiblingsGainfullyEmployed,
-        whoFinancesYourSchooling,
-        isFourPsBeneficiary,
-        fourPsIdNumber,
-        isFirstGenStudent,
-        houseHoldMonthlyIncome,
-        natureOfResidence,
-        handleChange,
-        submitForm
-    } = context.homeAndFamilyBackground
+    const navigate = useNavigate()
+    const { uuid } = useParams<{uuid: string | undefined}>()    
+    const [homeAndFamilyBackground, setHomeAndFamilyBackground] = React.useState<HomeAndFamilyBackgroundType>(initialHomeAndFamilyBackground)
+    const handleChangeInputNOSGE = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target
+        setHomeAndFamilyBackground((prevState: HomeAndFamilyBackgroundType) => ({ ...prevState, [name]: parseInt(value) }))
+    }
+    const handleChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target
+        setHomeAndFamilyBackground((prevState: HomeAndFamilyBackgroundType) => ({ ...prevState, [name]: value }))
+    }
+    const handleChangeSelect = (event: SelectChangeEvent<string>) => {
+        const { name, value } = event.target
+        setHomeAndFamilyBackground((prevState: HomeAndFamilyBackgroundType) => ({ ...prevState, [name]: value }))
+    }
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        const formData = new FormData(event.currentTarget)
+        formData.append('uuid', uuid ?? '')
+        const { data, status } = await axiosInstance.post('/home-and-family-backgrounds/create', formData)
+        console.log(data, status)
+        if([200, 201, 204].includes(status)) navigate('.')
+    }
     return (
       <React.Suspense fallback={<CircularProgress />}>
             <Box
@@ -31,9 +53,9 @@ const HomeAndFamilyBackground = () => {
                   }}
             >
                 <Paper>
-                    <IconButton aria-label="" onClick={() => context.setFilledOutForm({ ...context.filledOutForm, parentProfile: false })}>
+                    {/* <IconButton aria-label="" onClick={() => context.setFilledOutForm({ ...context.filledOutForm, parentProfile: false })}>
                          <ArrowBack />
-                    </IconButton>
+                    </IconButton> */}
                     <Box
                           component="form"
                           sx={{ 
@@ -45,7 +67,7 @@ const HomeAndFamilyBackground = () => {
                               padding: '1rem',
                               gap: 1
                           }}
-                          onSubmit={submitForm}
+                          onSubmit={handleSubmit}
                     >
                         <Box>
                             <House />
@@ -54,22 +76,22 @@ const HomeAndFamilyBackground = () => {
                         <Typography variant="body1" color="initial">Home and Family Background</Typography>
                         <FormControl fullWidth>
                             <TextField
-                                name="noOfSiblingsGainfullyEmployed"
+                                name="no_of_siblings_gainfully_employed"
                                 type='number'
                                 label="Number of Siblings gainfully employed"
-                                value={noOfSiblingsGainfullyEmployed}
-                                onChange={handleChange}
+                                value={homeAndFamilyBackground.no_of_siblings_gainfully_employed}
+                                onChange={handleChangeInputNOSGE}
                                 required
                             />
                         </FormControl>
                         <FormControl fullWidth>
-                            <InputLabel id="label-select-whoFinancesYourSchooling">Who finances your schooling?</InputLabel>
+                            <InputLabel id="label-select-who_finances_your_schooling">Who finances your schooling?</InputLabel>
                             <Select
-                                labelId="label-select-whoFinancesYourSchooling"
-                                id="select-whoFinancesYourSchooling"
-                                name="whoFinancesYourSchooling"
-                                value={whoFinancesYourSchooling}
-                                onChange={handleChange}
+                                labelId="label-select-who_finances_your_schooling"
+                                id="select-who_finances_your_schooling"
+                                name="who_finances_your_schooling"
+                                value={homeAndFamilyBackground.who_finances_your_schooling}
+                                onChange={handleChangeSelect}
                                 required
                             >
                                 <MenuItem value=""></MenuItem>
@@ -84,11 +106,11 @@ const HomeAndFamilyBackground = () => {
                         <FormControl fullWidth>
                             <InputLabel id="label-select-isFourPsBeneficiary">Are you a 4P's Beneficiary?</InputLabel>
                             <Select
-                                labelId="label-select-isFourPsBeneficiary"
-                                id="select-isFourPsBeneficiary"
-                                name="isFourPsBeneficiary"
-                                value={isFourPsBeneficiary}
-                                onChange={handleChange}
+                                labelId="label-select-is_four_ps_beneficiary"
+                                id="select-is_four_ps_beneficiary"
+                                name="is_four_ps_beneficiary"
+                                value={homeAndFamilyBackground.is_four_ps_beneficiary}
+                                onChange={handleChangeSelect}
                                 required
                             >
                                 <MenuItem value=""></MenuItem>
@@ -98,21 +120,21 @@ const HomeAndFamilyBackground = () => {
                         </FormControl>
                         <FormControl fullWidth>
                             <TextField
-                                id="select-fourPsIdNumber"
-                                name="fourPsIdNumber"
+                                id="select-four_ps_id_no"
+                                name="four_ps_id_no"
                                 label="If Yes, Please enter your 4P's ID Number"
-                                value={fourPsIdNumber}
-                                onChange={handleChange}
+                                value={homeAndFamilyBackground.four_ps_id_no}
+                                onChange={handleChangeInput}
                             />
                         </FormControl>
                         <FormControl fullWidth>
                             <InputLabel id="label-select-isFirstGenStudent">Are you the First person in your family to enter college?</InputLabel>
                             <Select
-                                labelId="label-select-isFirstGenStudent"
-                                id="select-isFirstGenStudent"
-                                name="isFirstGenStudent"
-                                value={isFirstGenStudent}
-                                onChange={handleChange}
+                                labelId="label-select-is_first_gen_student"
+                                id="select-is_first_gen_student"
+                                name="is_first_gen_student"
+                                value={homeAndFamilyBackground.is_first_gen_student}
+                                onChange={handleChangeSelect}
                                 required
                             >
                                 <MenuItem value=""></MenuItem>
@@ -121,13 +143,13 @@ const HomeAndFamilyBackground = () => {
                             </Select>
                         </FormControl>
                         <FormControl fullWidth>
-                            <InputLabel id="label-select-houseHoldMonthlyIncome">Household Monthly Income</InputLabel>
+                            <InputLabel id="label-select-household_monthly_income">Household Monthly Income</InputLabel>
                             <Select
-                                labelId="label-select-houseHoldMonthlyIncome"
-                                id="select-houseHoldMonthlyIncome"
-                                name="houseHoldMonthlyIncome"
-                                value={houseHoldMonthlyIncome}
-                                onChange={handleChange}
+                                labelId="label-select-household_monthly_income"
+                                id="select-household_monthly_income"
+                                name="household_monthly_income"
+                                value={homeAndFamilyBackground.household_monthly_income}
+                                onChange={handleChangeSelect}
                                 required
                             >
                                 <MenuItem value=""></MenuItem>
@@ -141,13 +163,13 @@ const HomeAndFamilyBackground = () => {
                             </Select>
                         </FormControl>
                         <FormControl fullWidth>
-                            <InputLabel id="label-select-natureOfResidence">Nature of residence while attending school</InputLabel>
+                            <InputLabel id="label-select-nature_of_residence">Nature of residence while attending school</InputLabel>
                             <Select
-                                labelId="label-select-natureOfResidence"
-                                id="select-natureOfResidence"
-                                name="natureOfResidence"
-                                value={natureOfResidence}
-                                onChange={handleChange}
+                                labelId="label-select-nature_of_residence"
+                                id="select-nature_of_residence"
+                                name="nature_of_residence"
+                                value={homeAndFamilyBackground.nature_of_residence}
+                                onChange={handleChangeSelect}
                                 required
                             >
                                 <MenuItem value=""></MenuItem>
