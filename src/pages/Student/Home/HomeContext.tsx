@@ -3,22 +3,24 @@ import { HomeContextType, HomeContextProviderProps } from './type'
 
 export const HomeContext = React.createContext<HomeContextType>({
     filledOutForm: {
-        personalInformation: false,
-        addressDetails: false,
-        parentProfile: false,
-        homeAndFamilyBackground: false,
-        health: false
+        personal_information_status: 0,
+        address_detail_status: 0,
+        parent_profile_status: 0,
+        home_and_family_background_status: 0,
+        health_status: 0,
+        schedules_status: 0
     },
     setFilledOutForm: () => {},
 })
 
 export const HomeContextProvider = ({children}: HomeContextProviderProps) => {
     const [filledOutForm, setFilledOutForm] = React.useState<HomeContextType['filledOutForm']>({
-        personalInformation: false,
-        addressDetails: false,
-        parentProfile: false,
-        homeAndFamilyBackground: false,
-        health: false
+        personal_information_status: 0,
+        address_detail_status: 0,
+        parent_profile_status: 0,
+        home_and_family_background_status: 0,
+        health_status: 0,
+        schedules_status: 0
     })
     
     return (

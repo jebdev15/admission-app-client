@@ -2,8 +2,8 @@ import { House, People } from '@mui/icons-material'
 import { Box, Button, CircularProgress, FormControl,  InputLabel, MenuItem, Paper, Select, Typography, TextField, SelectChangeEvent } from '@mui/material'
 import React from 'react'
 import { HomeAndFamilyBackgroundType } from './type'
-import axiosInstance from '../../../../api'
 import { useNavigate, useParams } from 'react-router'
+import { HomeAndFamilyBackgroundService } from '../../../../services/homeAndFamilyBackgroundService'
 
 const initialHomeAndFamilyBackground: HomeAndFamilyBackgroundType = {
     no_of_siblings_gainfully_employed: 0,
@@ -34,10 +34,17 @@ const HomeAndFamilyBackground = () => {
         event.preventDefault()
         const formData = new FormData(event.currentTarget)
         formData.append('uuid', uuid ?? '')
-        const { data, status } = await axiosInstance.post('/home-and-family-backgrounds/create', formData)
+        const { data, status } = await HomeAndFamilyBackgroundService.saveHomeAndFamilyBackground(formData)
         console.log(data, status)
         if([200, 201, 204].includes(status)) navigate('.')
     }
+    React.useEffect(() => {
+        const getHomeAndFamilyBackground = async (uuid: string) => {
+            const { data } = await HomeAndFamilyBackgroundService.getHomeAndFamilyBackground(uuid)
+            if(data.length > 0) setHomeAndFamilyBackground(data[0])
+        }
+        getHomeAndFamilyBackground(uuid)
+    },[uuid])
     return (
       <React.Suspense fallback={<CircularProgress />}>
             <Box

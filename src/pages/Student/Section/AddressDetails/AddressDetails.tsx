@@ -8,6 +8,7 @@ import barangays from './AddressJson/barangays.json'
 import { AddressDetailsType } from './type'
 import axiosInstance from '../../../../api'
 import { useNavigate, useParams } from 'react-router'
+import { AddressDetailsService } from '../../../../services/addressDetailsService'
 
 const initialAddressDetails: AddressDetailsType = {
     region: '',
@@ -107,14 +108,6 @@ const AddressDetails = () => {
             [name]: value
         }))
     }
-    const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        const formData = new FormData(event.currentTarget)
-        formData.append('uuid', uuid ?? '')
-        const { data, status } = await axiosInstance.post('/address-details/create', formData)
-        console.log(data, status)
-        if([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
-    } 
     const filteredProvinces = provinces.filter((province) => province.regionCode === addressDetails.region_code)
     const filteredCities = cities.filter((city) => city.provinceCode === addressDetails.province_code)
     const filteredBarangays = barangays.filter((barangay) => barangay.cityCode === addressDetails.city_code)
@@ -124,6 +117,28 @@ const AddressDetails = () => {
     const provinceName = filteredProvinces.find((province) => province.code === addressDetails.province_code)?.name
     const cityName = filteredCities.find((city) => city.code === addressDetails.city_code)?.name
     const barangayName = filteredBarangays.find((barangay) => barangay.code === addressDetails.barangay_code)?.name
+    const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        const formData = new FormData(event.currentTarget)
+        formData.append('region_name', regionName)
+        formData.append('region_region_name', regionRegionName)
+        formData.append('province_name', provinceName)
+        formData.append('city_name', cityName)
+        formData.append('barangay_name', barangayName)
+        formData.append('uuid', uuid ?? '')
+        const { data, status } = await axiosInstance.post('/address-details/create', formData)
+        console.log(data, status)
+        if([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
+    } 
+    const getAddressDetails = async (uuid: string) => {
+        const { data } = await AddressDetailsService.getAddressDetails(uuid)
+        if(data.length > 0) {
+            setAddressDetails(data[0])
+        }
+    }
+    React.useEffect(() => {
+        getAddressDetails(uuid)
+    },[uuid])
     return (
       <React.Suspense fallback={<CircularProgress />}>
               <Box
@@ -169,8 +184,6 @@ const AddressDetails = () => {
                                 <MenuItem key={region.code} value={region.code}>{`${region.regionName}(${region.name})`}</MenuItem>
                             ))}
                             </Select>
-                            <TextField name="region_name" value={regionName} />
-                            <TextField name="region_region_name" value={regionRegionName} />
                         </FormControl>
                         <FormControl fullWidth>
                             <InputLabel id="label-select-province">Province</InputLabel>
@@ -187,7 +200,6 @@ const AddressDetails = () => {
                                 <MenuItem key={province.code} value={province.code}>{province.name}</MenuItem>
                             ))}
                             </Select>
-                            <TextField name="province_name" value={addressDetails.province_code ? provinceName : ''} />
                         </FormControl>
                         <FormControl fullWidth>
                             <InputLabel id="label-select-city">City</InputLabel>
@@ -204,7 +216,6 @@ const AddressDetails = () => {
                                 <MenuItem key={city.code} value={city.code}>{city.name}</MenuItem>
                             ))}
                             </Select>
-                            <TextField name="city_name" value={addressDetails.city_code ? cityName : ''} />
                         </FormControl>
                         <FormControl fullWidth>
                             <InputLabel id="label-select-barangay">Barangay</InputLabel>
@@ -221,7 +232,6 @@ const AddressDetails = () => {
                                     <MenuItem key={barangay.code} value={barangay.code}>{barangay.name}</MenuItem>
                                 ))}
                             </Select>
-                            <TextField name="barangay_name" value={addressDetails.barangay_code ? barangayName : ''} />
                         </FormControl>
                         <FormControl fullWidth>
                             <TextField

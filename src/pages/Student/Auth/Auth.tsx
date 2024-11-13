@@ -1,6 +1,6 @@
 import React from 'react'
 import { Person } from '@mui/icons-material'
-import { Box, FormControl, Paper, TextField, Typography, Button, Divider, Dialog, DialogTitle, DialogContent, CircularProgress, SelectChangeEvent, Select, InputLabel, MenuItem, Alert, AlertTitle } from '@mui/material'
+import { Box, FormControl, Paper, TextField, Typography, Button, Divider, Dialog, DialogTitle, DialogContent, SelectChangeEvent, Select, InputLabel, MenuItem, Alert, AlertTitle } from '@mui/material'
 import { AuthContext } from '../../../context/Auth/AuthContext'
 import CustomCircularProgress from '../../../components/CustomCircularProgress'
 import campusesJson from '../campuses.json';
@@ -154,7 +154,7 @@ const Register = () => {
     const selectCourseDescription = selectedCourse ? courses.find(c => c.course_code === selectedCourse)?.course_description : '';
     
     return (
-        <React.Suspense fallback={<CircularProgress />}>
+        <React.Suspense fallback={<CustomCircularProgress />}>
             <Box
                 sx={{ 
                     display: 'flex', 

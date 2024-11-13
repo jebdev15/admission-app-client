@@ -1,35 +1,41 @@
 import { Box, CircularProgress } from '@mui/material'
 import React from 'react'
-import { HomeContext } from './HomeContext';
-import Summary from '../Section/Summary';
-import { useLoaderData, useParams } from 'react-router';
+import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router';
 import axiosInstance from '../../../api';
+import CustomCircularProgress from '../../../components/CustomCircularProgress';
+import VerticalLinearStepper from '../Section/VerticalLineStepper';
+import { HomeContext } from './HomeContext';
 const PersonalInformation = React.lazy(() => import('../Section/PersonalInformation/PersonalInformation'))
 const AddressDetails = React.lazy(() => import('../Section/AddressDetails/AddressDetails'))
 const ParentProfile = React.lazy(() => import('../Section/ParentProfile/ParentProfile'))
 const HomeAndFamilyBackground = React.lazy(() => import('../Section/HomeAndFamilyBackground/HomeAndFamilyBackground'))
 const Health = React.lazy(() => import('../Section/Health/Health'))
-
+const Schedules = React.lazy(() => import('../Section/Schedules/Schedules'))
+const Header = React.lazy(() => import('../Header'))
 const Home = () => {
-  const { validUUID, form_status } = useLoaderData()
+  const { validUUID, forms_status } = useLoaderData()
+  const { filledOutForm, setFilledOutForm } = React.useContext(HomeContext)
   const currentForm = () => {
-    if (!form_status.personal_information_status) {
+    if (!filledOutForm.personal_information_status) {
       return <PersonalInformation />
-    } else if (!form_status.address_detail_status) {
+    } else if (!filledOutForm.address_detail_status) {
       return <AddressDetails />
-    } else if (!form_status.parent_profile_status) {
+    } else if (!filledOutForm.parent_profile_status) {
       return <ParentProfile />
-    } else if (!form_status.home_and_family_background_status) {
+    } else if (!filledOutForm.home_and_family_background_status) {
       return <HomeAndFamilyBackground />
-    } else if (!form_status.health_status) {
+    } else if (!filledOutForm.health_status) {
       return <Health />
+    } else if(!filledOutForm.schedules_status) {
+      return <Schedules />
     }
   }
   React.useEffect(() => {
-    console.log(validUUID, form_status)
-  },[validUUID, form_status])
+    setFilledOutForm(forms_status)
+    console.log(validUUID, forms_status)
+  },[validUUID, forms_status])
   return (
-    <React.Suspense fallback={<CircularProgress />}>
+    <React.Suspense fallback={<CustomCircularProgress />}>
       <Box
         sx={{ 
           display: 'flex', 
@@ -41,6 +47,7 @@ const Home = () => {
           gap: 1
         }}
       >
+        <Header />
         {currentForm()}
       </Box>
     </React.Suspense>
@@ -50,8 +57,6 @@ const Home = () => {
 export const loader = async ({ params }: any) => {
   const { uuid } = params
   const { data } = await axiosInstance.get(`/applicants/${params.uuid}`)
-
-  return { validUUID: uuid, form_status: data[0]}
+  return { validUUID: uuid, forms_status: data[0]}
 }
-
 export default Home

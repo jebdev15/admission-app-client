@@ -1,30 +1,51 @@
-import { School, Work } from '@mui/icons-material'
-import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField, Typography } from '@mui/material'
+import { ArrowBack, School, Work } from '@mui/icons-material'
+import { Box, Button, CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField, Typography } from '@mui/material'
 import React from 'react'
 import { ParentProfileType } from './type'
 import { useNavigate, useParams } from 'react-router'
-import axiosInstance from '../../../../api'
+import { HomeContext } from '../../Home/HomeContext'
+import { ParentProfileService } from '../../../../services/parentProfileService'
+
+const initialParentProfile: ParentProfileType = {
+    father_highest_educational_attainment: '',
+    father_occupation: '',
+    mother_highest_educational_attainment: '',
+    mother_occupation: '',
+    is_living_with_guardian: '',
+} 
 
 const ParentProfile = () => {
     const navigate = useNavigate()
     const { uuid } = useParams<{uuid: string | undefined}>()
-    const [parentProfile, setParentProfile] = React.useState<ParentProfileType>({
-        father_highest_educational_attainment: '',
-        father_occupation: '',
-        mother_highest_educational_attainment: '',
-        mother_occupation: '',
-        is_living_with_guardian: '',
-    })
+    const [parentProfile, setParentProfile] = React.useState<ParentProfileType>(initialParentProfile)
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setParentProfile((prevState: ParentProfileType) => ({...prevState, [event?.target.name]: event?.target.value }))
     const handleChangeSelect = (event: SelectChangeEvent<string>) => setParentProfile((prevState: ParentProfileType) => ({...prevState, [event?.target.name]: event?.target.value }))
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         const formData = new FormData(event.currentTarget)
         formData.append('uuid', uuid ?? '')
-        const { data, status } = await axiosInstance.post('/parent-profiles/create', formData)
+        const { data, status } = await ParentProfileService.saveParentProfile(formData)
         console.log(data, status)
         if([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
     }
+    const handleUpdate = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        const formData = new FormData(event.currentTarget)
+        formData.append('uuid', uuid ?? '')
+        const { data, status } = await ParentProfileService.saveParentProfile(formData)
+        console.log(data, status)
+        if([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
+    }
+    const getParentProfile = async (uuid: string) => {
+        const { data } = await ParentProfileService.getParentProfile(uuid)
+        if(data.length > 0) {
+            setParentProfile(data[0])
+        }
+    }
+    const { setFilledOutForm } = React.useContext(HomeContext)
+    React.useEffect(() => {
+        getParentProfile(uuid)
+    }, [uuid])
     return (
       <React.Suspense fallback={<CircularProgress />}>
               <Box
@@ -40,9 +61,9 @@ const ParentProfile = () => {
                   }}
               >
                   <Paper>
-                      {/* <IconButton aria-label="" onClick={() => context.setFilledOutForm({ ...context.filledOutForm, addressDetails: false })}>
+                      <IconButton aria-label="" onClick={() => setFilledOutForm((prevState) => ({ ...prevState, address_detail_status: 0 }) )}>
                           <ArrowBack />
-                      </IconButton> */}
+                      </IconButton>
                       <Box
                           component="form"
                           sx={{ 

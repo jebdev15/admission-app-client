@@ -7,6 +7,7 @@ import dayjs, { Dayjs } from 'dayjs'
 import { PersonalInformationType } from './type'
 import { useNavigate, useParams } from 'react-router'
 import axiosInstance from '../../../../api'
+import { PersonalInformationService } from '../../../../services/personalInformationService'
 
 const PersonalInformation = () => {
   const navigate = useNavigate()
@@ -32,16 +33,24 @@ const PersonalInformation = () => {
   })
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> ) => setPersonalInformation((prevState: PersonalInformationType) => ({...prevState, [event?.target.name]: event?.target.value }))
   const handleChangeSelect = (event: SelectChangeEvent<string>) => setPersonalInformation((prevState: PersonalInformationType) => ({...prevState, [event?.target.name]: event?.target.value }))
-  const handleChangeDate = (newValue: Dayjs | null) => setPersonalInformation((prevState) => ({ ...prevState, date_of_birth: newValue ?? dayjs() }))  // Update date_of_birth in `dayjs` format
+  const handleChangeDate = (newValue: Dayjs | null) => setPersonalInformation((prevState: PersonalInformationType) => ({ ...prevState, date_of_birth: newValue ?? dayjs() }))  // Update date_of_birth in `dayjs` format
   const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
           event.preventDefault()
-          
           const formData = new FormData(event.currentTarget)
           formData.append('uuid', uuid ?? '')
           const { data, status } = await axiosInstance.post('/personal-information/create', formData)
           console.log(data, status)
           if([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
-      }
+  }
+  const getPersonalInformation = async (uuid: string):Promise<void> => {
+    const { data } = await PersonalInformationService.getPersonalInformation(uuid)
+    if(data.length > 0) {
+      setPersonalInformation(data[0])
+    } 
+  }
+  React.useEffect(() => {
+      getPersonalInformation(uuid)
+  }, [uuid])
     return (
       <React.Suspense fallback={<CircularProgress />}>
               <Box
@@ -287,7 +296,7 @@ const PersonalInformation = () => {
                           <FormControl fullWidth>
                           <Button 
                           type='submit'
-                          variant="contained" 
+                          variant="outlined" 
                           color="primary" 
                           fullWidth>
                               Next

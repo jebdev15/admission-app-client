@@ -4,6 +4,7 @@ import React from 'react'
 import { HealthType } from './type'
 import axiosInstance from '../../../../api'
 import { useNavigate, useParams } from 'react-router'
+import { HealthService } from '../../../../services/healthService'
 
 const initialHealth: HealthType = {
     is_pwd: '',
@@ -29,10 +30,19 @@ const Health = () => {
         event.preventDefault()
         const formData = new FormData(event.currentTarget)
         formData.append('uuid', uuid ?? '')
-        const { data, status } = await axiosInstance.post('/health/create', formData)
+        const { data, status } = await HealthService.saveHealth(formData)
         console.log(data, status)
         if([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
     }
+    React.useEffect(() => {
+        const getHealth = async (uuid: string) => {
+            const { data } = await HealthService.getHealth(uuid)
+            if(data.length > 0) {
+                setHealth(data[0])
+            }
+        }
+        getHealth(uuid)
+    }, [uuid])
     return (
       <React.Suspense fallback={<CircularProgress />}>
               <Box
