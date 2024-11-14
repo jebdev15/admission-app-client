@@ -1,5 +1,5 @@
 import { Schedule } from '@mui/icons-material'
-import { Box, Button, CircularProgress, FormControl, List, ListItem, Paper, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, FormControl, FormControlLabel, FormLabel, List, ListItem, Paper, Radio, RadioGroup, Typography } from '@mui/material'
 import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
@@ -28,7 +28,7 @@ const Schedules = () => {
     const [availableTimes, setAvailableTimes] = React.useState<string[]>([]);
     const [availableSchedules, setAvailableSchedules] = React.useState<any[]>([])
     const [selectedDate, setSelectedDate] = React.useState<Dayjs | null>(null); // State for the selected date
-    
+    const [selectedTime, setSelectedTime] = React.useState<string>('')
     // Define available dates for highlighting and accumulate times
     const availableDates = availableSchedules?.reduce((acc, schedule) => {
         const formattedDate = dayjs(schedule.schedule_date).format('YYYY-MM-DD');
@@ -64,21 +64,26 @@ const Schedules = () => {
 
         if (matchingSchedule && Array.isArray(matchingSchedule.times)) {
             setAvailableTimes(matchingSchedule.times);
-            console.log("Available times for selected date:", matchingSchedule.times);
         } else {
             setAvailableTimes([]); // No available times for the selected date
             console.log("No available times for the selected date.");
         }
+        setSelectedTime('')
     };
-    const handleClick = () => {
-        const confirmation = window.confirm("Are you sure you want to proceed with this action?");
-        if (confirmation) {
-            // Proceed with the action
-            console.log("Action confirmed", selectedDate);
-        } else {
-            // Cancel the action
-            console.log("Action canceled");
-        }
+    const handleChangeTime = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const eventSelectedTime = event.target.value;
+        setSelectedTime(eventSelectedTime);
+    }
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const confirmation = window.confirm('Are you sure you want to submit the selected schedule?');
+        if(!confirmation) return
+        const formData = new FormData();
+        formData.append('schedule_date', selectedDate?.format('YYYY-MM-DD') ?? '')
+        formData.append('schedule_time', selectedTime ?? '')
+        formData.append('uuid', uuid ?? '')
+        const { data } = await SchedulesService.saveApplicantSchedule(formData)
+        console.log(data)
     }
     React.useEffect(() => {
         const getApplicantInitialInfo = async () => {
@@ -90,16 +95,13 @@ const Schedules = () => {
         const getSchedules = async (uuid) => {
             const { data } = await SchedulesService.getSchedules()
             if(data?.length > 0) {
-                console.log({data})
-                const formattedData = data.map((item: any) => dayjs(item.schedule_date))
                 setAvailableSchedules(data)
-                console.log({formattedData})
             }
         }
         getSchedules(uuid)
         getApplicantInitialInfo(uuid)
-        console.log({availableDates})
     }, [uuid])
+    const disableButtonSubmit = !selectedDate || !selectedTime
     return (
         <React.Suspense fallback={<CircularProgress />}>
                 <Box
@@ -124,6 +126,8 @@ const Schedules = () => {
                                 padding: '1rem',
                                 gap: 1
                             }}
+                            component={'form'}
+                            onSubmit={handleSubmit}
                         >
                             <Schedule />
                             <Typography variant="body1" color="initial">Schedules</Typography>
@@ -173,22 +177,37 @@ const Schedules = () => {
                                     <Paper sx={{ flexGrow: 1 }}>
                                         <Box sx={{ mt: 2 }}>
                                             <Typography variant="body2" color="initial" textAlign={'center'}>Available Times:</Typography>
-                                            <List>
-                                                {availableTimes.map((time) => (
-                                                    <ListItem key={time} sx={{ display: 'flex', justifyContent: 'center' }}>{time}</ListItem>
-                                                ))}
+                                            <List sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 1 }}>
+                                                    <>
+                                                        {/* <ListItem key={time} sx={{ display: 'flex', justifyContent: 'center', backgroundColor: 'green', color: 'white' }}>{time}</ListItem> */}
+                                                        <FormControl sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 1 }}>
+                                                            {/* <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel> */}
+                                                            <RadioGroup
+                                                                aria-labelledby="demo-radio-buttons-group-label"
+                                                                name="radio-buttons-group"
+                                                                onChange={handleChangeTime}
+                                                                >
+                                                                {availableTimes.map((time) => (
+                                                                    <FormControlLabel key={time} value={time} control={<Radio />} label={time} />
+                                                                ))}
+                                                            </RadioGroup>
+                                                        </FormControl>
+                                                    </>
                                             </List>
+                                            
                                         </Box>
                                     </Paper>
                                 )}
                             </Box>
                             <FormControl fullWidth>
                             <Button 
-                            variant="contained" 
-                            color="primary" 
-                            onClick={handleClick}
-                            fullWidth>
-                                Next
+                                variant="contained" 
+                                color="primary" 
+                                type='submit'
+                                fullWidth
+                                disabled={disableButtonSubmit}
+                            >
+                                Submit
                             </Button>
                             </FormControl>
                         </Box>

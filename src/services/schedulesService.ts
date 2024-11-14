@@ -9,8 +9,8 @@ export const SchedulesService = {
         const { data } = await axiosInstance.get('/schedules')
         return { data }
     },
-    saveSchedule: async (formData: FormData) => {
-        const { data } = await axiosInstance.get('/schedules/create', formData)
+    saveApplicantSchedule: async (formData: FormData) => {
+        const { data } = await axiosInstance.post('/applicants/schedule', formData)
         return { data }
     }
 }
