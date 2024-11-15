@@ -1,10 +1,10 @@
-import { Box, CircularProgress } from '@mui/material'
+import { Box } from '@mui/material'
 import React from 'react'
-import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router';
+import { useLoaderData } from 'react-router';
 import axiosInstance from '../../../api';
 import CustomCircularProgress from '../../../components/CustomCircularProgress';
-import VerticalLinearStepper from '../Section/VerticalLineStepper';
 import { HomeContext } from './HomeContext';
+import Summary from '../Section/Summary/Summary';
 const PersonalInformation = React.lazy(() => import('../Section/PersonalInformation/PersonalInformation'))
 const AddressDetails = React.lazy(() => import('../Section/AddressDetails/AddressDetails'))
 const ParentProfile = React.lazy(() => import('../Section/ParentProfile/ParentProfile'))
@@ -26,14 +26,16 @@ const Home = () => {
       return <HomeAndFamilyBackground />
     } else if (!filledOutForm.health_status) {
       return <Health />
-    } else if(!filledOutForm.schedules_status) {
+    } else if(!filledOutForm.schedule_status) {
       return <Schedules />
+    } else {
+      return <Summary />
     }
   }
   React.useEffect(() => {
     setFilledOutForm(forms_status)
-    console.log(validUUID, forms_status)
-  },[validUUID, forms_status])
+    console.log({validUUID, forms_status, filledOutForm})
+  },[validUUID, forms_status, filledOutForm])
   return (
     <React.Suspense fallback={<CustomCircularProgress />}>
       <Box
@@ -43,7 +45,6 @@ const Home = () => {
           justifyContent: 'center', 
           alignItems: 'center', 
           height: 'auto',
-          padding: '1rem',
           gap: 1
         }}
       >

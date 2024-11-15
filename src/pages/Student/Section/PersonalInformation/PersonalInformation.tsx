@@ -34,22 +34,33 @@ const PersonalInformation = () => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> ) => setPersonalInformation((prevState: PersonalInformationType) => ({...prevState, [event?.target.name]: event?.target.value }))
   const handleChangeSelect = (event: SelectChangeEvent<string>) => setPersonalInformation((prevState: PersonalInformationType) => ({...prevState, [event?.target.name]: event?.target.value }))
   const handleChangeDate = (newValue: Dayjs | null) => setPersonalInformation((prevState: PersonalInformationType) => ({ ...prevState, date_of_birth: newValue ?? dayjs() }))  // Update date_of_birth in `dayjs` format
+  const [disableButton, setDisableButton] = React.useState<boolean>(false)
+  // const [isNewData, setIsNewData] = React.useState<boolean>(true)
   const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
           event.preventDefault()
+          setDisableButton(true)
           const formData = new FormData(event.currentTarget)
           formData.append('uuid', uuid ?? '')
-          const { data, status } = await axiosInstance.post('/personal-information/create', formData)
-          console.log(data, status)
-          if([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
+          // if(isNewData) {
+            const { data, status } = await axiosInstance.post('/personal-information/create', formData)
+            console.log(data, status)
+            if([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
+          // } else {
+          //   const { data, status } = await axiosInstance.put('/personal-information/update', formData)
+          //   console.log(data, status)
+          //   if([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
+          // }
+          
   }
   const getPersonalInformation = async (uuid: string):Promise<void> => {
     const { data } = await PersonalInformationService.getPersonalInformation(uuid)
     if(data.length > 0) {
       setPersonalInformation(data[0])
+      // setIsNewData(false)
     } 
   }
   React.useEffect(() => {
-      getPersonalInformation(uuid)
+      getPersonalInformation(uuid ?? '')
   }, [uuid])
     return (
       <React.Suspense fallback={<CircularProgress />}>
@@ -295,10 +306,12 @@ const PersonalInformation = () => {
                           )}
                           <FormControl fullWidth>
                           <Button 
-                          type='submit'
-                          variant="outlined" 
-                          color="primary" 
-                          fullWidth>
+                            disabled={disableButton}
+                            type='submit'
+                            variant="outlined" 
+                            color="primary" 
+                            fullWidth
+                          >
                               Next
                           </Button>
                           </FormControl>

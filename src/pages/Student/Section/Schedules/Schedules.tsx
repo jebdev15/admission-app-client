@@ -1,5 +1,5 @@
 import { Schedule } from '@mui/icons-material'
-import { Box, Button, CircularProgress, FormControl, FormControlLabel, FormLabel, List, ListItem, Paper, Radio, RadioGroup, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, FormControl, FormControlLabel, Paper, Radio, RadioGroup, Typography } from '@mui/material'
 import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
@@ -82,11 +82,14 @@ const Schedules = () => {
         formData.append('schedule_date', selectedDate?.format('YYYY-MM-DD') ?? '')
         formData.append('schedule_time', selectedTime ?? '')
         formData.append('uuid', uuid ?? '')
-        const { data } = await SchedulesService.saveApplicantSchedule(formData)
+        const { data, status } = await SchedulesService.updateApplicantScheduleId(formData)
         console.log(data)
+        if([200,201,204].includes(status)){
+            navigate('.')
+        }
     }
     React.useEffect(() => {
-        const getApplicantInitialInfo = async () => {
+        const getApplicantInitialInfo = async (uuid) => {
             const { data } = await SchedulesService.getApplicantInitialInfo(uuid)
             if(data.length > 0) {
                 setApplicantInitialInfo(data[0])
@@ -177,7 +180,6 @@ const Schedules = () => {
                                     <Paper sx={{ flexGrow: 1 }}>
                                         <Box sx={{ mt: 2 }}>
                                             <Typography variant="body2" color="initial" textAlign={'center'}>Available Times:</Typography>
-                                            <List sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 1 }}>
                                                     <>
                                                         {/* <ListItem key={time} sx={{ display: 'flex', justifyContent: 'center', backgroundColor: 'green', color: 'white' }}>{time}</ListItem> */}
                                                         <FormControl sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 1 }}>
@@ -193,8 +195,6 @@ const Schedules = () => {
                                                             </RadioGroup>
                                                         </FormControl>
                                                     </>
-                                            </List>
-                                            
                                         </Box>
                                     </Paper>
                                 )}
