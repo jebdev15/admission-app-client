@@ -43,7 +43,7 @@ const Summary = () => {
                             }}
                         >
                             <Celebration />
-                            <Typography variant="h6" color="initial">Thank you for submitting your application!</Typography>
+                            <Typography variant="h6" color="initial" textAlign={'center'}>Thank you for submitting your application!</Typography>
                             <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
                                 <Typography variant="body1" color="initial">Name: {applicantSummaryInfo?.name}</Typography>
                                 <Typography variant="body1" color="initial">Email Address: {applicantSummaryInfo?.email}</Typography>
@@ -52,8 +52,7 @@ const Summary = () => {
                                 <Typography variant="body1" color="initial">College :{applicantSummaryInfo?.college_description}</Typography>
                                 <Typography variant="body1" color="initial">Course/Program :{applicantSummaryInfo?.course_description}</Typography>
                                 <Typography variant="body1" color="initial">Date & Time of Examination</Typography>
-                                <Typography variant="body1" color="initial">Date:  {FormatDateUtil.formatDateOnly(applicantSummaryInfo?.schedule_date)}</Typography>
-                                <Typography variant="body1" color="initial">Time: {applicantSummaryInfo?.schedule_time}</Typography>
+                                <Typography variant="body1" color="initial"> {FormatDateUtil.formatDateOnly(applicantSummaryInfo?.schedule_date)} {applicantSummaryInfo?.schedule_time}</Typography>
                             </Box>
                         </Box>
                     </Paper>

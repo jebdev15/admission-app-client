@@ -29,47 +29,68 @@ const Schedules = () => {
     const [availableSchedules, setAvailableSchedules] = React.useState<any[]>([])
     const [selectedDate, setSelectedDate] = React.useState<Dayjs | null>(null); // State for the selected date
     const [selectedTime, setSelectedTime] = React.useState<string>('')
-    // Define available dates for highlighting and accumulate times
+    // Define available dates for highlighting and group schedule time start and end
     const availableDates = availableSchedules?.reduce((acc, schedule) => {
-        const formattedDate = dayjs(schedule.schedule_date).format('YYYY-MM-DD');
+        const formattedDate = dayjs(schedule.schedule_date).format('YYYY-MM-DD')
 
         // Find if the date already exists in the accumulator
-        const existingDate = acc.find(item => item.date === formattedDate);
+        const existingDate = acc.find(item => item.date === formattedDate)
+
+        const scheduleRange = `${schedule.schedule_time_start}-${schedule.schedule_time_end}`
 
         if (existingDate) {
-            // If the date exists, push the new time to the times array
-            existingDate.times.push(schedule.schedule_time);
+            // If the date exists, push the new schedule range to the array
+            existingDate.timeRanges.push(scheduleRange)
         } else {
-            // If the date does not exist, create a new entry
-            acc.push({
-                date: formattedDate,
-                times: [schedule.schedule_time],
-            });
+            if(schedule.slots_remaining > 0) {
+                // If the date does not exist, create a new entry
+                acc.push({
+                    date: formattedDate,
+                    timeRanges: [scheduleRange], // Store the range as a string
+                })
+            }
         }
 
-        return acc;
+        return acc
     }, []); // Initialize with an empty array
 
     // Function to check if a date is available
     const isAvailableDate = (date: Dayjs) =>
         availableDates?.some((availableDate) => availableDate.date === date.format('YYYY-MM-DD'));
     // Handle date change
+    // const handleDateChange = (date: Dayjs | null) => {
+    //     setSelectedDate(date);
+    //     const selectedDateFormatted  = date?.format('YYYY-MM-DD');
+
+    //     const matchingSchedule = availableDates.find(
+    //         (availableDate) => availableDate.date === selectedDateFormatted 
+    //     );
+
+    //     if (matchingSchedule && Array.isArray(matchingSchedule.times)) {
+    //         setAvailableTimes(matchingSchedule.times);
+    //     } else {
+    //         setAvailableTimes([]); // No available times for the selected date
+    //         console.log("No available times for the selected date.");
+    //     }
+    //     setSelectedTime('')
+    // };
+    // Handle date change
     const handleDateChange = (date: Dayjs | null) => {
-        setSelectedDate(date);
-        const selectedDateFormatted  = date?.format('YYYY-MM-DD');
+        setSelectedDate(date)
+        const selectedDateFormatted = date?.format('YYYY-MM-DD')
 
         const matchingSchedule = availableDates.find(
-            (availableDate) => availableDate.date === selectedDateFormatted 
-        );
+            (availableDate) => availableDate.date === selectedDateFormatted
+        )
 
-        if (matchingSchedule && Array.isArray(matchingSchedule.times)) {
-            setAvailableTimes(matchingSchedule.times);
+        if (matchingSchedule && Array.isArray(matchingSchedule.timeRanges)) {
+            setAvailableTimes(matchingSchedule.timeRanges)
         } else {
-            setAvailableTimes([]); // No available times for the selected date
-            console.log("No available times for the selected date.");
+            setAvailableTimes([]) // No available times for the selected date
+            console.log("No available times for the selected date.")
         }
         setSelectedTime('')
-    };
+    }
     const handleChangeTime = (event: React.ChangeEvent<HTMLInputElement>) => {
         const eventSelectedTime = event.target.value;
         setSelectedTime(eventSelectedTime);
@@ -84,23 +105,27 @@ const Schedules = () => {
         formData.append('uuid', uuid ?? '')
         const { data, status } = await SchedulesService.updateApplicantScheduleId(formData)
         console.log(data)
+        if(data.slots_remaining < 1) {
+            getSchedules(uuid)
+        }
         if([200,201,204].includes(status)){
+            alert(data.message)
             navigate('.')
         }
     }
+    const getApplicantInitialInfo = async (uuid: string | undefined) => {
+        const { data } = await SchedulesService.getApplicantInitialInfo(uuid)
+        if(data.length > 0) {
+            setApplicantInitialInfo(data[0])
+        }
+    }
+    const getSchedules = async (uuid: string | undefined) => {
+        const { data } = await SchedulesService.getSchedules(uuid)
+        if(data?.length > 0) {
+            setAvailableSchedules(data)
+        }
+    }
     React.useEffect(() => {
-        const getApplicantInitialInfo = async (uuid) => {
-            const { data } = await SchedulesService.getApplicantInitialInfo(uuid)
-            if(data.length > 0) {
-                setApplicantInitialInfo(data[0])
-            }
-        }
-        const getSchedules = async (uuid) => {
-            const { data } = await SchedulesService.getSchedules()
-            if(data?.length > 0) {
-                setAvailableSchedules(data)
-            }
-        }
         getSchedules(uuid)
         getApplicantInitialInfo(uuid)
     }, [uuid])
