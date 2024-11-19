@@ -21,6 +21,7 @@ export interface AddressDetailsType {
     current_address_province_name: string
     current_address_city_code: string
     current_address_city_name: string
+    current_address_barangay_code: string
     current_address_barangay_name: string
     current_address_street: string
 }

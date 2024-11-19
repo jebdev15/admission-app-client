@@ -1,9 +1,11 @@
 import React from 'react'
 import { Person } from '@mui/icons-material'
-import { Box, FormControl, Paper, TextField, Typography, Button, Divider, Dialog, DialogTitle, DialogContent, SelectChangeEvent, Select, InputLabel, MenuItem, Alert, AlertTitle } from '@mui/material'
+import { Box, FormControl, Paper, TextField, Typography, Button, Divider, Dialog, DialogTitle, DialogContent, SelectChangeEvent, Select, InputLabel, MenuItem, Alert, AlertTitle, useTheme, List, ListItem } from '@mui/material'
 import { AuthContext } from '../../../context/Auth/AuthContext'
 import CustomCircularProgress from '../../../components/CustomCircularProgress'
 import campusesJson from '../campuses.json';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { LoadingButton } from '@mui/lab'
 // Define types for the JSON structure
 interface Course {
   course_code: string;
@@ -27,11 +29,14 @@ interface Data {
 // Sample JSON Data
 const data: Data = campusesJson ;
 const DataPrivacyPolicyModal = () => {
+    const theme = useTheme();
+    const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
     const { open, setAgreed } = React.useContext(AuthContext)
     return(
     <Dialog
         open={open}
         maxWidth="sm"
+        fullScreen={fullScreen}
         fullWidth
       >
       <DialogTitle>CHMSU Data Privacy Policy</DialogTitle>
@@ -152,7 +157,7 @@ const Register = () => {
     const courses = selectedCollege ? colleges.find(c => c.college_code === selectedCollege)?.courses || [] : [];
     const selectedCollegeDescription = selectedCollege ? data[selectedCampus].colleges.find(c => c.college_code === selectedCollege)?.college_description : '';
     const selectCourseDescription = selectedCourse ? courses.find(c => c.course_code === selectedCourse)?.course_description : '';
-    
+    const disableButton = !email || !selectedCampus || !selectedCollege || !selectedCourse;
     return (
         <React.Suspense fallback={<CustomCircularProgress />}>
             <Box
@@ -161,8 +166,6 @@ const Register = () => {
                     flexDirection: 'column',
                     justifyContent: 'center', 
                     alignItems: 'center', 
-                    height: '100dvh',
-                    width: '100%',
                     padding: '1rem',
                     gap: 1
                 }}
@@ -175,19 +178,19 @@ const Register = () => {
                             flexDirection: 'column',
                             justifyContent: 'center', 
                             alignItems: 'center', 
-                            minWidth: '500px',
+                            width: {xs: '100%', md: '500px'},
                             padding: '1rem',
                             gap: 1
                         }}
                         onSubmit={submitForm}
                     >
-                    <Typography variant="h5" color="primary">Welcome to CHMSU ADMISSION SYSTEM</Typography>
+                    <Typography variant="h5" color="primary" textAlign={'center'}>Welcome to CHMSU ADMISSION SYSTEM</Typography>
                     <Alert severity="info" sx={{ width: '100%', padding: 0 }}>
                         <AlertTitle>Information</AlertTitle>
-                        <ul>
-                            <li>Please fill up the form below</li>
-                            <li>Use your active email address</li>
-                        </ul>
+                        <List>
+                            <ListItem sx={{ pl: 0 }}>Please fill up the form below</ListItem>
+                            <ListItem sx={{ pl: 0 }}>Use your active email address</ListItem>
+                        </List>
                         <Typography variant="caption" color="initial"></Typography>
                     </Alert> 
                     <Person sx={{ color: 'primary.main' }} />
@@ -291,14 +294,23 @@ const Register = () => {
                             />
                         </FormControl>
                         <FormControl fullWidth>
-                        <Button 
+                        {/* <Button 
                         type='submit'
                         variant="outlined" 
                         color="primary" 
                         disabled={disableFormContent || !email || !selectedCampus || !selectedCollege || !selectedCourse || loadingButton} 
                         fullWidth>
                             Register
-                        </Button>
+                        </Button> */}
+                        <LoadingButton
+                            type="submit" // Assigning the type property
+                            variant="contained"
+                            color="primary"
+                            loading={loadingButton}
+                            disabled={disableButton}
+                        >
+                            {loadingButton ? 'Registering...' : 'Register'}
+                        </LoadingButton>
                         </FormControl>
                     </Box>
                 </Paper>

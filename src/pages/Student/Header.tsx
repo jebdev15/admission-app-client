@@ -4,7 +4,6 @@ import Typography from '@mui/material/Typography';
 import chmsuLogo from '../../assets/chmsu.png';
 
 
-
 export default function ButtonAppBar() {
   return (
     <Box sx={{ 
@@ -18,7 +17,8 @@ export default function ButtonAppBar() {
         borderBottom: 3, 
         borderColor: 'primary.main',
         width: '100%', 
-        height: "clamp(80px, 100%, 120px)"
+        // height: {xs: 'auto', md: '100px'}
+        height: 'auto'
       }}>
         <Box sx={{ display: 'flex', flexDirection: {xs: 'column', md: 'row'}, alignContent: 'center', alignItems: 'center' }}>
           <img src={chmsuLogo} alt="CHMSU Logo" width={50} height={50} />
@@ -28,9 +28,9 @@ export default function ButtonAppBar() {
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignContent: 'center', alignItems: 'center' }}>
           <Typography variant="h6" color="primary" textAlign={'center'}>ADMISSION SYSTEM</Typography>
-          {/* <Typography variant="body1" component="div" color='primary' textAlign={'center'}>
+          <Typography variant="body1" component="div" color='primary' textAlign={'center'}>
               A.Y 2025-2026
-          </Typography> */}
+          </Typography>
         </Box>
     </Box>
   );

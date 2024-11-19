@@ -1,7 +1,6 @@
 import React from 'react'
 import { AuthContextInterface, AuthContextProviderProps } from './type'
 import axiosInstance from '../../api/index'
-import { useNavigate } from 'react-router'
 
 // Create and export the LoginContext with default values
 export const AuthContext = React.createContext<AuthContextInterface>({
@@ -29,7 +28,6 @@ export const AuthContext = React.createContext<AuthContextInterface>({
 })
 
 export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
-    const navigate = useNavigate()
     const [context, setContext] = React.useState<AuthContextInterface>({
         agreed: false, // If the user has agreed to the privacy policy
         open: true, // If the modal is open
@@ -58,38 +56,12 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
                 )),
                 submitForm: async (event: React.FormEvent<HTMLFormElement>) => {
                     event.preventDefault(); 
-                    // setContext((prevState: AuthContextInterface) => (
-                    //     {
-                    //         ...prevState, 
-                    //         register: {
-                    //             ...prevState.register, 
-                    //             loadingButton: true
-                    //         }
-                    //     }
-                    // ))
+                    setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: true}}))
                     const formData = new FormData(event.currentTarget)
                     const { data, status } = await axiosInstance.post('/auth/register', formData)
-                    // if(data.status === 200) {
-                    //     setContext((prevState: AuthContextInterface) => (
-                    //         {
-                    //             ...prevState, 
-                    //             data: {
-                    //                 ...prevState.data, 
-                    //                 email: '', 
-                    //                 campus: '',
-                    //                 college: '',
-                    //                 course: ''
-                    //             },
-                    //             register: {
-                    //                 ...prevState.register, 
-                    //                 loadingButton: false
-                    //             }
-                    //         }
-                    //     ))
-                    // }
                     alert(data.message)
-                    if(status === 201) {
-                        navigate(`/home/${data.uuid}`)
+                    if(status) {
+                        setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: false}}))
                     }
                 },
                 handleChange: (event) => setContext((prevState: AuthContextInterface) => (

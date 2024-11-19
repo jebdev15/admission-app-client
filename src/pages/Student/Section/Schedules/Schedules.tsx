@@ -1,5 +1,5 @@
 import { Schedule } from '@mui/icons-material'
-import { Box, Button, CircularProgress, FormControl, FormControlLabel, Paper, Radio, RadioGroup, Typography } from '@mui/material'
+import { Box, CircularProgress, FormControl, List, ListItem, ListItemButton, ListItemText, Paper, Typography } from '@mui/material'
 import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
@@ -7,51 +7,43 @@ import React from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 import { useNavigate, useParams } from 'react-router'
 import { SchedulesService } from '../../../../services/schedulesService';
+import { LoadingButton } from '@mui/lab';
 
-const initialApplicantInitialInfo = {
-    email: '',
-    campus_to_enroll: '',
-    campus_to_take_exam: '',
-    college_description: '',
-    course_description: '',
-}
 const Schedules = () => {
     const navigate = useNavigate()
     const { uuid } = useParams<{uuid: string | undefined}>()
-    const [applicantInitialInfo, setApplicantInitialInfo] = React.useState<{
-        email: string
-        campus_to_enroll: string
-        campus_to_take_exam: string
-        college_description: string
-        course_description: string
-    }>(initialApplicantInitialInfo)
-    const [availableTimes, setAvailableTimes] = React.useState<string[]>([]);
+    const [availableTimes, setAvailableTimes] = React.useState<{timeRange: string, slotsRemaining: number}[]>([]);
     const [availableSchedules, setAvailableSchedules] = React.useState<any[]>([])
     const [selectedDate, setSelectedDate] = React.useState<Dayjs | null>(null); // State for the selected date
     const [selectedTime, setSelectedTime] = React.useState<string>('')
+    const [calendarKey, setCalendarKey] = React.useState<number>(0)
+    const [loading, setLoading] = React.useState<boolean>(false)
     // Define available dates for highlighting and group schedule time start and end
     const availableDates = availableSchedules?.reduce((acc, schedule) => {
-        const formattedDate = dayjs(schedule.schedule_date).format('YYYY-MM-DD')
-
+        const formattedDate = dayjs(schedule.schedule_date).format('YYYY-MM-DD');
+    
         // Find if the date already exists in the accumulator
-        const existingDate = acc.find(item => item.date === formattedDate)
-
-        const scheduleRange = `${schedule.schedule_time_start}-${schedule.schedule_time_end}`
-
+        const existingDate = acc.find(item => item.date === formattedDate);
+    
+        const scheduleDetails = {
+            timeRange: `${schedule.schedule_time_start}-${schedule.schedule_time_end}`,
+            slotsRemaining: schedule.slots_remaining,
+        };
+    
         if (existingDate) {
-            // If the date exists, push the new schedule range to the array
-            existingDate.timeRanges.push(scheduleRange)
+            // If the date exists, push the new schedule details to the array
+            existingDate.schedules.push(scheduleDetails);
         } else {
-            if(schedule.slots_remaining > 0) {
+            if (schedule.slots_remaining > 0) {
                 // If the date does not exist, create a new entry
                 acc.push({
                     date: formattedDate,
-                    timeRanges: [scheduleRange], // Store the range as a string
-                })
+                    schedules: [scheduleDetails], // Store the schedule details as an array
+                });
             }
         }
-
-        return acc
+    
+        return acc;
     }, []); // Initialize with an empty array
 
     // Function to check if a date is available
@@ -82,9 +74,9 @@ const Schedules = () => {
         const matchingSchedule = availableDates.find(
             (availableDate) => availableDate.date === selectedDateFormatted
         )
-
-        if (matchingSchedule && Array.isArray(matchingSchedule.timeRanges)) {
-            setAvailableTimes(matchingSchedule.timeRanges)
+        console.log(matchingSchedule.schedules)
+        if (matchingSchedule && Array.isArray(matchingSchedule.schedules)) {
+            setAvailableTimes(matchingSchedule.schedules)
         } else {
             setAvailableTimes([]) // No available times for the selected date
             console.log("No available times for the selected date.")
@@ -93,32 +85,39 @@ const Schedules = () => {
     }
     const handleChangeTime = (event: React.ChangeEvent<HTMLInputElement>) => {
         const eventSelectedTime = event.target.value;
+        console.log(eventSelectedTime)
         setSelectedTime(eventSelectedTime);
     }
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const confirmation = window.confirm('Are you sure you want to submit the selected schedule?');
         if(!confirmation) return
+        setLoading(true)
         const formData = new FormData();
         formData.append('schedule_date', selectedDate?.format('YYYY-MM-DD') ?? '')
         formData.append('schedule_time', selectedTime ?? '')
         formData.append('uuid', uuid ?? '')
         const { data, status } = await SchedulesService.updateApplicantScheduleId(formData)
-        console.log(data)
-        if(data.slots_remaining < 1) {
-            getSchedules(uuid)
-        }
-        if([200,201,204].includes(status)){
-            alert(data.message)
-            navigate('.')
+        if(data || data.message) {
+
+            if(data.slots_remaining < 1) {
+                // Reset state and refresh schedules
+                setSelectedDate(null); // Reset selected date
+                setSelectedTime(''); // Reset selected time
+                setAvailableTimes([]); // Clear available times
+                setAvailableSchedules([]); // Clear schedules
+                setCalendarKey((prevKey) => prevKey + 1); // Increment key to force re-render
+                await getSchedules(uuid); // Refresh schedules
+            }
+            if([200,201,204].includes(status)){
+                alert(data.message)
+                navigate('.')
+            }
+            // Simulate a network request
+            setTimeout(() => setLoading(false), 2000);
         }
     }
-    const getApplicantInitialInfo = async (uuid: string | undefined) => {
-        const { data } = await SchedulesService.getApplicantInitialInfo(uuid)
-        if(data.length > 0) {
-            setApplicantInitialInfo(data[0])
-        }
-    }
+
     const getSchedules = async (uuid: string | undefined) => {
         const { data } = await SchedulesService.getSchedules(uuid)
         if(data?.length > 0) {
@@ -127,7 +126,6 @@ const Schedules = () => {
     }
     React.useEffect(() => {
         getSchedules(uuid)
-        getApplicantInitialInfo(uuid)
     }, [uuid])
     const disableButtonSubmit = !selectedDate || !selectedTime
     return (
@@ -159,16 +157,10 @@ const Schedules = () => {
                         >
                             <Schedule />
                             <Typography variant="body1" color="initial">Schedules</Typography>
-                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                <Typography variant="body1" color="initial">Email Address: {applicantInitialInfo?.email}</Typography>
-                                <Typography variant="body1" color="initial">Campus To Enroll: {applicantInitialInfo?.campus_to_enroll}</Typography>
-                                <Typography variant="body1" color="initial">Campus To Take Exam: {applicantInitialInfo?.campus_to_take_exam}</Typography>
-                                <Typography variant="body1" color="initial">College :{applicantInitialInfo?.college_description}</Typography>
-                                <Typography variant="body1" color="initial">Course/Program :{applicantInitialInfo?.course_description}</Typography>
-                            </Box>
+                            {/* <Alert severity="info">Slots Remaining isn't real-time</Alert> */}
                             <Box
                                 sx={{ 
-                                    display: 'flex',
+                                    display: { xs: 'column', md: 'flex' },
                                     width: '100%',
                                  }}
                             >
@@ -185,6 +177,7 @@ const Schedules = () => {
                                         <DemoContainer components={['DateCalendar']}>
                                             <DemoItem label="Available Dates" sx={{ textAlign: 'center' }}>
                                                 <DateCalendar
+                                                    key={calendarKey} // Force re-render on key change
                                                     onChange={handleDateChange} // Handle date change
                                                     minDate={dayjs('2025-02-03')}
                                                     maxDate={dayjs('2025-03-31')}
@@ -201,39 +194,44 @@ const Schedules = () => {
                                     </LocalizationProvider>
                                     </Box>
                                 </Paper>
-                                {availableTimes?.length > 0 && (
                                     <Paper sx={{ flexGrow: 1 }}>
                                         <Box sx={{ mt: 2 }}>
                                             <Typography variant="body2" color="initial" textAlign={'center'}>Available Times:</Typography>
-                                                    <>
-                                                        {/* <ListItem key={time} sx={{ display: 'flex', justifyContent: 'center', backgroundColor: 'green', color: 'white' }}>{time}</ListItem> */}
-                                                        <FormControl sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 1 }}>
-                                                            {/* <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel> */}
-                                                            <RadioGroup
-                                                                aria-labelledby="demo-radio-buttons-group-label"
-                                                                name="radio-buttons-group"
-                                                                onChange={handleChangeTime}
-                                                                >
-                                                                {availableTimes.map((time) => (
-                                                                    <FormControlLabel key={time} value={time} control={<Radio />} label={time} />
-                                                                ))}
-                                                            </RadioGroup>
-                                                        </FormControl>
-                                                    </>
+                                            <List>
+                                                {availableTimes?.length > 0 && availableTimes.map((schedule, index) => (
+                                                    <ListItem key={index} disablePadding>
+                                                        <ListItemButton
+                                                            sx={{
+                                                                backgroundColor: selectedTime === schedule.timeRange ? 'green' : 'initial',
+                                                                color: selectedTime === schedule.timeRange ? 'white' : 'initial',
+                                                                '&:hover': {
+                                                                    backgroundColor: selectedTime === schedule.timeRange ? 'darkgreen' : 'lightgray',
+                                                                },
+                                                                borderRadius: 1,
+                                                            }}
+                                                            onClick={() => setSelectedTime(schedule.timeRange)}
+                                                        >
+                                                            <ListItemText
+                                                                primary={schedule.timeRange}
+                                                                // secondary={`Slots Remaining: ${schedule.slotsRemaining}`}
+                                                            />
+                                                        </ListItemButton>
+                                                    </ListItem>
+                                                ))}
+                                            </List>
                                         </Box>
                                     </Paper>
-                                )}
                             </Box>
                             <FormControl fullWidth>
-                            <Button 
-                                variant="contained" 
-                                color="primary" 
-                                type='submit'
-                                fullWidth
-                                disabled={disableButtonSubmit}
-                            >
-                                Submit
-                            </Button>
+                                <LoadingButton
+                                    type="submit" // Assigning the type property
+                                    variant="contained"
+                                    color="primary"
+                                    loading={loading}
+                                    disabled={disableButtonSubmit}
+                                >
+                                    {loading ? 'Submitting...' : 'Submit'}
+                                </LoadingButton>
                             </FormControl>
                         </Box>
                     </Paper>

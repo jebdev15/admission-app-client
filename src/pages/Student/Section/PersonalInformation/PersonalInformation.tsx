@@ -7,7 +7,8 @@ import dayjs, { Dayjs } from 'dayjs'
 import { PersonalInformationType } from './type'
 import { useNavigate, useParams } from 'react-router'
 import axiosInstance from '../../../../api'
-import { PersonalInformationService } from '../../../../services/personalInformationService'
+import { LoadingButton } from '@mui/lab'
+// import { PersonalInformationService } from '../../../../services/personalInformationService'
 
 const PersonalInformation = () => {
   const navigate = useNavigate()
@@ -31,20 +32,25 @@ const PersonalInformation = () => {
       has_scholarship_or_financial_aid: '',
       scholarship_or_financial_aid: '',
   })
+  const disableButton = !personalInformation.first_name || !personalInformation.last_name || !personalInformation.mobile_no || !personalInformation.lrn || !personalInformation.date_of_birth || !personalInformation.gender || !personalInformation.civil_status || !personalInformation.religion || !personalInformation.is_solo_parent || !personalInformation.is_indigenous_group || !personalInformation.school_last_attended || !personalInformation.type_of_school || !personalInformation.has_scholarship_or_financial_aid
+  const [loading, setLoading] = React.useState<boolean>(false)
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> ) => setPersonalInformation((prevState: PersonalInformationType) => ({...prevState, [event?.target.name]: event?.target.value }))
   const handleChangeSelect = (event: SelectChangeEvent<string>) => setPersonalInformation((prevState: PersonalInformationType) => ({...prevState, [event?.target.name]: event?.target.value }))
   const handleChangeDate = (newValue: Dayjs | null) => setPersonalInformation((prevState: PersonalInformationType) => ({ ...prevState, date_of_birth: newValue ?? dayjs() }))  // Update date_of_birth in `dayjs` format
-  const [disableButton, setDisableButton] = React.useState<boolean>(false)
   // const [isNewData, setIsNewData] = React.useState<boolean>(true)
   const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
           event.preventDefault()
-          setDisableButton(true)
+          const confirmation = window.confirm('Are you sure to proceed to next form? You can\'t edit your personal information after proceeding.');
+          if(!confirmation) return
+          setLoading(true)
           const formData = new FormData(event.currentTarget)
           formData.append('uuid', uuid ?? '')
-          // if(isNewData) {
-            const { data, status } = await axiosInstance.post('/personal-information/create', formData)
-            console.log(data, status)
+          const { data, status } = await axiosInstance.post('/personal-information/create', formData)
+          if(data) {
+            setLoading(false)
             if([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
+          }
+          // if(isNewData) {
           // } else {
           //   const { data, status } = await axiosInstance.put('/personal-information/update', formData)
           //   console.log(data, status)
@@ -52,16 +58,16 @@ const PersonalInformation = () => {
           // }
           
   }
-  const getPersonalInformation = async (uuid: string):Promise<void> => {
-    const { data } = await PersonalInformationService.getPersonalInformation(uuid)
-    if(data.length > 0) {
-      setPersonalInformation(data[0])
-      // setIsNewData(false)
-    } 
-  }
-  React.useEffect(() => {
-      getPersonalInformation(uuid ?? '')
-  }, [uuid])
+  // const getPersonalInformation = async (uuid: string):Promise<void> => {
+  //   const { data } = await PersonalInformationService.getPersonalInformation(uuid)
+  //   if(data.length > 0) {
+  //     setPersonalInformation(data[0])
+  //     // setIsNewData(false)
+  //   } 
+  // }
+  // React.useEffect(() => {
+  //     getPersonalInformation(uuid ?? '')
+  // }, [uuid])
     return (
       <React.Suspense fallback={<CircularProgress />}>
               <Box
@@ -305,15 +311,24 @@ const PersonalInformation = () => {
                             </FormControl>
                           )}
                           <FormControl fullWidth>
-                          <Button 
-                            disabled={disableButton}
-                            type='submit'
-                            variant="outlined" 
-                            color="primary" 
-                            fullWidth
-                          >
-                              Next
-                          </Button>
+                            {/* <Button 
+                              disabled={disableButton}
+                              type='submit'
+                              variant="outlined" 
+                              color="primary" 
+                              fullWidth
+                            >
+                                Next
+                            </Button> */}
+                            <LoadingButton
+                                    type="submit" // Assigning the type property
+                                    variant="contained"
+                                    color="primary"
+                                    loading={loading}
+                                    disabled={disableButton}
+                                >
+                                  {loading ? 'Submitting...' : 'Submit'}
+                            </LoadingButton>
                           </FormControl>
                       </Box>
                   </Paper>
