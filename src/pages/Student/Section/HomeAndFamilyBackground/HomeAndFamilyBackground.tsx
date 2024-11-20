@@ -1,9 +1,10 @@
 import { House, People } from '@mui/icons-material'
-import { Box, Button, CircularProgress, FormControl,  InputLabel, MenuItem, Paper, Select, Typography, TextField, SelectChangeEvent } from '@mui/material'
+import { Box, CircularProgress, FormControl,  InputLabel, MenuItem, Paper, Select, Typography, TextField, SelectChangeEvent } from '@mui/material'
 import React from 'react'
 import { HomeAndFamilyBackgroundType } from './type'
 import { useNavigate, useParams } from 'react-router'
 import { HomeAndFamilyBackgroundService } from '../../../../services/homeAndFamilyBackgroundService'
+import { LoadingButton } from '@mui/lab'
 
 const initialHomeAndFamilyBackground: HomeAndFamilyBackgroundType = {
     no_of_siblings_gainfully_employed: 0,
@@ -18,6 +19,7 @@ const HomeAndFamilyBackground = () => {
     const navigate = useNavigate()
     const { uuid } = useParams<{uuid: string | undefined}>()    
     const [homeAndFamilyBackground, setHomeAndFamilyBackground] = React.useState<HomeAndFamilyBackgroundType>(initialHomeAndFamilyBackground)
+    const [loading, setLoading] = React.useState<boolean>(false)
     const handleChangeInputNOSGE = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target
         setHomeAndFamilyBackground((prevState: HomeAndFamilyBackgroundType) => ({ ...prevState, [name]: parseInt(value) }))
@@ -32,19 +34,19 @@ const HomeAndFamilyBackground = () => {
     }
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        const confirmation = window.confirm('Are you sure to proceed to next form? You can\'t edit your home and family background after proceeding.');
+        if(!confirmation) return
+        setLoading(true)
         const formData = new FormData(event.currentTarget)
         formData.append('uuid', uuid ?? '')
         const { data, status } = await HomeAndFamilyBackgroundService.saveHomeAndFamilyBackground(formData)
         console.log(data, status)
-        if([200, 201, 204].includes(status)) navigate('.')
-    }
-    React.useEffect(() => {
-        const getHomeAndFamilyBackground = async (uuid: string) => {
-            const { data } = await HomeAndFamilyBackgroundService.getHomeAndFamilyBackground(uuid)
-            if(data.length > 0) setHomeAndFamilyBackground(data[0])
+        if(status) {
+            setLoading(false)
+            if([200, 201, 204].includes(status)) navigate('.')
         }
-        getHomeAndFamilyBackground(uuid)
-    },[uuid])
+    }
+    const disableButton = !homeAndFamilyBackground.no_of_siblings_gainfully_employed || !homeAndFamilyBackground.who_finances_your_schooling || !homeAndFamilyBackground.is_four_ps_beneficiary || !homeAndFamilyBackground.is_first_gen_student || !homeAndFamilyBackground.household_monthly_income || !homeAndFamilyBackground.nature_of_residence
     return (
       <React.Suspense fallback={<CircularProgress />}>
             <Box
@@ -60,9 +62,6 @@ const HomeAndFamilyBackground = () => {
                   }}
             >
                 <Paper>
-                    {/* <IconButton aria-label="" onClick={() => context.setFilledOutForm({ ...context.filledOutForm, parentProfile: false })}>
-                         <ArrowBack />
-                    </IconButton> */}
                     <Box
                           component="form"
                           sx={{ 
@@ -190,14 +189,15 @@ const HomeAndFamilyBackground = () => {
                             </Select>
                         </FormControl>
                         <FormControl fullWidth>
-                            <Button 
-                                type='submit'
-                                variant="contained" 
-                                color="primary" 
-                                fullWidth
+                            <LoadingButton
+                                type="submit" // Assigning the type property
+                                variant="contained"
+                                color="primary"
+                                loading={loading}
+                                disabled={disableButton}
                             >
-                                Next
-                            </Button>
+                                {loading ? 'Submitting...' : 'Next'}
+                            </LoadingButton>
                         </FormControl>
                     </Box>
                 </Paper>

@@ -1,10 +1,10 @@
 import { Place } from '@mui/icons-material'
-import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField, Typography } from '@mui/material'
+import { Box, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField, Typography } from '@mui/material'
 import React from 'react'
 import { HealthType } from './type'
-import axiosInstance from '../../../../api'
 import { useNavigate, useParams } from 'react-router'
 import { HealthService } from '../../../../services/healthService'
+import { LoadingButton } from '@mui/lab'
 
 const initialHealth: HealthType = {
     is_pwd: '',
@@ -18,6 +18,7 @@ const Health = () => {
     const navigate = useNavigate()
     const { uuid } = useParams<{uuid: string | undefined}>()
     const [health, setHealth] = React.useState(initialHealth)
+    const [loading, setLoading] = React.useState<boolean>(false)
     const handleChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target
         setHealth((prevState: HealthType) => ({ ...prevState, [name]: value }))
@@ -28,21 +29,21 @@ const Health = () => {
     }
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        const confirmation = window.confirm('Are you sure to proceed to next form? You can\'t edit your health after proceeding.');
+        if(!confirmation) return
+        setLoading(true)
         const formData = new FormData(event.currentTarget)
         formData.append('uuid', uuid ?? '')
         const { data, status } = await HealthService.saveHealth(formData)
         console.log(data, status)
-        if([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
-    }
-    React.useEffect(() => {
-        const getHealth = async (uuid: string) => {
-            const { data } = await HealthService.getHealth(uuid)
-            if(data.length > 0) {
-                setHealth(data[0])
-            }
+        if(status) {
+            if([200, 201, 204].includes(status)) {
+                navigate('.')
+            } 
+            setLoading(false)
         }
-        getHealth(uuid)
-    }, [uuid])
+    }
+    const disableButton = !health.is_pwd || !health.is_sped || !health.has_siblings_studying_in_chmsu || !health.has_relatives_studying_in_chmsu
     return (
       <React.Suspense fallback={<CircularProgress />}>
               <Box
@@ -157,14 +158,15 @@ const Health = () => {
                             </Select>
                         </FormControl>
                         <FormControl fullWidth>
-                            <Button 
-                                type='submit'
-                                variant="contained" 
-                                color="primary" 
-                                fullWidth
+                            <LoadingButton
+                                type="submit" // Assigning the type property
+                                variant="contained"
+                                color="primary"
+                                loading={loading}
+                                disabled={disableButton}
                             >
-                                Next
-                            </Button>
+                                {loading ? 'Submitting...' : 'Next'}
+                            </LoadingButton>
                         </FormControl>
                       </Box>
                   </Paper>

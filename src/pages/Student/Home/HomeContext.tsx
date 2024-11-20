@@ -8,6 +8,7 @@ export const HomeContext = React.createContext<HomeContextType>({
         parent_profile_status: 0,
         home_and_family_background_status: 0,
         health_status: 0,
+        picture_status: 0,
         schedule_status: 0
     },
     setFilledOutForm: () => {},
@@ -20,6 +21,7 @@ export const HomeContextProvider = ({children}: HomeContextProviderProps) => {
         parent_profile_status: 0,
         home_and_family_background_status: 0,
         health_status: 0,
+        picture_status: 0,
         schedule_status: 0
     })
     

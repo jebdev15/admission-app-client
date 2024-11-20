@@ -5,6 +5,7 @@ export interface HomeContextType {
         parent_profile_status: number,
         home_and_family_background_status: number,
         health_status: number
+        picture_status: number
         schedule_status: number
     },
     setFilledOutForm: React.Dispatch<React.SetStateAction<HomeContextType['filledOutForm']>>,

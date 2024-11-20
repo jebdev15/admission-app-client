@@ -2,9 +2,12 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import chmsuLogo from '../../assets/chmsu.png';
+import { useMediaQuery, useTheme } from '@mui/material';
 
 
 export default function ButtonAppBar() {
+  const theme = useTheme();
+  const mediumSize = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Box sx={{ 
         display: {xs: 'colum', md: 'flex'}, 
@@ -13,7 +16,6 @@ export default function ButtonAppBar() {
         justifyContent: 'space-between',
         paddingY: 1, 
         paddingX: 5, 
-        flexGrow: 1, 
         borderBottom: 3, 
         borderColor: 'primary.main',
         width: '100%', 
@@ -22,7 +24,7 @@ export default function ButtonAppBar() {
       }}>
         <Box sx={{ display: 'flex', flexDirection: {xs: 'column', md: 'row'}, alignContent: 'center', alignItems: 'center' }}>
           <img src={chmsuLogo} alt="CHMSU Logo" width={50} height={50} />
-          <Typography variant="h6" component="div" color='primary' textAlign={'center'}>
+          <Typography variant={"h6"} component="div" color='primary' textAlign={'center'}>
               CARLOS HILADO MEMORIAL STATE UNIVERSITY
           </Typography>
         </Box>

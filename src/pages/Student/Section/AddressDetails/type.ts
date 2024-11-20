@@ -25,3 +25,8 @@ export interface AddressDetailsType {
     current_address_barangay_name: string
     current_address_street: string
 }
+export interface AddressItem {
+    code: string;
+    name?: string;
+    regionName?: string;
+}

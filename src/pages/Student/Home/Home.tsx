@@ -5,6 +5,7 @@ import axiosInstance from '../../../api';
 import CustomCircularProgress from '../../../components/CustomCircularProgress';
 import { HomeContext } from './HomeContext';
 import Summary from '../Section/Summary/Summary';
+import Picture from '../Section/ImageUploader/ImageUploader';
 const PersonalInformation = React.lazy(() => import('../Section/PersonalInformation/PersonalInformation'))
 const AddressDetails = React.lazy(() => import('../Section/AddressDetails/AddressDetails'))
 const ParentProfile = React.lazy(() => import('../Section/ParentProfile/ParentProfile'))
@@ -26,6 +27,8 @@ const Home = () => {
       return <HomeAndFamilyBackground />
     } else if (!filledOutForm.health_status) {
       return <Health />
+    } else if (!filledOutForm.picture_status) {
+      return <Picture />
     } else if(!filledOutForm.schedule_status) {
       return <Schedules />
     } else {

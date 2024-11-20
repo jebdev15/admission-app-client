@@ -213,7 +213,7 @@ const Schedules = () => {
                                                         >
                                                             <ListItemText
                                                                 primary={schedule.timeRange}
-                                                                // secondary={`Slots Remaining: ${schedule.slotsRemaining}`}
+                                                                secondary={`Slots Remaining: ${schedule.slotsRemaining}`}
                                                             />
                                                         </ListItemButton>
                                                     </ListItem>

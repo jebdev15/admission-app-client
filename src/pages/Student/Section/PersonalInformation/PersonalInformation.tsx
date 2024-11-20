@@ -1,5 +1,5 @@
 import { Person } from '@mui/icons-material'
-import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField, Typography } from '@mui/material'
+import { Box, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField, Typography } from '@mui/material'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import React from 'react'
@@ -50,24 +50,7 @@ const PersonalInformation = () => {
             setLoading(false)
             if([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
           }
-          // if(isNewData) {
-          // } else {
-          //   const { data, status } = await axiosInstance.put('/personal-information/update', formData)
-          //   console.log(data, status)
-          //   if([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
-          // }
-          
   }
-  // const getPersonalInformation = async (uuid: string):Promise<void> => {
-  //   const { data } = await PersonalInformationService.getPersonalInformation(uuid)
-  //   if(data.length > 0) {
-  //     setPersonalInformation(data[0])
-  //     // setIsNewData(false)
-  //   } 
-  // }
-  // React.useEffect(() => {
-  //     getPersonalInformation(uuid ?? '')
-  // }, [uuid])
     return (
       <React.Suspense fallback={<CircularProgress />}>
               <Box
@@ -311,15 +294,6 @@ const PersonalInformation = () => {
                             </FormControl>
                           )}
                           <FormControl fullWidth>
-                            {/* <Button 
-                              disabled={disableButton}
-                              type='submit'
-                              variant="outlined" 
-                              color="primary" 
-                              fullWidth
-                            >
-                                Next
-                            </Button> */}
                             <LoadingButton
                                     type="submit" // Assigning the type property
                                     variant="contained"
@@ -327,7 +301,7 @@ const PersonalInformation = () => {
                                     loading={loading}
                                     disabled={disableButton}
                                 >
-                                  {loading ? 'Submitting...' : 'Submit'}
+                                  {loading ? 'Submitting...' : 'Next'}
                             </LoadingButton>
                           </FormControl>
                       </Box>

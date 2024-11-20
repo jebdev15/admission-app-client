@@ -158,6 +158,8 @@ const Register = () => {
     const selectedCollegeDescription = selectedCollege ? data[selectedCampus].colleges.find(c => c.college_code === selectedCollege)?.college_description : '';
     const selectCourseDescription = selectedCourse ? courses.find(c => c.course_code === selectedCourse)?.course_description : '';
     const disableButton = !email || !selectedCampus || !selectedCollege || !selectedCourse;
+    const theme = useTheme();
+    const belowMediumScreenSize = useMediaQuery(theme.breakpoints.down('md'));
     return (
         <React.Suspense fallback={<CustomCircularProgress />}>
             <Box
@@ -184,7 +186,7 @@ const Register = () => {
                         }}
                         onSubmit={submitForm}
                     >
-                    <Typography variant="h5" color="primary" textAlign={'center'}>Welcome to CHMSU ADMISSION SYSTEM</Typography>
+                    <Typography variant={belowMediumScreenSize ? "body1" : "h6" } color="primary" textAlign={'center'}>Welcome to CHMSU ADMISSION SYSTEM</Typography>
                     <Alert severity="info" sx={{ width: '100%', padding: 0 }}>
                         <AlertTitle>Information</AlertTitle>
                         <List>
