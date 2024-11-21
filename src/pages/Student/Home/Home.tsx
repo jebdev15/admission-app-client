@@ -27,7 +27,7 @@ const Home = () => {
       return <HomeAndFamilyBackground />
     } else if (!filledOutForm.health_status) {
       return <Health />
-    } else if (!filledOutForm.picture_status) {
+    } else if (!filledOutForm.image_status) {
       return <Picture />
     } else if(!filledOutForm.schedule_status) {
       return <Schedules />

@@ -84,7 +84,6 @@ const ImageUploader: React.FC = () => {
     if (image) {
       // Convert the base64 image to a Blob (if necessary)
       const blob = base64ToBlob(image); 
-      console.log(blob)
       // Append the Blob or File directly (no need to convert if it's already a File)
       formData.append('file', blob || image, `${uuid}.jpg`);  // Use the file object directly if available
       formData.append('uuid', uuid ?? '');
@@ -94,19 +93,15 @@ const ImageUploader: React.FC = () => {
       return;
     }
   
-    // Log the FormData contents (optional)
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value); // Check if the file is being added correctly
-    }
-  
     try {
-      const { data, status } = await axiosInstance.post('/images/upload', formData);
+      const { data, status } = await axiosInstance.post('/images/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' }, });
   
       if (status) {
         setLoading(false);
         if ([200, 201, 204].includes(status)) {
           navigate('.');  // Navigate to the next page
         }
+        alert(data.message)
       }
       console.log(data, status);
     } catch (error) {
@@ -115,7 +110,6 @@ const ImageUploader: React.FC = () => {
     }
   };
   
-
   const disableButton = !image;
 
   return (
