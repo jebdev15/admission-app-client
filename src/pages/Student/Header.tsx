@@ -2,12 +2,8 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import chmsuLogo from '../../assets/chmsu.png';
-import { useMediaQuery, useTheme } from '@mui/material';
-
 
 export default function ButtonAppBar() {
-  const theme = useTheme();
-  const mediumSize = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Box sx={{ 
         display: {xs: 'colum', md: 'flex'}, 

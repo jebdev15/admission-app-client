@@ -46,7 +46,7 @@ const HomeAndFamilyBackground = () => {
             if([200, 201, 204].includes(status)) navigate('.')
         }
     }
-    const disableButton = !homeAndFamilyBackground.no_of_siblings_gainfully_employed || !homeAndFamilyBackground.who_finances_your_schooling || !homeAndFamilyBackground.is_four_ps_beneficiary || !homeAndFamilyBackground.is_first_gen_student || !homeAndFamilyBackground.household_monthly_income || !homeAndFamilyBackground.nature_of_residence
+    const disableButton = !homeAndFamilyBackground.who_finances_your_schooling || !homeAndFamilyBackground.is_four_ps_beneficiary || !homeAndFamilyBackground.is_first_gen_student || !homeAndFamilyBackground.household_monthly_income || !homeAndFamilyBackground.nature_of_residence
     return (
       <React.Suspense fallback={<CircularProgress />}>
             <Box

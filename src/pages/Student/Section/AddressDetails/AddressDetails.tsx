@@ -8,7 +8,6 @@ import barangays from './AddressJson/barangays.json'
 import { AddressDetailsType, AddressItem } from './type'
 import axiosInstance from '../../../../api'
 import { useNavigate, useParams } from 'react-router'
-import { AddressDetailsService } from '../../../../services/addressDetailsService'
 import { LoadingButton } from '@mui/lab'
 // Define types for better type safety
 

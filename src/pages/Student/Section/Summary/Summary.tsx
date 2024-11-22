@@ -81,6 +81,8 @@ const Summary = () => {
                                         alt="Image"
                                         sx={{ borderRadius: "4px" }}
                                         loading="lazy"
+                                        height="100%"
+                                        width="100%"
                                     />
                                     </Card>
                                 </Box>

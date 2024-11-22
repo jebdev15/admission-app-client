@@ -1,6 +1,7 @@
 import React from 'react'
 import { AuthContextInterface, AuthContextProviderProps } from './type'
 import axiosInstance from '../../api/index'
+import { validateEmail } from '../../utils/emailValidator'
 
 // Create and export the LoginContext with default values
 export const AuthContext = React.createContext<AuthContextInterface>({
@@ -56,12 +57,18 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
                 )),
                 submitForm: async (event: React.FormEvent<HTMLFormElement>) => {
                     event.preventDefault(); 
-                    setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: true}}))
                     const formData = new FormData(event.currentTarget)
-                    const { data, status } = await axiosInstance.post('/auth/register', formData)
-                    alert(data.message)
-                    if(status) {
-                        setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: false}}))
+                    console.log(formData.get('email'))
+                    const {isValid, error} = validateEmail(formData.get('email') as string)
+                    if(isValid) {
+                        setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: true}}))
+                        const { data, status } = await axiosInstance.post('/auth/register', formData)
+                        alert(data.message)
+                        if(status) {
+                            setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: false}}))
+                        }
+                    } else {
+                        alert(error)
                     }
                 },
                 handleChange: (event) => setContext((prevState: AuthContextInterface) => (

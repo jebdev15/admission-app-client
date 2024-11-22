@@ -9,7 +9,7 @@ import axiosInstance from "../../../../api";
 // Helper function to convert base64 to Blob
 function base64ToBlob(base64: string, mimeType: string = 'image/jpeg'): Blob {
   // Ensure the base64 string is properly split into metadata and actual base64 string
-  const [header, base64Data] = base64.split(',');
+  const [,base64Data] = base64.split(',');
   
   // Check if base64 data is valid
   if (!base64Data) {
@@ -65,6 +65,7 @@ const ImageUploader: React.FC = () => {
         };
         reader.readAsDataURL(compressedFile);
       } catch (err) {
+        console.log(err);
         setError("Failed to process the image. Please try again.");
       }
     }

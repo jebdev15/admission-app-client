@@ -14,3 +14,17 @@ export interface HomeContextType {
 export interface HomeContextProviderProps {
     children: React.ReactNode
 }
+
+ // Define the type for the loader data
+export interface LoaderData {
+  validUUID: string;
+  forms_status: {
+    personal_information_status: boolean;
+    address_detail_status: boolean;
+    parent_profile_status: boolean;
+    home_and_family_background_status: boolean;
+    health_status: boolean;
+    image_status: boolean;
+    schedule_status: boolean;
+  };
+}

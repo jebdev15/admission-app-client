@@ -6,6 +6,7 @@ import CustomCircularProgress from '../../../components/CustomCircularProgress';
 import { HomeContext } from './HomeContext';
 import Summary from '../Section/Summary/Summary';
 import Picture from '../Section/ImageUploader/ImageUploader';
+import { LoaderData } from './type';
 const PersonalInformation = React.lazy(() => import('../Section/PersonalInformation/PersonalInformation'))
 const AddressDetails = React.lazy(() => import('../Section/AddressDetails/AddressDetails'))
 const ParentProfile = React.lazy(() => import('../Section/ParentProfile/ParentProfile'))
@@ -13,8 +14,9 @@ const HomeAndFamilyBackground = React.lazy(() => import('../Section/HomeAndFamil
 const Health = React.lazy(() => import('../Section/Health/Health'))
 const Schedules = React.lazy(() => import('../Section/Schedules/Schedules'))
 const Header = React.lazy(() => import('../Header'))
+
 const Home = () => {
-  const { validUUID, forms_status } = useLoaderData()
+  const { validUUID, forms_status } = useLoaderData() as LoaderData
   const { filledOutForm, setFilledOutForm } = React.useContext(HomeContext)
   const currentForm = () => {
     if (!filledOutForm.personal_information_status) {
@@ -36,7 +38,15 @@ const Home = () => {
     }
   }
   React.useEffect(() => {
-    setFilledOutForm(forms_status)
+    const normalizedFormStatus = Object.entries(forms_status).reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [key]: Number(value), // Convert boolean to number
+      }),
+      {} as typeof filledOutForm
+    );
+  
+    setFilledOutForm(normalizedFormStatus);
     console.log({validUUID, forms_status, filledOutForm})
   },[validUUID, forms_status, filledOutForm])
   return (

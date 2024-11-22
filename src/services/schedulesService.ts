@@ -5,7 +5,7 @@ export const SchedulesService = {
         const { data } = await axiosInstance.get(`/applicants/${uuid}/initial-info`)
         return { data }
     },
-    getSchedules: async (uuid: string) => {
+    getSchedules: async (uuid: string | undefined) => {
         const { data } = await axiosInstance.get(`/schedules/${uuid}`)
         return { data }
     },

@@ -8,22 +8,22 @@ import dayjs, { Dayjs } from 'dayjs'
 import { useNavigate, useParams } from 'react-router'
 import { SchedulesService } from '../../../../services/schedulesService';
 import { LoadingButton } from '@mui/lab';
-
+import { AccumulatorItem, AvailableDateType, ScheduleType } from './type';
 const Schedules = () => {
     const navigate = useNavigate()
     const { uuid } = useParams<{uuid: string | undefined}>()
     const [availableTimes, setAvailableTimes] = React.useState<{timeRange: string, slotsRemaining: number}[]>([]);
-    const [availableSchedules, setAvailableSchedules] = React.useState<any[]>([])
+    const [availableSchedules, setAvailableSchedules] = React.useState<ScheduleType[]>([])
     const [selectedDate, setSelectedDate] = React.useState<Dayjs | null>(null); // State for the selected date
     const [selectedTime, setSelectedTime] = React.useState<string>('')
     const [calendarKey, setCalendarKey] = React.useState<number>(0)
     const [loading, setLoading] = React.useState<boolean>(false)
     // Define available dates for highlighting and group schedule time start and end
-    const availableDates = availableSchedules?.reduce((acc, schedule) => {
+    const availableDates = availableSchedules?.reduce((acc, schedule: ScheduleType) => {
         const formattedDate = dayjs(schedule.schedule_date).format('YYYY-MM-DD');
     
         // Find if the date already exists in the accumulator
-        const existingDate = acc.find(item => item.date === formattedDate);
+        const existingDate = acc.find((item: AccumulatorItem) => item.date === formattedDate);
     
         const scheduleDetails = {
             timeRange: `${schedule.schedule_time_start}-${schedule.schedule_time_end}`,
@@ -44,11 +44,11 @@ const Schedules = () => {
         }
     
         return acc;
-    }, []); // Initialize with an empty array
+    }, [] as AccumulatorItem[]); // Initialize with an empty array
 
     // Function to check if a date is available
     const isAvailableDate = (date: Dayjs) =>
-        availableDates?.some((availableDate) => availableDate.date === date.format('YYYY-MM-DD'));
+        availableDates?.some((availableDate: AvailableDateType) => availableDate.date === date.format('YYYY-MM-DD'));
     // Handle date change
     // const handleDateChange = (date: Dayjs | null) => {
     //     setSelectedDate(date);
@@ -72,9 +72,8 @@ const Schedules = () => {
         const selectedDateFormatted = date?.format('YYYY-MM-DD')
 
         const matchingSchedule = availableDates.find(
-            (availableDate) => availableDate.date === selectedDateFormatted
+            (availableDate: AvailableDateType) => availableDate.date === selectedDateFormatted
         )
-        console.log(matchingSchedule.schedules)
         if (matchingSchedule && Array.isArray(matchingSchedule.schedules)) {
             setAvailableTimes(matchingSchedule.schedules)
         } else {
@@ -83,11 +82,11 @@ const Schedules = () => {
         }
         setSelectedTime('')
     }
-    const handleChangeTime = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const eventSelectedTime = event.target.value;
-        console.log(eventSelectedTime)
-        setSelectedTime(eventSelectedTime);
-    }
+    // const handleChangeTime = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     const eventSelectedTime = event.target.value;
+    //     console.log(eventSelectedTime)
+    //     setSelectedTime(eventSelectedTime);
+    // }
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const confirmation = window.confirm('Are you sure you want to submit the selected schedule?');
@@ -119,11 +118,15 @@ const Schedules = () => {
     }
 
     const getSchedules = async (uuid: string | undefined) => {
-        const { data } = await SchedulesService.getSchedules(uuid)
-        if(data?.length > 0) {
-            setAvailableSchedules(data)
+        try {
+          const { data } = await SchedulesService.getSchedules(uuid);
+          if (data?.length > 0) {
+            setAvailableSchedules(data);
+          }
+        } catch (error) {
+          console.error('Error fetching schedules:', error);
         }
-    }
+    };
     React.useEffect(() => {
         getSchedules(uuid)
     }, [uuid])
@@ -181,7 +184,7 @@ const Schedules = () => {
                                                     onChange={handleDateChange} // Handle date change
                                                     minDate={dayjs('2025-02-03')}
                                                     maxDate={dayjs('2025-03-31')}
-                                                    shouldDisableDate={(date) => !isAvailableDate(date)} // Disable dates not in availableDates
+                                                    shouldDisableDate={(date: Dayjs) => !isAvailableDate(date)} // Disable dates not in availableDates
                                                     sx={{
                                                     '& .MuiPickersDay-root': {
                                                         backgroundColor: (date: any) =>
