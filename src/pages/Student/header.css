@@ -1,0 +1,125 @@
+.logo {
+  margin-right: 0.5rem;
+}
+
+.admissionText {
+  & * {
+    /* color: red; */
+  }
+}
+
+.systemName span:first-child:before {
+  white-space: nowrap;
+  content: "CARLOS HILADO MEMORIAL STATE UNIVERSITY";
+  letter-spacing: 0px;
+}
+
+.systemName span:last-child::before {
+  display: block;
+  white-space: nowrap;
+  /* content: "GRADING SYSTEM"; */
+  content: "ADMISSION SYSTEM";
+  font-size: 16px;
+  letter-spacing: 1px;
+  display: none;
+}
+
+@media (max-width: 799px) {
+  .systemName {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .systemName span:first-child {
+    display: inline-flex;
+    flex-direction: column;
+  }
+  .systemName span:first-child:before {
+    white-space: nowrap;
+    content: "CARLOS HILADO";
+    letter-spacing: 1.75px;
+  }
+  .systemName span:first-child:after {
+    white-space: nowrap;
+    content: "MEMORIAL STATE UNIVERSITY";
+    letter-spacing: 0px;
+    font-size: 12px;
+  }
+
+  .systemName span:last-child::before {
+    white-space: nowrap;
+    /* content: "GRADING SYSTEM"; */
+    content: "ADMISSION SYSTEM";
+    letter-spacing: 0px;
+    display: none;
+  }
+}
+
+@media (max-width: 899px) {
+  .systemName span:last-child::before {
+    /* content: "GRADING SYST."; */
+    content: "ADMISSION SYSTEM";
+    display: none;
+  }
+}
+
+@media (max-width: 549px) {
+  .systemName {
+    display: block;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .systemName span:first-child:before {
+    white-space: nowrap;
+    content: "CHMSU";
+    /* letter-spacing: 8.5px; */
+    font-size: 24px;
+  }
+  .systemName span:first-child:after {
+    content: "";
+  }
+
+  .systemName span:last-child::before {
+    white-space: nowrap;
+    content: "ADMISSION SYSTEM";
+    letter-spacing: 0px;
+    display: none;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 449px) {
+  .systemName {
+    display: none;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .systemName span:first-child:before {
+    white-space: nowrap;
+    content: "CHMSU";
+    /* letter-spacing: 8.5px; */
+    font-size: 24px;
+  }
+  .systemName span:first-child:after {
+    content: "";
+  }
+
+  .systemName span:last-child::before {
+    white-space: nowrap;
+    content: "ADMISSION SYSTEM";
+    letter-spacing: 0px;
+    display: none;
+    font-size: 14px;
+  }
+
+  .headerContent {
+    justify-content: start;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    & * {
+      align-items: start !important;
+    }
+  }
+}
