@@ -35,9 +35,14 @@ const DataPrivacyPolicyModal = () => {
     return(
     <Dialog
         open={open}
-        maxWidth="sm"
+        maxWidth="md"
         fullScreen={fullScreen}
         fullWidth
+        sx={{
+          '& .MuiDialog-paper': {
+            borderRadius: 2
+          },
+        }}
       >
       <DialogTitle>CHMSU Data Privacy Policy</DialogTitle>
       <DialogContent>
@@ -54,7 +59,7 @@ const DataPrivacyPolicyModal = () => {
             (CHMSUET), is one with this mission and seeks to deliver quality services
             to all its clientele.
             </Typography>
-            <Divider />
+            <Divider sx={{ my: 2 }} />
             <Typography color="primary.main" fontWeight={500} textTransform="uppercase">
             What information we collect and how
             </Typography>
@@ -76,7 +81,7 @@ const DataPrivacyPolicyModal = () => {
             to reject or warn you before downloading cookies. Information regarding
             this may be found in your browser’s help facility.
             </Typography>
-            <Divider />
+            <Divider sx={{ my: 2 }} />
             <Typography color="primary.main" fontWeight={500} textTransform="uppercase">
             What we do with your information
             </Typography>
@@ -97,7 +102,7 @@ const DataPrivacyPolicyModal = () => {
             information we collect to authorized persons under the student admission
             and screening committee.
             </Typography>
-            <Divider />
+            <Divider sx={{ my: 2 }} />
             <Typography color="primary.main" fontWeight={500} textTransform="uppercase">
             Your Rights
             </Typography>
@@ -108,9 +113,9 @@ const DataPrivacyPolicyModal = () => {
             contact details and address using our support form. Further instructions
             will be given.
             </Typography>
-            <Divider />
+            <Divider sx={{ my: 2 }} />
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                <Button variant='contained' onClick={setAgreed}>Agree & Continue</Button>
+                <Button variant='contained' color="primary" sx={{ pt: 1, color: "white", borderRadius: 2}} onClick={setAgreed}>Agree & Continue</Button>
             </Box>
       </DialogContent>
     </Dialog>
@@ -168,13 +173,11 @@ const Register = () => {
                     flexDirection: 'column',
                     justifyContent: 'center', 
                     alignItems: 'center', 
-                    padding: '1rem',
-                    gap: 1
+                    padding: 2,
+                    gap: 1,
                 }}
             >
-                <Paper sx={{ 
-                            width: {xs: '100%', sm: '450px', md: '600px'}
-                            }}>
+                <Paper sx={{ width: {xs: '100%', sm: '500px', md: '60%'}, maxWidth: "700px", borderRadius: 2}}>
                     <Box
                         component="form"
                         sx={{ 
@@ -182,32 +185,33 @@ const Register = () => {
                             flexDirection: 'column',
                             justifyContent: 'center', 
                             alignItems: 'center', 
-                            padding: '1rem',
+                            padding: {xs: 2, sm: 4},
                             gap: 1,
                             width: '100%',
                         }}
                         onSubmit={submitForm}
                     >
-                    <Typography variant={belowMediumScreenSize ? "body1" : "h6" } color="primary" textAlign={'center'}>Welcome to CHMSU ADMISSION SYSTEM</Typography>
-                    <Alert severity="info" sx={{ width: '100%', padding: 0 }}>
+                    <Typography variant={belowMediumScreenSize ? "h6" : "h6" } color="primary" textAlign={'center'} sx={{ mb: 2, mt: {xs: 2, sm: 0} }}>Welcome to<br />CHMSU ADMISSION SYSTEM</Typography>
+                    <Alert severity="info" sx={{ width: '100%', p: 2, pb: 0, borderRadius: 2 }}>
                         <AlertTitle>Information</AlertTitle>
-                        <List>
+                        <List sx={{ pt: 0 }}>
                             <ListItem sx={{ pl: 0 }}>Please fill up the form below</ListItem>
                             <ListItem sx={{ pl: 0 }}>Use your active email address</ListItem>
                         </List>
                         <Typography variant="caption" color="initial"></Typography>
                     </Alert> 
-                    <Person sx={{ color: 'primary.main' }} />
+                    <Person sx={{ color: 'primary.main', fontSize: 50, mb: -1.5}} />
                     <Typography variant="body1" color="primary">Registration Form</Typography>
-                        <FormControl fullWidth>
+                        <FormControl fullWidth margin="dense">
                             <TextField 
                                 name="email"
                                 label="Email Address"
                                 type="email"
                                 value={email}
                                 onChange={handleChange}
-                                variant="standard"
+                                variant="outlined"
                                 disabled={disableFormContent}
+                                sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
                             />
                         </FormControl>
                         {/* Campus Select */}
@@ -218,14 +222,15 @@ const Register = () => {
                                 name='campus_to_enroll'
                                 value={selectedCampus}
                                 onChange={handleCampusChange}
-                                label="Campus"
-                                variant="standard"
+                                label="Campus To Enroll"
+                                variant="outlined"
                                 required
                                 inputProps={{
                                     sx: {
                                         whiteSpace: "normal !important"
                                     }
                                 }}
+                                sx={{ borderRadius: 2 }}
                             >
                             {campuses.map((campus) => (
                                 <MenuItem key={campus} value={campus} sx={{whiteSpace: "normal"}}>
@@ -235,16 +240,17 @@ const Register = () => {
                             </Select>
                         </FormControl>
                         {/* Campus Select */}
-                        <FormControl fullWidth margin="normal">
+                        <FormControl fullWidth margin="dense">
                                 <InputLabel id="campus-t-take-exam-label">Campus To Take Exam</InputLabel>
                                 <Select
                                     labelId="campus-t-take-exam-label"
                                     name='campus_to_take_exam'
                                     value={selectedCampusToTakeExam}
                                     onChange={handleCampusToTakeExamChange}
-                                    label="Campus"
-                                    variant="standard"
+                                    label="Campus To Take Exam"
+                                    variant="outlined"
                                     required
+                                sx={{ borderRadius: 2 }}
                                 inputProps={{
                                     sx: {
                                         whiteSpace: "normal !important"
@@ -259,20 +265,21 @@ const Register = () => {
                                 </Select>
                             </FormControl>
                         {/* College Select */}
-                        <FormControl fullWidth margin="normal" disabled={!selectedCampus}>
+                        <FormControl fullWidth margin="dense" disabled={!selectedCampus}>
                             <InputLabel id="college-label">College</InputLabel>
                             <Select
                                 labelId="college-label"
                                 value={selectedCollege}
                                 onChange={handleCollegeChange}
                                 label="College"
-                                variant="standard"
+                                variant="outlined"
                                 required
                                 inputProps={{
                                     sx: {
                                         whiteSpace: "normal !important"
                                     }
                                 }}
+                                sx={{ borderRadius: 2 }}
                             >
                             {colleges.map((college) => (
                                 <MenuItem key={college.college_code} value={college.college_code} sx={{whiteSpace: "normal"}}>
@@ -289,15 +296,16 @@ const Register = () => {
                         </FormControl>
 
                         {/* Course Select */}
-                        <FormControl fullWidth margin="normal" disabled={!selectedCollege}>
+                        <FormControl fullWidth margin="dense" disabled={!selectedCollege}>
                             <InputLabel id="course-label">Course</InputLabel>
                             <Select
                                 labelId="course-label"
                                 value={selectedCourse}
                                 onChange={handleCourseChange}
                                 label="Course"
-                                variant="standard"
+                                variant="outlined"
                                 required
+                                sx={{ borderRadius: 2 }}
                             >
                             {courses.map((course) => (
                                 <MenuItem key={course.course_code} value={course.course_code}>
@@ -308,11 +316,11 @@ const Register = () => {
                             <TextField
                                 name="course_description"
                                 value={selectCourseDescription}
-                                variant="standard"
+                                variant="outlined"
                                 sx={{ display: 'none' }}
                             />
                         </FormControl>
-                        <FormControl fullWidth>
+                        <FormControl fullWidth margin='dense'>
                         {/* <Button 
                         type='submit'
                         variant="outlined" 
@@ -327,6 +335,7 @@ const Register = () => {
                             color="primary"
                             loading={loadingButton}
                             disabled={disableButton}
+                            sx={{ py: 1.75, pt: 2, color: "white", borderRadius: 2 }}
                         >
                             {loadingButton ? 'Registering...' : 'Register'}
                         </LoadingButton>
