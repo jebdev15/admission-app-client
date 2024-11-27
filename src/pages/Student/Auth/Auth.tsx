@@ -5,7 +5,7 @@ import { AuthContext } from '../../../context/Auth/AuthContext'
 import CustomCircularProgress from '../../../components/CustomCircularProgress'
 import campusesJson from '../campuses.json';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { LoadingButton } from '@mui/lab'
+import { LoadingButton } from '@mui/lab';
 // Define types for the JSON structure
 interface Course {
   course_code: string;
@@ -172,7 +172,9 @@ const Register = () => {
                     gap: 1
                 }}
             >
-                <Paper>
+                <Paper sx={{ 
+                            width: {xs: '100%', sm: '450px', md: '600px'}
+                            }}>
                     <Box
                         component="form"
                         sx={{ 
@@ -180,9 +182,9 @@ const Register = () => {
                             flexDirection: 'column',
                             justifyContent: 'center', 
                             alignItems: 'center', 
-                            width: {xs: '100%', md: '500px'},
                             padding: '1rem',
-                            gap: 1
+                            gap: 1,
+                            width: '100%',
                         }}
                         onSubmit={submitForm}
                     >
@@ -198,7 +200,7 @@ const Register = () => {
                     <Person sx={{ color: 'primary.main' }} />
                     <Typography variant="body1" color="primary">Registration Form</Typography>
                         <FormControl fullWidth>
-                            <TextField
+                            <TextField 
                                 name="email"
                                 label="Email Address"
                                 type="email"
@@ -219,9 +221,14 @@ const Register = () => {
                                 label="Campus"
                                 variant="standard"
                                 required
+                                inputProps={{
+                                    sx: {
+                                        whiteSpace: "normal !important"
+                                    }
+                                }}
                             >
                             {campuses.map((campus) => (
-                                <MenuItem key={campus} value={campus}>
+                                <MenuItem key={campus} value={campus} sx={{whiteSpace: "normal"}}>
                                 {campus}
                                 </MenuItem>
                             ))}
@@ -238,9 +245,14 @@ const Register = () => {
                                     label="Campus"
                                     variant="standard"
                                     required
+                                inputProps={{
+                                    sx: {
+                                        whiteSpace: "normal !important"
+                                    }
+                                }}
                                 >
                                 {campuses.map((campus) => (
-                                    <MenuItem key={campus} value={campus}>
+                                    <MenuItem key={campus} value={campus} sx={{whiteSpace: "normal"}}>
                                     {campus}
                                     </MenuItem>
                                 ))}
@@ -256,9 +268,14 @@ const Register = () => {
                                 label="College"
                                 variant="standard"
                                 required
+                                inputProps={{
+                                    sx: {
+                                        whiteSpace: "normal !important"
+                                    }
+                                }}
                             >
                             {colleges.map((college) => (
-                                <MenuItem key={college.college_code} value={college.college_code}>
+                                <MenuItem key={college.college_code} value={college.college_code} sx={{whiteSpace: "normal"}}>
                                 {college.college_description}
                                 </MenuItem>
                             ))}
