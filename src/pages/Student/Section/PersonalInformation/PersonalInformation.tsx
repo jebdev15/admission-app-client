@@ -54,62 +54,68 @@ const PersonalInformation = () => {
     return (
       <React.Suspense fallback={<CircularProgress />}>
               <Box
-                  sx={{ 
-                      display: 'flex', 
-                      flexDirection: 'column',
-                      justifyContent: 'center', 
-                      alignItems: 'center', 
-                      height: '100%',
-                      padding: '1rem',
-                      width: { xs: '100%', md: '678px'},
-                      gap: 1
-                  }}
-              >
-                  <Paper sx={{ width: { xs: '100%', md: '678px'}, }}>
-                      <Box
-                          component="form"
-                          sx={{ 
-                              display: 'flex', 
-                              flexDirection: 'column',
-                              justifyContent: 'center', 
-                              alignItems: 'center', 
-                              padding: '1rem',
-                              gap: 1
-                          }}
-                          onSubmit={submitForm}
+                sx={{ 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    justifyContent: 'center', 
+                    alignItems: 'center', 
+                    padding: 2,
+                    gap: 1,
+                }}
+            >
+                  
+                <Paper sx={{ width: {xs: '100%', sm: '500px', md: '60%'}, maxWidth: "700px", borderRadius: 2}}>
+                    <Box
+                        component="form"
+                        sx={{ 
+                            display: 'flex', 
+                            flexDirection: 'column',
+                            justifyContent: 'center', 
+                            alignItems: 'center', 
+                            padding: {xs: 2, sm: 4},
+                            gap: 1,
+                            width: '100%',
+                        }}
+                        onSubmit={submitForm}
                     >
-                      <Person />
-                      <Typography variant="body1" color="initial">Personal Information</Typography>
-                          <FormControl fullWidth>
+                      <Person sx={{ color: 'primary.main', fontSize: 50, mb: -1.5}} />
+                      <Typography variant="body1" color="primary" sx={{ mb: 2 }}>Personal Information</Typography>
+                          <FormControl fullWidth margin='dense'>
                               <TextField
                                     name="first_name"
                                     label="First Name"
+                                    placeholder='e.g. John'
                                     type="text"
                                     value={personalInformation.first_name}
                                     onChange={handleChange}
                                     required
+                                    sx={{ '& .MuiInputBase-root': { borderRadius: 2 }}}
                               />
                           </FormControl>
-                          <FormControl fullWidth>
+                          <FormControl fullWidth margin='dense'>
                               <TextField
                                     name="middle_name"
                                     label="Middle Name"
+                                    placeholder='e.g. Doe'
                                     type="text"
                                     value={personalInformation.middle_name}
                                     onChange={handleChange}
+                                    sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
                               />
                           </FormControl>
-                          <FormControl fullWidth>
+                          <FormControl fullWidth margin='dense'>
                               <TextField
                                     name="last_name"
                                     label="Last Name"
+                                    placeholder='e.g. Smith'
                                     type="text"
                                     value={personalInformation.last_name}
                                     onChange={handleChange}
                                     required
+                                    sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
                               />
                           </FormControl>
-                          <FormControl fullWidth>
+                          <FormControl fullWidth margin='dense'>
                               <TextField
                                     name="lrn"
                                     label="Learner's Reference Number"
@@ -117,62 +123,71 @@ const PersonalInformation = () => {
                                     value={personalInformation.lrn}
                                     onChange={handleChange}
                                     required
+                                    sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
                               />
                           </FormControl>
-                          <FormControl fullWidth>
+                          <FormControl fullWidth margin='dense'>
                               <TextField
                                     name="mobile_no"
-                                    label="Mobile Number(09123456789)"
+                                    label="Mobile Number"
+                                    placeholder='e.g. 09123456789'
                                     type="number"
                                     value={personalInformation.mobile_no}
                                     onChange={handleChange}
                                     required
+                                    sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
                               />
                           </FormControl>
-                          <FormControl fullWidth>
+                          <FormControl fullWidth margin='dense'>
                               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker name="date_of_birth" label="Date of Birth" value={personalInformation.date_of_birth ? dayjs(personalInformation.date_of_birth) : null} onChange={handleChangeDate} format="YYYY-MM-DD"/>
+                                <DatePicker name="date_of_birth" label="Date of Birth" value={personalInformation.date_of_birth ? dayjs(personalInformation.date_of_birth) : null} onChange={handleChangeDate} format="YYYY-MM-DD" sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}/>
                               </LocalizationProvider>
                           </FormControl>
-                          <FormControl fullWidth>
+                          <FormControl fullWidth margin='dense'>
                             <InputLabel id="label-select-sex">Sex</InputLabel>
                               <Select
                                 labelId="label-select-sex"
+                                label="Sex"
                                 id="select-sex"
                                 name="gender"
                                 value={personalInformation.gender}
                                 onChange={handleChangeSelect}
                                 required
+                                sx={{ borderRadius: 2 }}
                               >
                                   <MenuItem value=""></MenuItem>
                                   <MenuItem value="Male">Male</MenuItem>
                                   <MenuItem value="Female">Female</MenuItem>
                               </Select>
                           </FormControl>
-                          <FormControl fullWidth>
+                          <FormControl fullWidth margin='dense'>
                             <InputLabel id="label-select-civilStatus">Civil Status</InputLabel>
                               <Select
                                 labelId="label-select-civilStatus"
+                                label="Civil Status"
                                 id="select-civilStatus"
                                 name="civil_status"
                                 value={personalInformation.civil_status}
                                 onChange={handleChangeSelect}
                                 required
+                                sx={{ borderRadius: 2 }}
                               >
                                   <MenuItem value=""></MenuItem>
                                   <MenuItem value="Single">Single</MenuItem>
                                   <MenuItem value="Married">Married</MenuItem>
                               </Select>
                           </FormControl>
-                          <FormControl fullWidth>
+                          <FormControl fullWidth margin='dense'>
                             <InputLabel id="label-select-religion">Religion</InputLabel>
                               <Select
                                 labelId="label-select-religion"
+                                label="Religion"
                                 id="select-religion"
                                 name="religion"
                                 value={personalInformation.religion}
                                 onChange={handleChangeSelect}
                                 required
+                                sx={{ borderRadius: 2 }}
                               >
                                   <MenuItem value=""></MenuItem>
                                   <MenuItem value="Roman Catholic">Roman Catholic</MenuItem>
@@ -186,7 +201,7 @@ const PersonalInformation = () => {
                               </Select>
                           </FormControl>
                           {personalInformation.religion === 'Others' && (
-                            <FormControl fullWidth>
+                            <FormControl fullWidth margin='dense'>
                                 <TextField
                                     name="other_religion"
                                     label="Please specify"
@@ -194,33 +209,38 @@ const PersonalInformation = () => {
                                     value={personalInformation.other_religion}
                                     onChange={handleChange}
                                     required
+                                    sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
                                 />
                             </FormControl>
                           )}
-                          <FormControl fullWidth>
+                          <FormControl fullWidth margin='dense'>
                             <InputLabel id="label-select-soloParent">Solo Parent</InputLabel>
                               <Select
                                 labelId="label-select-soloParent"
+                                label="Solo Parent"
                                 id="select-soloParent"
                                 name="is_solo_parent"
                                 value={personalInformation.is_solo_parent}
                                 onChange={handleChangeSelect}
                                 required
+                                sx={{ borderRadius: 2 }}
                               >
                                   <MenuItem value=""></MenuItem>
                                   <MenuItem value='Yes'>Yes</MenuItem>
                                   <MenuItem value='No'>No</MenuItem>
                               </Select>
                           </FormControl>
-                          <FormControl fullWidth>
+                          <FormControl fullWidth margin='dense'>
                             <InputLabel id="label-select-isIndigenousGroup">Are you part of an Indigenous Group?</InputLabel>
                               <Select
                                 labelId="label-select-isIndigenousGroup"
+                                label="Are you part of an Indigenous Group?"
                                 id="select-isIndigenousGroup"
                                 name="is_indigenous_group"
                                 value={personalInformation.is_indigenous_group}
                                 onChange={handleChangeSelect}
                                 required
+                                sx={{ borderRadius: 2 }}
                               >
                                   <MenuItem value=""></MenuItem>
                                   <MenuItem value='Yes'>Yes</MenuItem>
@@ -228,7 +248,7 @@ const PersonalInformation = () => {
                               </Select>
                           </FormControl>
                           {personalInformation.is_indigenous_group === 'Yes' && (
-                          <FormControl fullWidth>
+                          <FormControl fullWidth margin='dense'>
                             <TextField
                                 name="indigenous_group"
                                 label="If Yes, please specify"
@@ -236,10 +256,11 @@ const PersonalInformation = () => {
                                 value={personalInformation.indigenous_group}
                                 onChange={handleChange}
                                 required
+                                sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
                               />
                           </FormControl>
                           )}
-                          <FormControl fullWidth>
+                          <FormControl fullWidth margin='dense'>
                             <TextField
                                 name="school_last_attended"
                                 label="School Last Attended"
@@ -247,34 +268,39 @@ const PersonalInformation = () => {
                                 value={personalInformation.school_last_attended}
                                 onChange={handleChange}
                                 required
+                                sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
                               />
                           </FormControl>
-                          <FormControl fullWidth>
+                          <FormControl fullWidth margin='dense'>
                             <InputLabel id="label-select-typeOfSchool">Type of School</InputLabel>
                               <Select
                                 labelId="label-select-typeOfSchool"
+                                label="Type of School"
                                 id="select-typeOfSchool"
                                 name="type_of_school"
                                 value={personalInformation.type_of_school}
                                 type='text'
                                 onChange={handleChangeSelect}
                                 required
+                                sx={{ borderRadius: 2 }}
                               >
                                   <MenuItem value=""></MenuItem>
                                   <MenuItem value='Public'>Public</MenuItem>
                                   <MenuItem value='Private'>Private</MenuItem>
                               </Select>
                           </FormControl>
-                          <FormControl fullWidth>
+                          <FormControl fullWidth margin='dense'>
                             <InputLabel id="label-select-hasScholarshipOrFinancialAid">Do you have an existing Scholarship/Financial Aid?</InputLabel>
                               <Select
                                 labelId="label-select-hasScholarshipOrFinancialAid"
+                                label="Do you have an existing Scholarship/Financial Aid?"
                                 id="select-hasScholarshipOrFinancialAid"
                                 name="has_scholarship_or_financial_aid"
                                 type='text'
                                 value={personalInformation.has_scholarship_or_financial_aid}
                                 onChange={handleChangeSelect}
                                 required
+                                sx={{ borderRadius: 2 }}
                               >
                                   <MenuItem value=""></MenuItem>
                                   <MenuItem value='Yes'>Yes</MenuItem>
@@ -282,7 +308,7 @@ const PersonalInformation = () => {
                               </Select>
                           </FormControl>
                           {personalInformation.has_scholarship_or_financial_aid === 'Yes' && (
-                            <FormControl fullWidth>
+                            <FormControl fullWidth margin='dense'>
                                 <TextField
                                     name="scholarship_or_financial_aid"
                                     label="If Yes, please specify"
@@ -290,16 +316,18 @@ const PersonalInformation = () => {
                                     value={personalInformation.scholarship_or_financial_aid}
                                     onChange={handleChange}
                                     required
+                                    sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
                                 />
                             </FormControl>
                           )}
-                          <FormControl fullWidth>
+                          <FormControl fullWidth margin='dense'>
                             <LoadingButton
                                     type="submit" // Assigning the type property
                                     variant="contained"
                                     color="primary"
                                     loading={loading}
                                     disabled={disableButton}
+                                    sx={{ py: 1.75, pt: 2, color: "white", borderRadius: 2 }}
                                 >
                                   {loading ? 'Submitting...' : 'Next'}
                             </LoadingButton>

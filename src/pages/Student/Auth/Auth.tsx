@@ -206,6 +206,7 @@ const Register = () => {
                             <TextField 
                                 name="email"
                                 label="Email Address"
+                                placeholder='e.g. johndoe@email.com'
                                 type="email"
                                 value={email}
                                 onChange={handleChange}

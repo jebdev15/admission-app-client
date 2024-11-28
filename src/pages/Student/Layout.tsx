@@ -12,6 +12,8 @@ const Layout = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     width: '100%',
+                    height: 'auto',
+                    minHeight: '100dvh',
                     backgroundColor: '#e0e0e0'
                  }}
             >

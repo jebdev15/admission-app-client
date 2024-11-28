@@ -53,12 +53,13 @@ const Home = () => {
     <React.Suspense fallback={<CustomCircularProgress />}>
       <Box
         sx={{ 
-          display: 'flex', 
+          display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center', 
-          alignItems: 'center', 
+          jusstifyContent: 'center',
+          width: '100%',
           height: 'auto',
-          gap: 1
+          minHeight: '100dvh',
+          backgroundColor: '#e0e0e0'
         }}
       >
         <Header />
