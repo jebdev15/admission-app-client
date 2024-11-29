@@ -1,6 +1,7 @@
 import React from 'react'
 import { Person } from '@mui/icons-material'
 import { Box, FormControl, Paper, TextField, Typography, Button, Divider, Dialog, DialogTitle, DialogContent, SelectChangeEvent, Select, InputLabel, MenuItem, Alert, AlertTitle, useTheme, List, ListItem } from '@mui/material'
+import Grid from '@mui/material/Grid2'
 import { AuthContext } from '../../../context/Auth/AuthContext'
 import CustomCircularProgress from '../../../components/CustomCircularProgress'
 import campusesJson from '../campuses.json';
@@ -173,11 +174,11 @@ const Register = () => {
                     flexDirection: 'column',
                     justifyContent: 'center', 
                     alignItems: 'center', 
-                    padding: 2,
+                    padding: {xs: 0, sm: 2},
                     gap: 1,
                 }}
             >
-                <Paper sx={{ width: {xs: '100%', sm: '500px', md: '60%'}, maxWidth: "700px", borderRadius: 2}}>
+                <Paper sx={{ width: {xs: '100%', sm: '500px', md: '60%'}, maxWidth: "700px", borderRadius: {xs: 0, sm: 2} }}>
                     <Box
                         component="form"
                         sx={{ 
@@ -191,7 +192,7 @@ const Register = () => {
                         }}
                         onSubmit={submitForm}
                     >
-                    <Typography variant={belowMediumScreenSize ? "h6" : "h6" } color="primary" textAlign={'center'} sx={{ mb: 2, mt: {xs: 2, sm: 0} }}>Welcome to<br />CHMSU ADMISSION SYSTEM</Typography>
+                    <Typography variant={belowMediumScreenSize ? "h6" : "h6" } color="primary" textAlign={'center'} sx={{ mb: 2, mt: {xs: 1, sm: 0} }}>Welcome to<br />CHMSU ADMISSION SYSTEM</Typography>
                     <Alert severity="info" sx={{ width: '100%', p: 2, pb: 0, borderRadius: 2 }}>
                         <AlertTitle>Information</AlertTitle>
                         <List sx={{ pt: 0 }}>
@@ -200,147 +201,152 @@ const Register = () => {
                         </List>
                         <Typography variant="caption" color="initial"></Typography>
                     </Alert> 
-                    <Person sx={{ color: 'primary.main', fontSize: 50, mb: -1.5}} />
-                    <Typography variant="body1" color="primary">Registration Form</Typography>
-                        <FormControl fullWidth margin="dense">
-                            <TextField 
-                                name="email"
-                                label="Email Address"
-                                placeholder='e.g. johndoe@email.com'
-                                type="email"
-                                value={email}
-                                onChange={handleChange}
-                                variant="outlined"
-                                disabled={disableFormContent}
-                                sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
-                            />
-                        </FormControl>
-                        {/* Campus Select */}
-                        <FormControl fullWidth margin="normal">
-                            <InputLabel id="campus-label">Campus To Enroll</InputLabel>
-                            <Select
-                                labelId="campus-label"
-                                name='campus_to_enroll'
-                                value={selectedCampus}
-                                onChange={handleCampusChange}
-                                label="Campus To Enroll"
-                                variant="outlined"
-                                required
-                                inputProps={{
-                                    sx: {
-                                        whiteSpace: "normal !important"
-                                    }
-                                }}
-                                sx={{ borderRadius: 2 }}
-                            >
-                            {campuses.map((campus) => (
-                                <MenuItem key={campus} value={campus} sx={{whiteSpace: "normal"}}>
-                                {campus}
-                                </MenuItem>
-                            ))}
-                            </Select>
-                        </FormControl>
-                        {/* Campus Select */}
-                        <FormControl fullWidth margin="dense">
-                                <InputLabel id="campus-t-take-exam-label">Campus To Take Exam</InputLabel>
+                    <Person sx={{ color: 'primary.main', fontSize: 50, mb: -1.5, mt: 1 }} />
+                    <Typography variant="body1" color="primary" sx={{mb: 2}}>Registration Form</Typography>
+                        <Grid container size={12} rowSpacing={3} columnSpacing={2} sx={{ width: '100%' }}>
+                            <FormControl fullWidth>
+                                <TextField
+                                    name="email"
+                                    label="Email Address"
+                                    placeholder='e.g. johndoe@email.com'
+                                    type="email"
+                                    value={email}
+                                    onChange={handleChange}
+                                    variant="outlined"
+                                    disabled={disableFormContent}
+                                    sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
+                                />
+                            </FormControl>
+                            {/* Campus Select */}
+                            <Grid size={{xs: 12, sm: 6}}>
+                                <FormControl fullWidth>
+                                    <InputLabel id="campus-label">Campus To Enroll</InputLabel>
+                                    <Select
+                                        labelId="campus-label"
+                                        name='campus_to_enroll'
+                                        value={selectedCampus}
+                                        onChange={handleCampusChange}
+                                        label="Campus To Enroll"
+                                        variant="outlined"
+                                        required
+                                        inputProps={{
+                                            sx: {
+                                                whiteSpace: "normal !important"
+                                            }
+                                        }}
+                                        sx={{ borderRadius: 2 }}
+                                    >
+                                    {campuses.map((campus) => (
+                                        <MenuItem key={campus} value={campus} sx={{whiteSpace: "normal"}}>
+                                        {campus}
+                                        </MenuItem>
+                                    ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            {/* Campus Select */}
+                            <Grid size={{xs: 12, sm: 6}}>
+                                <FormControl fullWidth>
+                                        <InputLabel id="campus-t-take-exam-label">Campus To Take Exam</InputLabel>
+                                        <Select
+                                            labelId="campus-t-take-exam-label"
+                                            name='campus_to_take_exam'
+                                            value={selectedCampusToTakeExam}
+                                            onChange={handleCampusToTakeExamChange}
+                                            label="Campus To Take Exam"
+                                            variant="outlined"
+                                            required
+                                        sx={{ borderRadius: 2 }}
+                                        inputProps={{
+                                            sx: {
+                                                whiteSpace: "normal !important"
+                                            }
+                                        }}
+                                        >
+                                        {campuses.map((campus) => (
+                                            <MenuItem key={campus} value={campus} sx={{whiteSpace: "normal"}}>
+                                            {campus}
+                                            </MenuItem>
+                                        ))}
+                                        </Select>
+                                    </FormControl>
+                            </Grid>
+                            {/* College Select */}
+                            <FormControl fullWidth disabled={!selectedCampus}>
+                                <InputLabel id="college-label">College</InputLabel>
                                 <Select
-                                    labelId="campus-t-take-exam-label"
-                                    name='campus_to_take_exam'
-                                    value={selectedCampusToTakeExam}
-                                    onChange={handleCampusToTakeExamChange}
-                                    label="Campus To Take Exam"
+                                    labelId="college-label"
+                                    value={selectedCollege}
+                                    onChange={handleCollegeChange}
+                                    label="College"
                                     variant="outlined"
                                     required
-                                sx={{ borderRadius: 2 }}
-                                inputProps={{
-                                    sx: {
-                                        whiteSpace: "normal !important"
-                                    }
-                                }}
+                                    inputProps={{
+                                        sx: {
+                                            whiteSpace: "normal !important"
+                                        }
+                                    }}
+                                    sx={{ borderRadius: 2 }}
                                 >
-                                {campuses.map((campus) => (
-                                    <MenuItem key={campus} value={campus} sx={{whiteSpace: "normal"}}>
-                                    {campus}
+                                {colleges.map((college) => (
+                                    <MenuItem key={college.college_code} value={college.college_code} sx={{whiteSpace: "normal"}}>
+                                    {college.college_description}
                                     </MenuItem>
                                 ))}
                                 </Select>
+                                <TextField
+                                    name="college_description"
+                                    value={selectedCollegeDescription}
+                                    variant="standard"
+                                    sx={{ display: 'none' }}
+                                />
                             </FormControl>
-                        {/* College Select */}
-                        <FormControl fullWidth margin="dense" disabled={!selectedCampus}>
-                            <InputLabel id="college-label">College</InputLabel>
-                            <Select
-                                labelId="college-label"
-                                value={selectedCollege}
-                                onChange={handleCollegeChange}
-                                label="College"
-                                variant="outlined"
-                                required
-                                inputProps={{
-                                    sx: {
-                                        whiteSpace: "normal !important"
-                                    }
-                                }}
-                                sx={{ borderRadius: 2 }}
-                            >
-                            {colleges.map((college) => (
-                                <MenuItem key={college.college_code} value={college.college_code} sx={{whiteSpace: "normal"}}>
-                                {college.college_description}
-                                </MenuItem>
-                            ))}
-                            </Select>
-                            <TextField
-                                name="college_description"
-                                value={selectedCollegeDescription}
-                                variant="standard"
-                                sx={{ display: 'none' }}
-                            />
-                        </FormControl>
-
-                        {/* Course Select */}
-                        <FormControl fullWidth margin="dense" disabled={!selectedCollege}>
-                            <InputLabel id="course-label">Course</InputLabel>
-                            <Select
-                                labelId="course-label"
-                                value={selectedCourse}
-                                onChange={handleCourseChange}
-                                label="Course"
-                                variant="outlined"
-                                required
-                                sx={{ borderRadius: 2 }}
-                            >
-                            {courses.map((course) => (
-                                <MenuItem key={course.course_code} value={course.course_code}>
-                                {course.course_description}
-                                </MenuItem>
-                            ))}
-                            </Select>
-                            <TextField
-                                name="course_description"
-                                value={selectCourseDescription}
-                                variant="outlined"
-                                sx={{ display: 'none' }}
-                            />
-                        </FormControl>
-                        <FormControl fullWidth margin='dense'>
-                        {/* <Button 
-                        type='submit'
-                        variant="outlined" 
-                        color="primary" 
-                        disabled={disableFormContent || !email || !selectedCampus || !selectedCollege || !selectedCourse || loadingButton} 
-                        fullWidth>
-                            Register
-                        </Button> */}
-                        <LoadingButton
-                            type="submit" // Assigning the type property
-                            variant="contained"
+                            {/* Course Select */}
+                            <FormControl fullWidth disabled={!selectedCollege}>
+                                <InputLabel id="course-label">Course</InputLabel>
+                                <Select
+                                    labelId="course-label"
+                                    value={selectedCourse}
+                                    onChange={handleCourseChange}
+                                    label="Course"
+                                    variant="outlined"
+                                    required
+                                    sx={{ borderRadius: 2 }}
+                                >
+                                {courses.map((course) => (
+                                    <MenuItem key={course.course_code} value={course.course_code}>
+                                    {course.course_description}
+                                    </MenuItem>
+                                ))}
+                                </Select>
+                                <TextField
+                                    name="course_description"
+                                    value={selectCourseDescription}
+                                    variant="outlined"
+                                    sx={{ display: 'none' }}
+                                />
+                            </FormControl>
+                            <FormControl fullWidth>
+                            {/* <Button
+                            type='submit'
+                            variant="outlined"
                             color="primary"
-                            loading={loadingButton}
-                            disabled={disableButton}
-                            sx={{ py: 1.75, pt: 2, color: "white", borderRadius: 2 }}
-                        >
-                            {loadingButton ? 'Registering...' : 'Register'}
-                        </LoadingButton>
-                        </FormControl>
+                            disabled={disableFormContent || !email || !selectedCampus || !selectedCollege || !selectedCourse || loadingButton}
+                            fullWidth>
+                                Register
+                            </Button> */}
+                            <LoadingButton
+                                type="submit" // Assigning the type property
+                                variant="contained"
+                                color="primary"
+                                loading={loadingButton}
+                                disabled={disableButton}
+                                sx={{ py: 1.75, pt: 2, color: "white", borderRadius: 2 }}
+                            >
+                                {loadingButton ? 'Registering...' : 'Register'}
+                            </LoadingButton>
+                            </FormControl>
+                        </Grid>
                     </Box>
                 </Paper>
             </Box>
