@@ -1,5 +1,6 @@
 import { House, People } from '@mui/icons-material'
 import { Box, CircularProgress, FormControl,  InputLabel, MenuItem, Paper, Select, Typography, TextField, SelectChangeEvent } from '@mui/material'
+import Grid from '@mui/material/Grid2'
 import React from 'react'
 import { HomeAndFamilyBackgroundType } from './type'
 import { useNavigate, useParams } from 'react-router'
@@ -51,154 +52,183 @@ const HomeAndFamilyBackground = () => {
       <React.Suspense fallback={<CircularProgress />}>
             <Box
                   sx={{ 
-                      display: 'flex', 
-                      flexDirection: 'column',
-                      justifyContent: 'center', 
-                      alignItems: 'center', 
-                      height: '100%',
-                      padding: '1rem',
-                      width: { xs: '320px', md: '678px'},
-                      gap: 1
-                  }}
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    justifyContent: 'center', 
+                    alignItems: 'center', 
+                    padding: {xs: 0, sm: 2},
+                    gap: 1,
+                }}
             >
-                <Paper>
+                <Paper sx={{ width: "100%", maxWidth: "1000px", borderRadius: {xs: 0, sm:2}}}>
                     <Box
-                          component="form"
-                          sx={{ 
-                              display: 'flex', 
-                              flexDirection: 'column',
-                              justifyContent: 'center', 
-                              alignItems: 'center', 
-                              width: { xs: '320px', md: '678px'},
-                              padding: '1rem',
-                              gap: 1
-                          }}
-                          onSubmit={handleSubmit}
+                        component="form"
+                        sx={{ 
+                            display: 'flex', 
+                            flexDirection: 'column',
+                            justifyContent: 'center', 
+                            alignItems: 'center',
+                            padding: {xs: 2, sm: 4},
+                            gap: 1,
+                            width: '100%',
+                        }}
+                        onSubmit={handleSubmit}
                     >
                         <Box>
-                            <House />
-                            <People />
+                            <House sx={{ color: 'primary.main', fontSize: 50, mb: -1.5}}/>
+                            <People sx={{ color: 'primary.main', fontSize: 50, mb: -1.5}}/>
                         </Box>
-                        <Typography variant="body1" color="initial">Home and Family Background</Typography>
-                        <FormControl fullWidth>
-                            <TextField
-                                name="no_of_siblings_gainfully_employed"
-                                type='number'
-                                label="Number of Siblings gainfully employed"
-                                value={homeAndFamilyBackground.no_of_siblings_gainfully_employed}
-                                onChange={handleChangeInputNOSGE}
-                                required
-                            />
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <InputLabel id="label-select-who_finances_your_schooling">Who finances your schooling?</InputLabel>
-                            <Select
-                                labelId="label-select-who_finances_your_schooling"
-                                id="select-who_finances_your_schooling"
-                                name="who_finances_your_schooling"
-                                value={homeAndFamilyBackground.who_finances_your_schooling}
-                                onChange={handleChangeSelect}
-                                required
-                            >
-                                <MenuItem value=""></MenuItem>
-                                <MenuItem value="Parents">Parents</MenuItem>
-                                <MenuItem value="Spouse">Spouse</MenuItem>
-                                <MenuItem value="Sibling(s)">Sibling(s)</MenuItem>
-                                <MenuItem value="Relative">Relative</MenuItem>
-                                <MenuItem value="Scholarship">Scholarship</MenuItem>
-                                <MenuItem value="Self-supporting / working student">Self-supporting / working student</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <InputLabel id="label-select-isFourPsBeneficiary">Are you a 4P's Beneficiary?</InputLabel>
-                            <Select
-                                labelId="label-select-is_four_ps_beneficiary"
-                                id="select-is_four_ps_beneficiary"
-                                name="is_four_ps_beneficiary"
-                                value={homeAndFamilyBackground.is_four_ps_beneficiary}
-                                onChange={handleChangeSelect}
-                                required
-                            >
-                                <MenuItem value=""></MenuItem>
-                                <MenuItem value="Yes">Yes</MenuItem>
-                                <MenuItem value="No">No</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <TextField
-                                id="select-four_ps_id_no"
-                                name="four_ps_id_no"
-                                label="If Yes, Please enter your 4P's ID Number"
-                                value={homeAndFamilyBackground.four_ps_id_no}
-                                onChange={handleChangeInput}
-                            />
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <InputLabel id="label-select-isFirstGenStudent">Are you the First person in your family to enter college?</InputLabel>
-                            <Select
-                                labelId="label-select-is_first_gen_student"
-                                id="select-is_first_gen_student"
-                                name="is_first_gen_student"
-                                value={homeAndFamilyBackground.is_first_gen_student}
-                                onChange={handleChangeSelect}
-                                required
-                            >
-                                <MenuItem value=""></MenuItem>
-                                <MenuItem value="Yes">Yes</MenuItem>
-                                <MenuItem value="No">No</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <InputLabel id="label-select-household_monthly_income">Household Monthly Income</InputLabel>
-                            <Select
-                                labelId="label-select-household_monthly_income"
-                                id="select-household_monthly_income"
-                                name="household_monthly_income"
-                                value={homeAndFamilyBackground.household_monthly_income}
-                                onChange={handleChangeSelect}
-                                required
-                            >
-                                <MenuItem value=""></MenuItem>
-                                <MenuItem value="Less than Php 10,957">Less than Php 10,957</MenuItem>
-                                <MenuItem value="Php 10,958 - Php 21,193">Php 10,958 - Php 21,193</MenuItem>
-                                <MenuItem value="Php 21,194 - Php 43,823">Php 21,194 - Php 43,823</MenuItem>
-                                <MenuItem value="Php 43,824 - Php 76,668">Php 43,824 - Php 76,668</MenuItem>
-                                <MenuItem value="Php 76,669 - Php 131,483">Php 76,669 - Php 131,483</MenuItem>
-                                <MenuItem value="Php 131,484 - Php 219,139">Php 131,484 - Php 219,139</MenuItem>
-                                <MenuItem value="Php 219,140 and above">Php 219,140 and above</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <InputLabel id="label-select-nature_of_residence">Nature of residence while attending school</InputLabel>
-                            <Select
-                                labelId="label-select-nature_of_residence"
-                                id="select-nature_of_residence"
-                                name="nature_of_residence"
-                                value={homeAndFamilyBackground.nature_of_residence}
-                                onChange={handleChangeSelect}
-                                required
-                            >
-                                <MenuItem value=""></MenuItem>
-                                <MenuItem value="Family Home">Family Home</MenuItem>
-                                <MenuItem value="Rented Apartment">Rented Apartment</MenuItem>
-                                <MenuItem value="Boarding House">Boarding House</MenuItem>
-                                <MenuItem value="Dorm">Dorm</MenuItem>
-                                <MenuItem value="Rented Room">Rented Room</MenuItem>
-                                <MenuItem value="House of Married Sibling">House of Married Sibling</MenuItem>
-                                <MenuItem value="Relative's House">Relative's House</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <LoadingButton
-                                type="submit" // Assigning the type property
-                                variant="contained"
-                                color="primary"
-                                loading={loading}
-                                disabled={disableButton}
-                            >
-                                {loading ? 'Submitting...' : 'Next'}
-                            </LoadingButton>
-                        </FormControl>
+                        <Typography variant="body1" color="primary" sx={{ mb: 3 }}>Home and Family Background</Typography>
+                        <Grid container size={12} rowSpacing={3} columnSpacing={2} sx={{width: "100%"}}>
+                            <Grid size={{xs: 12, sm: 12, md: 6}}>
+                                <FormControl fullWidth>
+                                    <TextField
+                                        sx={{ '& .MuiInputBase-root': { borderRadius: 2 }}}
+                                        name="no_of_siblings_gainfully_employed"
+                                        type='number'
+                                        label="Number of Siblings gainfully employed"
+                                        value={homeAndFamilyBackground.no_of_siblings_gainfully_employed}
+                                        onChange={handleChangeInputNOSGE}
+                                        required
+                                    />
+                                </FormControl>
+                            </Grid>
+                            <Grid size={{xs: 12, sm: 12, md: 6}}>
+                                <FormControl fullWidth>
+                                    <InputLabel id="label-select-who_finances_your_schooling">Who finances your schooling?</InputLabel>
+                                    <Select
+                                        labelId="label-select-who_finances_your_schooling"
+                                        label="Who finances your schooling?"
+                                        id="select-who_finances_your_schooling"
+                                        name="who_finances_your_schooling"
+                                        value={homeAndFamilyBackground.who_finances_your_schooling}
+                                        onChange={handleChangeSelect}
+                                        required
+                                        sx={{ borderRadius: 2 }}
+                                    >
+                                        <MenuItem value=""></MenuItem>
+                                        <MenuItem value="Parents">Parents</MenuItem>
+                                        <MenuItem value="Spouse">Spouse</MenuItem>
+                                        <MenuItem value="Sibling(s)">Sibling(s)</MenuItem>
+                                        <MenuItem value="Relative">Relative</MenuItem>
+                                        <MenuItem value="Scholarship">Scholarship</MenuItem>
+                                        <MenuItem value="Self-supporting / working student">Self-supporting / working student</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid container size={12}>
+                                <Grid size={"grow"}>
+                                    <FormControl fullWidth>
+                                        <InputLabel id="label-select-isFourPsBeneficiary">Are you a 4P's Beneficiary?</InputLabel>
+                                        <Select
+                                            labelId="label-select-is_four_ps_beneficiary"
+                                            label="Are you a 4P's Beneficiary?"
+                                            id="select-is_four_ps_beneficiary"
+                                            name="is_four_ps_beneficiary"
+                                            value={homeAndFamilyBackground.is_four_ps_beneficiary}
+                                            onChange={handleChangeSelect}
+                                            required
+                                            sx={{ borderRadius: 2 }}
+                                        >
+                                            <MenuItem value=""></MenuItem>
+                                            <MenuItem value="Yes">Yes</MenuItem>
+                                            <MenuItem value="No">No</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                                    <Grid size={{xs: 12, sm: 12, md: 6}}>
+                                        <FormControl fullWidth>
+                                            <TextField
+                                                id="select-four_ps_id_no"
+                                                name="four_ps_id_no"
+                                                label="If Yes, Please enter your 4P's ID Number"
+                                                value={homeAndFamilyBackground.four_ps_id_no}
+                                                onChange={handleChangeInput}
+                                                variant="standard"
+                                                // sx={{ '& .MuiInputBase-root': { borderRadius: 2 }, mt: {xs: -2, sm: 0} }}
+                                                sx={{ '& .MuiInputBase-root': { borderRadius: 2 }, mt: {xs: -2, sm: -2, md: 0}, mb: {xs: 2, sm: 2, md: 0}, mx: {xs: 2, sm: 2, md: 0} }}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                            </Grid>
+                            <Grid size={{xs: 12, sm: 12, md: 7}}>
+                                <FormControl fullWidth>
+                                    <InputLabel id="label-select-isFirstGenStudent">Are you the First person in your family to enter college?</InputLabel>
+                                    <Select
+                                        labelId="label-select-is_first_gen_student"
+                                        label="Are you the First person in your family to enter college?"
+                                        id="select-is_first_gen_student"
+                                        name="is_first_gen_student"
+                                        value={homeAndFamilyBackground.is_first_gen_student}
+                                        onChange={handleChangeSelect}
+                                        required
+                                        sx={{ borderRadius: 2 }}
+                                    >
+                                        <MenuItem value=""></MenuItem>
+                                        <MenuItem value="Yes">Yes</MenuItem>
+                                        <MenuItem value="No">No</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid size={{xs: 12, sm: 12, md: 5}}>
+                                <FormControl fullWidth>
+                                    <InputLabel id="label-select-household_monthly_income">Household Monthly Income</InputLabel>
+                                    <Select
+                                        labelId="label-select-household_monthly_income"
+                                        label="Household Monthly Income"
+                                        id="select-household_monthly_income"
+                                        name="household_monthly_income"
+                                        value={homeAndFamilyBackground.household_monthly_income}
+                                        onChange={handleChangeSelect}
+                                        required
+                                        sx={{ borderRadius: 2 }}
+                                    >
+                                        <MenuItem value=""></MenuItem>
+                                        <MenuItem value="Less than Php 10,957">Less than Php 10,957</MenuItem>
+                                        <MenuItem value="Php 10,958 - Php 21,193">Php 10,958 - Php 21,193</MenuItem>
+                                        <MenuItem value="Php 21,194 - Php 43,823">Php 21,194 - Php 43,823</MenuItem>
+                                        <MenuItem value="Php 43,824 - Php 76,668">Php 43,824 - Php 76,668</MenuItem>
+                                        <MenuItem value="Php 76,669 - Php 131,483">Php 76,669 - Php 131,483</MenuItem>
+                                        <MenuItem value="Php 131,484 - Php 219,139">Php 131,484 - Php 219,139</MenuItem>
+                                        <MenuItem value="Php 219,140 and above">Php 219,140 and above</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <FormControl fullWidth>
+                                <InputLabel id="label-select-nature_of_residence">Nature of residence while attending school</InputLabel>
+                                <Select
+                                    labelId="label-select-nature_of_residence"
+                                    label="Nature of residence while attending school"
+                                    id="select-nature_of_residence"
+                                    name="nature_of_residence"
+                                    value={homeAndFamilyBackground.nature_of_residence}
+                                    onChange={handleChangeSelect}
+                                    required
+                                    sx={{ borderRadius: 2 }}
+                                >
+                                    <MenuItem value=""></MenuItem>
+                                    <MenuItem value="Family Home">Family Home</MenuItem>
+                                    <MenuItem value="Rented Apartment">Rented Apartment</MenuItem>
+                                    <MenuItem value="Boarding House">Boarding House</MenuItem>
+                                    <MenuItem value="Dorm">Dorm</MenuItem>
+                                    <MenuItem value="Rented Room">Rented Room</MenuItem>
+                                    <MenuItem value="House of Married Sibling">House of Married Sibling</MenuItem>
+                                    <MenuItem value="Relative's House">Relative's House</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <FormControl fullWidth>
+                                <LoadingButton
+                                    type="submit" // Assigning the type property
+                                    variant="contained"
+                                    color="primary"
+                                    loading={loading}
+                                    disabled={disableButton}
+                                    sx={{ py: 1.75, pt: 2, color: "white", borderRadius: 2 }}
+                                >
+                                    {loading ? 'Submitting...' : 'Next'}
+                                </LoadingButton>
+                            </FormControl>
+                        </Grid>
                     </Box>
                 </Paper>
             </Box>
