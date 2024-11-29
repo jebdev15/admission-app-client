@@ -1,5 +1,6 @@
 import { School, Work } from '@mui/icons-material'
 import { Box, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField, Typography } from '@mui/material'
+import Grid from '@mui/material/Grid2'
 import React from 'react'
 import { ParentProfileType } from './type'
 import { useNavigate, useParams } from 'react-router'
@@ -39,116 +40,125 @@ const ParentProfile = () => {
     return (
       <React.Suspense fallback={<CircularProgress />}>
               <Box
-                  sx={{ 
-                      display: 'flex', 
-                      flexDirection: 'column',
-                      justifyContent: 'center', 
-                      alignItems: 'center', 
-                      height: '100%',
-                      padding: '1rem',
-                      width: { xs: '320px', md: '678px'},
-                      gap: 1
-                  }}
+                sx={{ 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    justifyContent: 'center', 
+                    alignItems: 'center', 
+                    padding: {xs: 0, sm: 2},
+                    gap: 1,
+                }}
               >
-                  <Paper>
+                  <Paper sx={{ width: "100%", maxWidth: "1000px", borderRadius: {xs: 0, sm:2}}}>
                       <Box
                           component="form"
                           sx={{ 
-                              display: 'flex', 
-                              flexDirection: 'column',
-                              justifyContent: 'center', 
-                              alignItems: 'center', 
-                              width: { xs: '320px', md: '678px'},
-                              padding: '1rem',
-                              gap: 1
-                            }}
+                            display: 'flex', 
+                            flexDirection: 'column',
+                            justifyContent: 'center', 
+                            alignItems: 'center',
+                            padding: {xs: 2, sm: 4},
+                            gap: 1,
+                            width: '100%',
+                        }}
                             onSubmit={handleSubmit}
                     >
                         <Box>
-                            <School />
-                            <Work />
+                            <School sx={{ color: 'primary.main', fontSize: 50, mb: -1.5}} />
+                            <Work sx={{ color: 'primary.main', fontSize: 50, mb: -1.5}} />
                         </Box>
-                      <Typography variant="body1" color="initial">Parent Profile</Typography>
-                        <FormControl fullWidth>
-                            <InputLabel id="label-select-father_highest_educational_attainment">Father's Highest Educational Attainment</InputLabel>
-                            <Select
-                                labelId="label-select-father_highest_educational_attainment"
-                                id="select-father_highest_educational_attainment"
-                                name="father_highest_educational_attainment"
-                                value={parentProfile.father_highest_educational_attainment}
-                                onChange={handleChangeSelect}
-                                required
-                            >
-                            <MenuItem value=""></MenuItem>
-                            <MenuItem value="Post Graduate">Post Graduate</MenuItem>
-                            <MenuItem value="College">College</MenuItem>
-                            <MenuItem value="High School">High School</MenuItem>
-                            <MenuItem value="Elementary">Elementary</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <TextField
-                                id="father_occupation"
-                                name="father_occupation"
-                                label="Father's Occupation"
-                                value={parentProfile.father_occupation}
-                                onChange={handleChange}
-                                required
-                            />
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <InputLabel id="label-select-mother_highest_educational_attainment">Mother's Highest Educational Attainment</InputLabel>
-                            <Select
-                                labelId="label-select-mother_highest_educational_attainment"
-                                id="select-mother_highest_educational_attainment"
-                                name="mother_highest_educational_attainment"
-                                value={parentProfile.mother_highest_educational_attainment}
-                                onChange={handleChangeSelect}
-                                required
-                            >
-                            <MenuItem value=""></MenuItem>
-                            <MenuItem value="Post Graduate">Post Graduate</MenuItem>
-                            <MenuItem value="College">College</MenuItem>
-                            <MenuItem value="High School">High School</MenuItem>
-                            <MenuItem value="Elementary">Elementary</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <TextField
-                                id="mother_occupation"
-                                name="mother_occupation"
-                                label="Mother's Occupation"
-                                value={parentProfile.mother_occupation}
-                                onChange={handleChange}
-                                required
-                            />
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <InputLabel id="label-select-withGuardian">Are you living with a Guardian</InputLabel>
-                            <Select
-                                labelId="label-select-is_living_with_guardian"
-                                id="select-is_living_with_guardian"
-                                name="is_living_with_guardian"
-                                value={parentProfile.is_living_with_guardian}
-                                onChange={handleChangeSelect}
-                                required
-                            >
+                      <Typography variant="body1" color="primary" sx={{ mb: 2 }}>Parent Profile</Typography>
+                        <Grid container size={12} rowSpacing={3} columnSpacing={2} sx={{width: "100%"}}>
+                            <FormControl fullWidth>
+                                <InputLabel id="label-select-father_highest_educational_attainment">Father's Highest Educational Attainment</InputLabel>
+                                <Select
+                                    labelId="label-select-father_highest_educational_attainment"
+                                    label="Father's Highest Educational Attainment"
+                                    id="select-father_highest_educational_attainment"
+                                    name="father_highest_educational_attainment"
+                                    value={parentProfile.father_highest_educational_attainment}
+                                    onChange={handleChangeSelect}
+                                    required
+                                    sx={{ borderRadius: 2 }}
+                                >
                                 <MenuItem value=""></MenuItem>
-                                <MenuItem value="Yes">Yes</MenuItem>
-                                <MenuItem value="No">No</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <LoadingButton
-                                type="submit" // Assigning the type property
-                                variant="contained"
-                                color="primary"
-                                loading={loading}
-                                disabled={disableButton}
-                            >
-                                {loading ? 'Submitting...' : 'Next'}
-                            </LoadingButton>
-                        </FormControl>
+                                <MenuItem value="Post Graduate">Post Graduate</MenuItem>
+                                <MenuItem value="College">College</MenuItem>
+                                <MenuItem value="High School">High School</MenuItem>
+                                <MenuItem value="Elementary">Elementary</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <FormControl fullWidth>
+                                <TextField
+                                    id="father_occupation"
+                                    name="father_occupation"
+                                    label="Father's Occupation"
+                                    value={parentProfile.father_occupation}
+                                    onChange={handleChange}
+                                    required
+                                    sx={{ '& .MuiInputBase-root': { borderRadius: 2 }}}
+                                />
+                            </FormControl>
+                            <FormControl fullWidth>
+                                <InputLabel id="label-select-mother_highest_educational_attainment">Mother's Highest Educational Attainment</InputLabel>
+                                <Select
+                                    labelId="label-select-mother_highest_educational_attainment"
+                                    label="Mother's Highest Educational Attainment"
+                                    id="select-mother_highest_educational_attainment"
+                                    name="mother_highest_educational_attainment"
+                                    value={parentProfile.mother_highest_educational_attainment}
+                                    onChange={handleChangeSelect}
+                                    required
+                                    sx={{ borderRadius: 2 }}
+                                >
+                                <MenuItem value=""></MenuItem>
+                                <MenuItem value="Post Graduate">Post Graduate</MenuItem>
+                                <MenuItem value="College">College</MenuItem>
+                                <MenuItem value="High School">High School</MenuItem>
+                                <MenuItem value="Elementary">Elementary</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <FormControl fullWidth>
+                                <TextField
+                                    id="mother_occupation"
+                                    name="mother_occupation"
+                                    label="Mother's Occupation"
+                                    value={parentProfile.mother_occupation}
+                                    onChange={handleChange}
+                                    required
+                                    sx={{ '& .MuiInputBase-root': { borderRadius: 2 }}}
+                                />
+                            </FormControl>
+                            <FormControl fullWidth>
+                                <InputLabel id="label-select-withGuardian">Are you living with a Guardian</InputLabel>
+                                <Select
+                                    labelId="label-select-is_living_with_guardian"
+                                    label="Are you living with a Guardian"
+                                    id="select-is_living_with_guardian"
+                                    name="is_living_with_guardian"
+                                    value={parentProfile.is_living_with_guardian}
+                                    onChange={handleChangeSelect}
+                                    required
+                                    sx={{ borderRadius: 2 }}
+                                >
+                                    <MenuItem value=""></MenuItem>
+                                    <MenuItem value="Yes">Yes</MenuItem>
+                                    <MenuItem value="No">No</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <FormControl fullWidth>
+                                <LoadingButton
+                                    type="submit" // Assigning the type property
+                                    variant="contained"
+                                    color="primary"
+                                    loading={loading}
+                                    disabled={disableButton}
+                                    sx={{ py: 1.75, pt: 2, color: "white", borderRadius: 2 }}
+                                >
+                                    {loading ? 'Submitting...' : 'Next'}
+                                </LoadingButton>
+                            </FormControl>
+                        </Grid>
                       </Box>
                   </Paper>
               </Box>
