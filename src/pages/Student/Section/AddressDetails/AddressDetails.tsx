@@ -192,10 +192,10 @@ const AddressDetails = () => {
                         onSubmit={submitForm}
                     >
                       <Place sx={{ color: 'primary.main', fontSize: 50, mb: -1.5}} />
-                      <Typography variant="body1" color="primary" sx={{ mb: 2 }}>Address Details</Typography>
-                      <Typography variant="h6" color="initial" textAlign='center' sx={{ mb: 1 }}>Home Address</Typography>
+                      <Typography variant="body1" color="primary">Address Details</Typography>
                       <Grid container rowSpacing={3} columnSpacing={2} sx={{ width: '100%' }}>
-                      <Grid>
+                      <Typography variant="h6" color="initial" textAlign='center' sx={{ width: '100%', mt: 3 }}>Home Address</Typography>
+                      <Grid size={{ xs: 12 }}>
                           <FormControl fullWidth>
                                 <InputLabel id="label-select-region">Region</InputLabel>
                                 <Select
@@ -216,7 +216,7 @@ const AddressDetails = () => {
                                 </Select>
                             </FormControl>
                       </Grid>
-                        <Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}>
                             <FormControl fullWidth>
                                 <InputLabel id="label-select-province">Province</InputLabel>
                                 <Select
@@ -237,7 +237,7 @@ const AddressDetails = () => {
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}>
                             <FormControl fullWidth>
                                 <InputLabel id="label-select-city">City</InputLabel>
                                 <Select
@@ -258,7 +258,7 @@ const AddressDetails = () => {
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}>
                             <FormControl fullWidth>
                                 <InputLabel id="label-select-barangay">Barangay</InputLabel>
                                 <Select
@@ -279,7 +279,7 @@ const AddressDetails = () => {
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}>
                             <FormControl fullWidth>
                                 <TextField
                                     id="textfield-street"
@@ -291,16 +291,17 @@ const AddressDetails = () => {
                                 />
                             </FormControl>
                         </Grid>
-                      </Grid>
                         <FormControl fullWidth>
                             <InputLabel id="label-select-isSameAsHomeAddress">Current Address</InputLabel>
                             <Select
                                 labelId="label-select-isSameAsHomeAddress"
+                                label="Current Address"
                                 id="select-isSameAsHomeAddress"
                                 name="is_same_as_home_address"
                                 value={addressDetails.is_same_as_home_address}
                                 onChange={handleChange}
                                 required
+                                sx={{ borderRadius: 2 }}
                             >
                             <MenuItem value=""></MenuItem>
                             <MenuItem value="Same as Home Address">Same as Home Address</MenuItem>
@@ -309,17 +310,18 @@ const AddressDetails = () => {
                         </FormControl>
                         { addressDetails.is_same_as_home_address === 'Other' && (
                             <>
-                            <Box sx={{ width: '100%', backgroundColor: 'background.paper' }}>
-                                <Typography variant="h6" color="initial" textAlign='center'>Current Address</Typography>
+                                <Typography variant="h6" color="initial" textAlign='center' sx={{ width: '100%', mt: 3 }}>Current Address</Typography>
                                 <FormControl fullWidth>
                                     <InputLabel id="label-select-current_address_region_code">Region</InputLabel>
                                     <Select
                                         labelId="label-select-current_address_region_code"
+                                        label="Region"
                                         id="select-current_address_region_code"
                                         name="current_address_region_code"
                                         value={addressDetails.current_address_region_code}
                                         onChange={handleChange}
                                         required
+                                            sx={{ borderRadius: 2 }}
                                     >
                                     <MenuItem value=""></MenuItem>
                                     {currentAddress.regions.length > 0 && currentAddress.regions.map((region) => (
@@ -327,64 +329,78 @@ const AddressDetails = () => {
                                     ))}
                                     </Select>
                                 </FormControl>
-                                <FormControl fullWidth>
-                                <InputLabel id="label-select-current_address_province_code">Province</InputLabel>
-                                <Select
-                                    labelId="label-select-current_address_province_code"
-                                    id="select-current_address_province_code"
-                                    name="current_address_province_code"
-                                    value={addressDetails.current_address_province_code}
-                                    onChange={handleChange}
-                                    required={filteredCurrentAddressProvinces.length > 0}
-                                >
-                                <MenuItem value=""></MenuItem>
-                                {filteredCurrentAddressProvinces.length > 0 && filteredCurrentAddressProvinces.map((province) => (
-                                    <MenuItem key={province.code} value={province.code}>{province.name}</MenuItem>
-                                ))}
-                                </Select>
-                                </FormControl>
-                                <FormControl fullWidth>
-                                    <InputLabel id="label-select-current_address_city_code">City</InputLabel>
+                                <Grid size={{xs: 12, sm: 6}}>
+                                    <FormControl fullWidth>
+                                    <InputLabel id="label-select-current_address_province_code">Province</InputLabel>
                                     <Select
-                                        labelId="label-select-current_address_city_code"
-                                        id="select-current_address_city_code"
-                                        name="current_address_city_code"
-                                        value={addressDetails.current_address_city_code}
+                                        labelId="label-select-current_address_province_code"
+                                        label="Province"
+                                        id="select-current_address_province_code"
+                                        name="current_address_province_code"
+                                        value={addressDetails.current_address_province_code}
                                         onChange={handleChange}
-                                        required={filteredCurrentAddressCities.length > 0}
+                                        required={filteredCurrentAddressProvinces.length > 0}
+                                            sx={{ borderRadius: 2 }}
                                     >
                                     <MenuItem value=""></MenuItem>
-                                    {filteredCurrentAddressCities.length > 0 && filteredCurrentAddressCities.map((city) => (
-                                        <MenuItem key={city.code} value={city.code}>{city.name}</MenuItem>
+                                    {filteredCurrentAddressProvinces.length > 0 && filteredCurrentAddressProvinces.map((province) => (
+                                        <MenuItem key={province.code} value={province.code}>{province.name}</MenuItem>
                                     ))}
                                     </Select>
-                                </FormControl>
-                                <FormControl fullWidth>
-                                    <InputLabel id="label-select-current_address_barangay_code">Barangay</InputLabel>
-                                    <Select
-                                        labelId="label-select-current_address_barangay_code"
-                                        id="select-current_address_barangay_code"
-                                        name="current_address_barangay_code"
-                                        value={addressDetails.current_address_barangay_code}
-                                        onChange={handleChange}
-                                        required={filteredCurrentAddressBarangays.length > 0}
-                                    >
+                                    </FormControl>
+                                </Grid>
+                                <Grid size={{xs: 12, sm: 6}}>
+                                    <FormControl fullWidth>
+                                        <InputLabel id="label-select-current_address_city_code">City</InputLabel>
+                                        <Select
+                                            labelId="label-select-current_address_city_code"
+                                            label="City"
+                                            id="select-current_address_city_code"
+                                            name="current_address_city_code"
+                                            value={addressDetails.current_address_city_code}
+                                            onChange={handleChange}
+                                            required={filteredCurrentAddressCities.length > 0}
+                                            sx={{ borderRadius: 2 }}
+                                        >
                                         <MenuItem value=""></MenuItem>
-                                        {filteredCurrentAddressBarangays.length > 0 && filteredCurrentAddressBarangays.map((barangay: { code: string; name: string; }) => (
-                                            <MenuItem key={barangay.code} value={barangay.code}>{barangay.name}</MenuItem>
+                                        {filteredCurrentAddressCities.length > 0 && filteredCurrentAddressCities.map((city) => (
+                                            <MenuItem key={city.code} value={city.code}>{city.name}</MenuItem>
                                         ))}
-                                    </Select>
-                                </FormControl>
-                                <FormControl fullWidth>
-                                    <TextField
-                                        id="textfield-street"
-                                        label="Street"
-                                        name="current_address_street"
-                                        value={addressDetails.current_address_street}
-                                        onChange={handleChangeInput}
-                                    />
-                                </FormControl>
-                            </Box>
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                                <Grid size={{xs: 12, sm: 6}}>
+                                    <FormControl fullWidth>
+                                        <InputLabel id="label-select-current_address_barangay_code">Barangay</InputLabel>
+                                        <Select
+                                            labelId="label-select-current_address_barangay_code"
+                                            label="Barangay"
+                                            id="select-current_address_barangay_code"
+                                            name="current_address_barangay_code"
+                                            value={addressDetails.current_address_barangay_code}
+                                            onChange={handleChange}
+                                            required={filteredCurrentAddressBarangays.length > 0}
+                                            sx={{ borderRadius: 2 }}
+                                        >
+                                            <MenuItem value=""></MenuItem>
+                                            {filteredCurrentAddressBarangays.length > 0 && filteredCurrentAddressBarangays.map((barangay: { code: string; name: string; }) => (
+                                                <MenuItem key={barangay.code} value={barangay.code}>{barangay.name}</MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                                <Grid size={{xs: 12, sm: 6}}>
+                                    <FormControl fullWidth>
+                                        <TextField
+                                            id="textfield-street"
+                                            label="Street"
+                                            name="current_address_street"
+                                            value={addressDetails.current_address_street}
+                                            onChange={handleChangeInput}
+                                            sx={{ '& .MuiInputBase-root': { borderRadius: 2 }}}
+                                        />
+                                    </FormControl>
+                                </Grid>
                             </>
                         )}
                         <FormControl fullWidth>
@@ -394,10 +410,12 @@ const AddressDetails = () => {
                                     color="primary"
                                     loading={loading}
                                     disabled={disableButton}
+                                sx={{ py: 1.75, pt: 2, color: "white", borderRadius: 2 }}
                                 >
                                   {loading ? 'Submitting...' : 'Next'}
                             </LoadingButton>
                         </FormControl>
+                      </Grid>
                       </Box>
                   </Paper>
               </Box>
