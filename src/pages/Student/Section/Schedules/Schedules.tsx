@@ -1,5 +1,6 @@
 import { Schedule } from '@mui/icons-material'
 import { Box, CircularProgress, FormControl, List, ListItem, ListItemButton, ListItemText, Paper, Typography } from '@mui/material'
+import Grid from '@mui/material/Grid2'
 import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
@@ -139,103 +140,101 @@ const Schedules = () => {
                         flexDirection: 'column',
                         justifyContent: 'center', 
                         alignItems: 'center', 
-                        height: '100%',
-                        padding: '1rem',
-                        width: { xs: '100%', md: '678px'},
-                        gap: 1
+                        padding: {xs: 0, sm: 2},
+                        gap: 1,
                     }}
                 >
-                    <Paper sx={{ width: { xs: '100%', md: '678px'}, }}>
+                    <Paper sx={{ width: "100%", maxWidth: "1000px", borderRadius: {xs: 0, sm:2}}}>
                         <Box
                             sx={{ 
                                 display: 'flex', 
                                 flexDirection: 'column',
                                 justifyContent: 'center', 
-                                alignItems: 'center', 
-                                padding: '1rem',
-                                gap: 1
+                                alignItems: 'center',
+                                padding: {xs: 2, sm: 4},
+                                gap: 1,
+                                width: '100%',
                             }}
                             component={'form'}
                             onSubmit={handleSubmit}
                         >
-                            <Schedule />
-                            <Typography variant="body1" color="initial">Schedules</Typography>
+                            <Schedule sx={{ color: 'primary.main', fontSize: 50, mb: -1}}/>
+                            <Typography variant="body1" color="primary" sx={{ mb: 3 }}>Schedules</Typography>
                             {/* <Alert severity="info">Slots Remaining isn't real-time</Alert> */}
-                            <Box
-                                sx={{ 
-                                    display: { xs: 'column', md: 'flex' },
-                                    width: '100%',
-                                 }}
-                            >
-                                <Paper sx={{ flexGrow: 1 }}>
-                                    <Box
-                                        sx={{ 
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            width: '100%',
-                                        }}
-                                    >
-
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <DemoContainer components={['DateCalendar']}>
-                                            <DemoItem label="Available Dates" sx={{ textAlign: 'center' }}>
-                                                <DateCalendar
-                                                    key={calendarKey} // Force re-render on key change
-                                                    onChange={handleDateChange} // Handle date change
-                                                    minDate={dayjs('2025-02-03')}
-                                                    maxDate={dayjs('2025-03-31')}
-                                                    shouldDisableDate={(date: Dayjs) => !isAvailableDate(date)} // Disable dates not in availableDates
-                                                    sx={{
-                                                    '& .MuiPickersDay-root': {
-                                                        backgroundColor: (date: any) =>
-                                                            isAvailableDate(dayjs(date)) ? 'rgba(0, 128, 0, 0.2)' : 'inherit',
-                                                    },
+                            <Grid container rowSpacing={3} columnSpacing={2} width={'100%'}>
+                                    <Grid size={{xs: 12, md: 7}}>
+                                        <Paper variant='outlined' sx={{ flexGrow: 1, borderRadius: 2 }}>
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    width: '100%',
                                                 }}
-                                                />
-                                            </DemoItem>
-                                        </DemoContainer>
-                                    </LocalizationProvider>
-                                    </Box>
-                                </Paper>
-                                    <Paper sx={{ flexGrow: 1 }}>
-                                        <Box sx={{ mt: 2 }}>
-                                            <Typography variant="body2" color="initial" textAlign={'center'}>Available Times:</Typography>
-                                            <List>
-                                                {availableTimes?.length > 0 && availableTimes.map((schedule, index) => (
-                                                    <ListItem key={index} disablePadding>
-                                                        <ListItemButton
+                                            >
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                <DemoContainer components={['DateCalendar']} sx={{py: 5, pb: 0}}>
+                                                    <DemoItem label="Available Dates" sx={{ textAlign: 'center' }}>
+                                                        <DateCalendar
+                                                            key={calendarKey} // Force re-render on key change
+                                                            onChange={handleDateChange} // Handle date change
+                                                            minDate={dayjs('2025-02-03')}
+                                                            maxDate={dayjs('2025-03-31')}
+                                                            shouldDisableDate={(date: Dayjs) => !isAvailableDate(date)} // Disable dates not in availableDates
                                                             sx={{
-                                                                backgroundColor: selectedTime === schedule.timeRange ? 'green' : 'initial',
-                                                                color: selectedTime === schedule.timeRange ? 'white' : 'initial',
-                                                                '&:hover': {
-                                                                    backgroundColor: selectedTime === schedule.timeRange ? 'darkgreen' : 'lightgray',
-                                                                },
-                                                                borderRadius: 1,
-                                                            }}
-                                                            onClick={() => setSelectedTime(schedule.timeRange)}
-                                                        >
-                                                            <ListItemText
-                                                                primary={schedule.timeRange}
-                                                                secondary={`Slots Remaining: ${schedule.slotsRemaining}`}
-                                                            />
-                                                        </ListItemButton>
-                                                    </ListItem>
-                                                ))}
-                                            </List>
-                                        </Box>
-                                    </Paper>
-                            </Box>
-                            <FormControl fullWidth>
-                                <LoadingButton
-                                    type="submit" // Assigning the type property
-                                    variant="contained"
-                                    color="primary"
-                                    loading={loading}
-                                    disabled={disableButtonSubmit}
-                                >
-                                    {loading ? 'Submitting...' : 'Submit'}
-                                </LoadingButton>
-                            </FormControl>
+                                                            '& .MuiPickersDay-root': {
+                                                                backgroundColor: (date: any) =>
+                                                                    isAvailableDate(dayjs(date)) ? 'primary.main' : 'inherit',
+                                                            },
+                                                        }}
+                                                        />
+                                                    </DemoItem>
+                                                </DemoContainer>
+                                            </LocalizationProvider>
+                                            </Box>
+                                        </Paper>
+                                    </Grid>
+                                    <Grid size={{xs: 12, md: 5}}>
+                                        <Paper variant='outlined' sx={{ flexGrow: 1, height: '100%', py: 5, px: 2, pb: 2, borderRadius: 2 }}>
+                                            <Box sx={{ height: '100%' }}>
+                                                <Typography variant="body2" color="initial" textAlign={'center'}>Available Times:</Typography>
+                                                <List>
+                                                    {availableTimes?.length > 0 && availableTimes.map((schedule, index) => (
+                                                        <ListItem key={index} disablePadding>
+                                                            <ListItemButton
+                                                                sx={{
+                                                                    backgroundColor: selectedTime === schedule.timeRange ? 'green' : 'initial',
+                                                                    color: selectedTime === schedule.timeRange ? 'white' : 'initial',
+                                                                    '&:hover': {
+                                                                        backgroundColor: selectedTime === schedule.timeRange ? 'darkgreen' : 'lightgray',
+                                                                    },
+                                                                    borderRadius: 2,
+                                                                }}
+                                                                onClick={() => setSelectedTime(schedule.timeRange)}
+                                                            >
+                                                                <ListItemText
+                                                                    primary={schedule.timeRange}
+                                                                    secondary={<Typography variant="body2" sx={{ color: selectedTime === schedule.timeRange ? 'lightgray' : 'gray', }}>Slots Remaining: {schedule.slotsRemaining}</Typography>}
+                                                                />
+                                                            </ListItemButton>
+                                                        </ListItem>
+                                                    ))}
+                                                </List>
+                                            </Box>
+                                        </Paper>
+                                    </Grid>
+                                <FormControl fullWidth>
+                                    <LoadingButton
+                                        type="submit" // Assigning the type property
+                                        variant="contained"
+                                        color="primary"
+                                        loading={loading}
+                                        disabled={disableButtonSubmit}
+                                        sx={{ py: 1.75, pt: 2, color: "white", borderRadius: 2 }}
+                                    >
+                                        {loading ? 'Submitting...' : 'Submit'}
+                                    </LoadingButton>
+                                </FormControl>
+                            </Grid>
                         </Box>
                     </Paper>
                 </Box>

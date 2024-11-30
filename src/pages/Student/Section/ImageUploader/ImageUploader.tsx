@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, Typography, Card, CardMedia, Alert, Paper, FormControl, Divider } from "@mui/material";
+import { Box, Button, Typography, Card, CardMedia, Alert, Paper, FormControl, Divider, AlertTitle, List, ListItem } from "@mui/material";
 import { PhotoCamera } from "@mui/icons-material";
 import imageCompression from "browser-image-compression";
 import { LoadingButton } from "@mui/lab";
@@ -114,71 +114,88 @@ const ImageUploader: React.FC = () => {
   const disableButton = !image;
 
   return (
-    <Paper>
-      <Box
-        sx={{
-          textAlign: "center",
-          mt: 4,
-          p: 2,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          height: 'auto',
-        }}
-        component="form"
-        onSubmit={handleSubmit}
-      >
-        <Typography variant="h4" gutterBottom>
-          Upload an Image (Max: 2 MB)
-        </Typography>
-
-        <Button
-          variant="contained"
-          component="label"
-          startIcon={<PhotoCamera />}
-          sx={{ mb: 2 }}
+    <Box 
+      sx={{ 
+        display: 'flex', 
+        flexDirection: 'column',
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        padding: {xs: 0, sm: 2},
+        gap: 1,
+      }}
+    >
+      <Paper sx={{ width: "100%", maxWidth: "600px", borderRadius: {xs: 0, sm:2}}}>
+        <Box
+          sx={{ 
+              display: 'flex', 
+              flexDirection: 'column',
+              justifyContent: 'center', 
+              alignItems: 'center',
+              padding: {xs: 2, sm: 4},
+              width: '100%',
+          }}
+          component="form"
+          onSubmit={handleSubmit}
         >
-          Upload Image
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            hidden
-          />
-        </Button>
-
-        {error && (
-          <Alert severity="warning" sx={{ mb: 2, maxWidth: 400 }}>
-            {error}
-          </Alert>
-        )}
-
-        {image && (
-          <>
-            <Card sx={{ maxWidth: 300, mt: 2 }}>
-              <CardMedia
-                component="img"
-                image={image}
-                alt="Uploaded"
-                sx={{ borderRadius: "4px" }}
-              />
-            </Card>
-            <Divider sx={{ my: 2 }} />
-            <FormControl fullWidth>
-              <LoadingButton
-                type="submit"
-                variant="contained"
-                color="primary"
-                loading={loading}
-                disabled={disableButton}
-              >
-                {loading ? 'Submitting...' : 'Next'}
-              </LoadingButton>
-            </FormControl>
-          </>
-        )}
-      </Box>
-    </Paper>
+          <Typography variant="h4" gutterBottom textAlign={'center'} sx={{ mb: 0 }}>
+            Upload Your Photo
+          </Typography>
+          <Typography variant="h5" gutterBottom textAlign={'center'} sx={{ mb: 2 }}>
+            (Max: 2 MB)
+          </Typography>
+          <Alert severity="info" sx={{ width: '100%', p: 2, pb: 0, borderRadius: 2, mb: 2 }}>
+            <AlertTitle>Note</AlertTitle>
+            <List sx={{ pt: 0 }}>
+                <ListItem sx={{ pl: 0 }}>Please upload a recent and clear image of yourself. This is required for identity verification as part of the admission process.</ListItem>
+            </List>
+            <Typography variant="caption" color="initial"></Typography>
+          </Alert> 
+          <Button
+            variant="contained"
+            component="label"
+            startIcon={<PhotoCamera />}
+            sx={{ py: 1, pt: 1.3, color: "white", borderRadius: 2 }}
+          >
+            Upload Image
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              hidden
+            />
+          </Button>
+          {error && (
+            <Alert severity="warning" sx={{ mb: 2, maxWidth: 400 }}>
+              {error}
+            </Alert>
+          )}
+          {image && (
+            <>
+              <Card sx={{ maxWidth: 300, mt: 4, borderRadius: 2, overflow: 'hidden', boxShadow: 4 }}>
+                <CardMedia
+                  component="img"
+                  image={image}
+                  alt="Uploaded"
+                />
+              </Card>
+              <Divider sx={{ my: 2 }} />
+              <FormControl fullWidth>
+                <LoadingButton
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  loading={loading}
+                  disabled={disableButton}
+                  sx={{ py: 1.75, pt: 2, color: "white", borderRadius: 2 }}
+                >
+                  {loading ? 'Submitting...' : 'Next'}
+                </LoadingButton>
+              </FormControl>
+            </>
+          )}
+        </Box>
+      </Paper>
+    </Box>
   );
 };
 
