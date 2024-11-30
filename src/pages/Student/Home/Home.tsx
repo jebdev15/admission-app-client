@@ -19,36 +19,29 @@ const Home = () => {
   const { validUUID, forms_status } = useLoaderData() as LoaderData
   const { filledOutForm, setFilledOutForm } = React.useContext(HomeContext)
   const currentForm = () => {
-    if (!filledOutForm.personal_information_status) {
+    if (!forms_status.personal_information_status) {
       return <PersonalInformation />
-    } else if (!filledOutForm.address_detail_status) {
+    } else if (!forms_status.address_detail_status) {
       return <AddressDetails />
-    } else if (!filledOutForm.parent_profile_status) {
+    } else if (!forms_status.parent_profile_status) {
       return <ParentProfile />
-    } else if (!filledOutForm.home_and_family_background_status) {
+    } else if (!forms_status.home_and_family_background_status) {
       return <HomeAndFamilyBackground />
-    } else if (!filledOutForm.health_status) {
+    } else if (!forms_status.health_status) {
       return <Health />
-    } else if (!filledOutForm.image_status) {
+    } else if (!forms_status.image_status) {
       return <Picture />
-    } else if(!filledOutForm.schedule_status) {
+    } else if(!forms_status.schedule_status) {
       return <Schedules />
     } else {
       return <Summary />
     }
   }
   React.useEffect(() => {
-    const normalizedFormStatus = Object.entries(forms_status).reduce(
-      (acc, [key, value]) => ({
-        ...acc,
-        [key]: Number(value), // Convert boolean to number
-      }),
-      {} as typeof filledOutForm
-    );
-  
-    setFilledOutForm(normalizedFormStatus);
-    console.log({validUUID, forms_status, filledOutForm})
-  },[validUUID, forms_status, filledOutForm])
+    if(forms_status) {
+      console.log(forms_status)
+    }
+  },[forms_status])
   return (
     <React.Suspense fallback={<CustomCircularProgress />}>
       <Box
