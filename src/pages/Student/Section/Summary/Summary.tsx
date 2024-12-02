@@ -1,7 +1,7 @@
 import React from 'react'
 import { useParams } from 'react-router'
 import { SummaryService } from '../../../../services/summaryService'
-import { Celebration, Padding } from '@mui/icons-material'
+import { Celebration } from '@mui/icons-material'
 import { Box, Card, CardMedia, CircularProgress, Paper, Typography } from '@mui/material'
 import { FormatDateUtil } from '../../../../utils/formatDate'
 import { VITE_API_URL } from '../../../../constants'
