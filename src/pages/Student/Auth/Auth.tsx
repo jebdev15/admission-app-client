@@ -311,10 +311,15 @@ const Register = () => {
                                     label="Course"
                                     variant="outlined"
                                     required
+                                    inputProps={{
+                                        sx: {
+                                            whiteSpace: "normal !important"
+                                        }
+                                    }}
                                     sx={{ borderRadius: 2 }}
                                 >
                                 {courses.map((course) => (
-                                    <MenuItem key={course.course_code} value={course.course_code}>
+                                    <MenuItem key={course.course_code} value={course.course_code} sx={{whiteSpace: "normal"}}>
                                     {course.course_description}
                                     </MenuItem>
                                 ))}
