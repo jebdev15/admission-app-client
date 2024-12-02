@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 import ErrorPage from '../pages/ErrorPage'
+import HomeErrorPage from '../pages/HomeErrorPage'
 import Home, {loader as HomeLoader} from '../pages/Student/Home/Home'
 import { AuthContextProvider } from '../context/Auth/AuthContext'
 import App from '../App'
@@ -18,7 +19,7 @@ export const router = createBrowserRouter([
         path: '/home/:uuid',
         element: <HomeContextProvider><Home /></HomeContextProvider>,
         loader: HomeLoader,
-        errorElement: <ErrorPage />,
+        errorElement: <HomeErrorPage  />,
     },
     {
         path: "*",
