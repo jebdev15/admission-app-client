@@ -1,7 +1,7 @@
 import React from 'react'
 import { useParams } from 'react-router'
 import { SummaryService } from '../../../../services/summaryService'
-import { Celebration } from '@mui/icons-material'
+import { Celebration, Padding } from '@mui/icons-material'
 import { Box, Card, CardMedia, CircularProgress, Paper, Typography } from '@mui/material'
 import { FormatDateUtil } from '../../../../utils/formatDate'
 import { VITE_API_URL } from '../../../../constants'
@@ -40,46 +40,46 @@ const Summary = () => {
                         flexDirection: 'column',
                         justifyContent: 'center', 
                         alignItems: 'center', 
-                        height: '100%',
-                        padding: '1rem',
-                        width: { xs: '100%', md: '678px'},
-                        gap: 1
+                        padding: {xs: 0, sm: 2},
+                        gap: 1,
                     }}
                 >
-                    <Paper sx={{ width: { xs: '100%', md: '678px'}, }}>
+                    <Paper sx={{ width: "100%", maxWidth: "600px", borderRadius: {xs: 0, sm:2}}}>
                         <Box
                             sx={{ 
                                 display: 'flex', 
                                 flexDirection: 'column',
                                 justifyContent: 'center', 
-                                alignItems: 'center', 
-                                padding: '1rem',
-                                gap: 1
+                                alignItems: 'center',
+                                padding: {xs: 2, sm: 4},
+                                gap: 1,
+                                width: '100%',
                             }}
                         >
-                            <Celebration />
-                            <Typography variant="h6" color="initial" textAlign={'center'}>Thank you for submitting your application!</Typography>
-                            <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                            <Celebration sx={{ color: 'primary.main', fontSize: 50, mb: -1}}/>
+                            <Typography variant="body1" color="primary" align="center" sx={{ mb: 3 }}>Thank you for submitting your application!</Typography>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                                 {imageSrc ? (
                                 <Box 
                                     sx={{ 
                                         display: 'flex', 
                                         justifyContent: 'center', 
-                                        alignItems: 'center' 
+                                        alignItems: 'center', 
+                                        mb: 2,
                                     }}
                                 >
                                     <Card 
                                         sx={{ 
-                                            width: {xs: '100%', md: 300}, 
-                                            height: {xs: '100%', md: 300}, 
-                                            mt: 2 
+                                            width: {xs: '160px'}, 
+                                            height: {xs: 'auto'},
+                                            borderRadius: 2,
+                                            shadow: 0,
                                         }}
                                     >
                                     <CardMedia
                                         component="img"
                                         image={imageSrc}
                                         alt="Image"
-                                        sx={{ borderRadius: "4px" }}
                                         loading="lazy"
                                         height="100%"
                                         width="100%"
@@ -91,14 +91,21 @@ const Summary = () => {
                                         No image available.
                                     </Typography>
                                 )}
-                                <Typography variant="body1" color="initial">Name: {applicantSummaryInfo?.name}</Typography>
-                                <Typography variant="body1" color="initial">Email Address: {applicantSummaryInfo?.email}</Typography>
-                                <Typography variant="body1" color="initial">Campus To Enroll: {applicantSummaryInfo?.campus_to_enroll}</Typography>
-                                <Typography variant="body1" color="initial">Campus To Take Exam: {applicantSummaryInfo?.campus_to_take_exam}</Typography>
-                                <Typography variant="body1" color="initial">College :{applicantSummaryInfo?.college_description}</Typography>
-                                <Typography variant="body1" color="initial">Course/Program :{applicantSummaryInfo?.course_description}</Typography>
-                                <Typography variant="body1" color="initial">Date & Time of Examination</Typography>
-                                <Typography variant="body1" color="initial"> {FormatDateUtil.formatDateOnly(applicantSummaryInfo?.schedule_date)} {applicantSummaryInfo?.schedule_time}</Typography>
+                                <Typography variant="h6" color="initial" align='center'>{applicantSummaryInfo?.name}</Typography>
+                                <Typography variant="body1" color="initial" align='center' sx={{ mb: 2 }}>{applicantSummaryInfo?.email}</Typography>
+                                <fieldset style={{ marginBottom: '1rem', padding: '1rem 1.25rem 1.5rem 1.25rem', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                    <legend style={{padding: '0 0.5rem', margin: '0 -0.5rem'}}>Enrollment Details</legend>
+                                    <Typography variant="h6" color="initial" align='center'>{applicantSummaryInfo?.course_description}</Typography>
+                                    <Typography variant="body1" color="initial" align='center'>{applicantSummaryInfo?.college_description}</Typography>
+                                    <Typography variant="body1" color="initial" align='center'>{applicantSummaryInfo?.campus_to_enroll} Campus</Typography>
+                                </fieldset>
+                                <fieldset style={{ padding: '1rem 1.25rem 1.5rem 1.25rem', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                    <legend style={{padding: '0 0.5rem', margin: '0 -0.5rem'}}>Examination Details</legend>
+                                    <Typography variant="body2" color="initial" align='center' sx={{mb: -1}}>Where:</Typography>
+                                    <Typography variant="h6" color="initial" align='center'>Function Hall, {applicantSummaryInfo?.campus_to_take_exam} Campus</Typography>
+                                    <Typography variant="body2" color="initial" align='center' sx={{mb: -1, mt: 2}}>When:</Typography>
+                                    <Typography variant="h6" color="initial" align='center'>{FormatDateUtil.formatDateOnly(applicantSummaryInfo?.schedule_date)} {applicantSummaryInfo?.schedule_time}</Typography>
+                                </fieldset>
                             </Box>
                         </Box>
                     </Paper>
