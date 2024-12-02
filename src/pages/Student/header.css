@@ -2,12 +2,6 @@
   margin-right: 0.5rem;
 }
 
-.admissionText {
-  & * {
-    /* color: red; */
-  }
-}
-
 .systemName span:first-child:before {
   white-space: nowrap;
   content: "CARLOS HILADO MEMORIAL STATE UNIVERSITY";
