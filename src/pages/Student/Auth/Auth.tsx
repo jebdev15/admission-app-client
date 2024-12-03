@@ -1,6 +1,6 @@
 import React from 'react'
 import { Person } from '@mui/icons-material'
-import { Box, FormControl, Paper, TextField, Typography, Button, Divider, Dialog, DialogTitle, DialogContent, SelectChangeEvent, Select, InputLabel, MenuItem, Alert, AlertTitle, useTheme, List, ListItem } from '@mui/material'
+import { Box, FormControl, Paper, TextField, Typography, Button, Divider, Dialog, DialogTitle, DialogContent, SelectChangeEvent, Select, InputLabel, MenuItem, Alert, AlertTitle, useTheme, List, ListItem, Tooltip } from '@mui/material'
 import Grid from '@mui/material/Grid2'
 import { AuthContext } from '../../../context/Auth/AuthContext'
 import CustomCircularProgress from '../../../components/CustomCircularProgress'
@@ -166,6 +166,9 @@ const Register = () => {
     const disableButton = !email || !selectedCampus || !selectedCollege || !selectedCourse;
     const theme = useTheme();
     const belowMediumScreenSize = useMediaQuery(theme.breakpoints.down('md'));
+    const [tooltipOpen1, setTooltipOpen1] = React.useState(false);
+    const [tooltipOpen2, setTooltipOpen2] = React.useState(false);
+
     return (
         <React.Suspense fallback={<CustomCircularProgress />}>
             <Box
@@ -192,7 +195,8 @@ const Register = () => {
                         }}
                         onSubmit={submitForm}
                     >
-                    <Typography variant={belowMediumScreenSize ? "h6" : "h6" } color="primary" textAlign={'center'} sx={{ mb: 2, mt: {xs: 1, sm: 0} }}>Welcome to<br />CHMSU ADMISSION SYSTEM</Typography>
+                    <Typography variant={belowMediumScreenSize ? "h6" : "h6" } color="primary" textAlign={'center'} sx={{ mb: 0, mt: {xs: 1, sm: 0} }}>Welcome to the CHMSU Admission Portal</Typography>
+                    <Typography variant={belowMediumScreenSize ? "h6" : "h6" } color="primary" textAlign={'center'} sx={{ mb: 2, mt: -1 }}>AY 2025-2026</Typography>
                     <Alert severity="info" sx={{ width: '100%', p: 2, pb: 0, borderRadius: 2 }}>
                         <AlertTitle>Information</AlertTitle>
                         <List sx={{ pt: 0 }}>
@@ -207,7 +211,7 @@ const Register = () => {
                             <FormControl fullWidth>
                                 <TextField
                                     name="email"
-                                    label="Email Address"
+                                    label="Email address"
                                     placeholder='e.g. johndoe@email.com'
                                     type="email"
                                     value={email}
@@ -217,68 +221,14 @@ const Register = () => {
                                     sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
                                 />
                             </FormControl>
-                            {/* Campus Select */}
-                            <Grid size={{xs: 12, sm: 6}}>
-                                <FormControl fullWidth>
-                                    <InputLabel id="campus-label">Campus To Enroll</InputLabel>
-                                    <Select
-                                        labelId="campus-label"
-                                        name='campus_to_enroll'
-                                        value={selectedCampus}
-                                        onChange={handleCampusChange}
-                                        label="Campus To Enroll"
-                                        variant="outlined"
-                                        required
-                                        inputProps={{
-                                            sx: {
-                                                whiteSpace: "normal !important"
-                                            }
-                                        }}
-                                        sx={{ borderRadius: 2 }}
-                                    >
-                                    {campuses.map((campus) => (
-                                        <MenuItem key={campus} value={campus} sx={{whiteSpace: "normal"}}>
-                                        {campus}
-                                        </MenuItem>
-                                    ))}
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            {/* Campus Select */}
-                            <Grid size={{xs: 12, sm: 6}}>
-                                <FormControl fullWidth>
-                                        <InputLabel id="campus-t-take-exam-label">Campus To Take Exam</InputLabel>
-                                        <Select
-                                            labelId="campus-t-take-exam-label"
-                                            name='campus_to_take_exam'
-                                            value={selectedCampusToTakeExam}
-                                            onChange={handleCampusToTakeExamChange}
-                                            label="Campus To Take Exam"
-                                            variant="outlined"
-                                            required
-                                        sx={{ borderRadius: 2 }}
-                                        inputProps={{
-                                            sx: {
-                                                whiteSpace: "normal !important"
-                                            }
-                                        }}
-                                        >
-                                        {campuses.map((campus) => (
-                                            <MenuItem key={campus} value={campus} sx={{whiteSpace: "normal"}}>
-                                            {campus}
-                                            </MenuItem>
-                                        ))}
-                                        </Select>
-                                    </FormControl>
-                            </Grid>
                             {/* College Select */}
                             <FormControl fullWidth disabled={!selectedCampus}>
-                                <InputLabel id="college-label">College</InputLabel>
+                                <InputLabel id="college-label">College of choice</InputLabel>
                                 <Select
                                     labelId="college-label"
                                     value={selectedCollege}
                                     onChange={handleCollegeChange}
-                                    label="College"
+                                    label="College of choice"
                                     variant="outlined"
                                     required
                                     inputProps={{
@@ -303,12 +253,12 @@ const Register = () => {
                             </FormControl>
                             {/* Course Select */}
                             <FormControl fullWidth disabled={!selectedCollege}>
-                                <InputLabel id="course-label">Course</InputLabel>
+                                <InputLabel id="course-label">Program of choice</InputLabel>
                                 <Select
                                     labelId="course-label"
                                     value={selectedCourse}
                                     onChange={handleCourseChange}
-                                    label="Course"
+                                    label="Program of choice"
                                     variant="outlined"
                                     required
                                     inputProps={{
@@ -331,6 +281,76 @@ const Register = () => {
                                     sx={{ display: 'none' }}
                                 />
                             </FormControl>
+                            {/* Campus Select */}
+                            <Grid size={{xs: 12, sm: 6}}>
+                                <FormControl fullWidth>
+                                <InputLabel id="campus-label">Campus</InputLabel>
+                                <Tooltip
+                                    title="Some programs are offered in multiple campuses."
+                                    open={tooltipOpen1}
+                                    placement="top"
+                                >
+                                    <Select
+                                        labelId="campus-label"
+                                        name="campus_to_enroll"
+                                        value={selectedCampus}
+                                        onChange={handleCampusChange}
+                                        label="Campus"
+                                        variant="outlined"
+                                        required
+                                        inputProps={{
+                                            sx: {
+                                                whiteSpace: "normal !important",
+                                            },
+                                        }}
+                                        sx={{ borderRadius: 2 }}
+                                        onFocus={() => setTooltipOpen1(true)}
+                                        onBlur={() => setTooltipOpen1(false)}
+                                    >
+                                        {campuses.map((campus) => (
+                                            <MenuItem key={campus} value={campus} sx={{ whiteSpace: "normal" }}>
+                                                {campus}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </Tooltip>
+                            </FormControl>
+                            </Grid>
+                            {/* Campus Select */}
+                            <Grid size={{xs: 12, sm: 6}}>
+                                <FormControl fullWidth>
+                                        <InputLabel id="campus-t-take-exam-label">Exam Venue</InputLabel>
+                                        <Tooltip
+                                            title="**You may choose the exam venue nearest you regardless of your preferred  to enroll in."
+                                            open={tooltipOpen2}
+                                            placement="top"
+                                        >
+                                        <Select
+                                            labelId="campus-t-take-exam-label"
+                                            name='campus_to_take_exam'
+                                            value={selectedCampusToTakeExam}
+                                            onChange={handleCampusToTakeExamChange}
+                                            label="Exam Venue"
+                                            variant="outlined"
+                                            required
+                                        sx={{ borderRadius: 2 }}
+                                        inputProps={{
+                                            sx: {
+                                                whiteSpace: "normal !important"
+                                            }
+                                        }}
+                                        onFocus={() => setTooltipOpen2(true)}
+                                        onBlur={() => setTooltipOpen2(false)}
+                                        >
+                                        {campuses.map((campus) => (
+                                            <MenuItem key={campus} value={campus} sx={{whiteSpace: "normal"}}>
+                                            {campus}
+                                            </MenuItem>
+                                        ))}
+                                        </Select>
+                                        </Tooltip>
+                                    </FormControl>
+                            </Grid>
                             <FormControl fullWidth>
                             {/* <Button
                             type='submit'
