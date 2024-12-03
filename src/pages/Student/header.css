@@ -109,7 +109,7 @@
   }
 
   .headerContent {
-    justify-content: start;
+    justify-content: start !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
     & * {
