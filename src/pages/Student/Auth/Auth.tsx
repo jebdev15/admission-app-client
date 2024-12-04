@@ -1,6 +1,6 @@
 import React from 'react'
 import { Person } from '@mui/icons-material'
-import { Box, FormControl, Paper, TextField, Typography, Button, Divider, Dialog, DialogTitle, DialogContent, SelectChangeEvent, Select, InputLabel, MenuItem, Alert, AlertTitle, useTheme, List, ListItem, Tooltip } from '@mui/material'
+import { Box, FormControl, Paper, TextField, Typography, Button, Divider, Dialog, DialogTitle, DialogContent, SelectChangeEvent, Select, InputLabel, MenuItem, Alert, AlertTitle, useTheme, List, ListItem, Tooltip, FormHelperText } from '@mui/material'
 import Grid from '@mui/material/Grid2'
 import { AuthContext } from '../../../context/Auth/AuthContext'
 import CustomCircularProgress from '../../../components/CustomCircularProgress'
@@ -55,10 +55,8 @@ const DataPrivacyPolicyModal = () => {
             Carlos Hilado Memorial State University is a GREEN university committed to
             empower learners through academic excellence, relevant research, active
             community engagement, and good governance in order to build a just and
-            sustainable world. The Office of the Guidance Services, the office
-            spearheading the Carlos Hilado Memorial State University Entrance Test
-            (CHMSUET), is one with this mission and seeks to deliver quality services
-            to all its clientele.
+            sustainable world. The Office of the Guidance Services is responsible for
+            managing the CHMSU Addmission Test.
             </Typography>
             <Divider sx={{ my: 2 }} />
             <Typography color="primary.main" fontWeight={500} textTransform="uppercase">
@@ -66,16 +64,19 @@ const DataPrivacyPolicyModal = () => {
             </Typography>
             <Typography variant="caption">
             {" "}
-            The information we collect via the website may include: <br />
+            The information we collect via the website may include: <br /><br />
+
             1. Personal details - Any personal details you knowingly provide us
-            through forms and our email, such as name, address, telephone number, etc.
+            through forms and our email, such as name, address, mobile/telephone number, etc.
             Under no circumstances will we hold sensitive payment details such as your
-            credit/debit card number, expiry date and security code. <br />
+            credit/debit card number, expiry date, one-time password, CVV number, and
+            security code. <br /><br />
+
             2. IP Address - This is a string of numbers unique to your computer that
-            is recorded by our web server when you request any page or component on
-            the website. This information is used to monitor your usage of the
-            website. <br />
-            3. Preferred settings – The website will record data which allows us to
+            our web server records when you request any page or component on the
+            website. This information is used to monitor your usage of the website.<br /><br />
+
+            3. Preferred settings – The website will record data that will allows us to
             recognize you and your preferred settings. This saves you from re-entering
             information on return visits to the site. Such data is recorded locally on
             your computer through the use of cookies. Most browsers can be programmed
@@ -91,16 +92,16 @@ const DataPrivacyPolicyModal = () => {
             Any personal information we collect from this website will be used in
             accordance with the Republic Act 10173 – Data Privacy Act of 2012 and
             other applicable laws. Specifically, the details we collect will be used
-            to: <br />
-            1. process your request for taking the university’s pre-admissions test,
-            CHMSUET, and to provide the information required by the Commission on
+            to: <br /><br />
+            1. Process your request for taking the university’s Admission Test, and 
+            provide the information required by the Commission on
             Higher Education (CHED) for billing and related purposes under the
-            REPUBLIC ACT No. 10687 or CHED UNIFAST Law; and <br />
-            2. carry out certain activities such as processing and sorting data,
-            monitoring how customers use the Website and issuing our e-mails for us.
+            REPUBLIC ACT 10687 or CHED UNIFAST Law; and <br /><br />
+            2. Carry out certain activities such as processing and sorting data,
+            monitoring how customers use the website, and issuing our e-mails for us.
             Third parties may be asked to do this but will not be allowed to use your
-            personal information for their own purposes. We may need to pass the
-            information we collect to authorized persons under the student admission
+            personal information for their purposes. We may need to pass the
+            information we collect to authorized persons under the university’s student admission
             and screening committee.
             </Typography>
             <Divider sx={{ my: 2 }} />
@@ -110,9 +111,11 @@ const DataPrivacyPolicyModal = () => {
             <Typography variant="caption">
             {" "}
             You have the right to request a copy of any information that we currently
-            hold about you. In order to receive such information, please send your
-            contact details and address using our support form. Further instructions
-            will be given.
+            hold about you.
+            <strong>
+                To receive such information, please send your
+                contact details and address using our support form. you will receive additional instructions upon submitting the support form.
+            </strong>
             </Typography>
             <Divider sx={{ my: 2 }} />
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
@@ -282,7 +285,7 @@ const Register = () => {
                                 />
                             </FormControl>
                             {/* Campus Select */}
-                            <Grid size={{xs: 12, sm: 6}}>
+                            <Grid size={{xs: 12, sm: 12}}>
                                 <FormControl fullWidth>
                                 <InputLabel id="campus-label">Campus</InputLabel>
                                 <Tooltip
@@ -317,20 +320,20 @@ const Register = () => {
                             </FormControl>
                             </Grid>
                             {/* Campus Select */}
-                            <Grid size={{xs: 12, sm: 6}}>
+                            <Grid size={{xs: 12, sm: 12}}>
                                 <FormControl fullWidth>
-                                        <InputLabel id="campus-t-take-exam-label">Exam Venue</InputLabel>
-                                        <Tooltip
+                                        <InputLabel id="campus-t-take-exam-label">Exam venue</InputLabel>
+                                        {/* <Tooltip
                                             title="**You may choose the exam venue nearest you regardless of your preferred  to enroll in."
                                             open={tooltipOpen2}
                                             placement="top"
-                                        >
+                                        > */}
                                         <Select
                                             labelId="campus-t-take-exam-label"
                                             name='campus_to_take_exam'
                                             value={selectedCampusToTakeExam}
                                             onChange={handleCampusToTakeExamChange}
-                                            label="Exam Venue"
+                                            label="Exam venue"
                                             variant="outlined"
                                             required
                                         sx={{ borderRadius: 2 }}
@@ -348,7 +351,8 @@ const Register = () => {
                                             </MenuItem>
                                         ))}
                                         </Select>
-                                        </Tooltip>
+                                        {/* </Tooltip> */}
+                                        <FormHelperText>**You may choose the exam venue nearest you regardless of your preferred  to enroll in.</FormHelperText>
                                     </FormControl>
                             </Grid>
                             <FormControl fullWidth>
