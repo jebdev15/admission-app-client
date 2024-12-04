@@ -2,7 +2,7 @@ import React from 'react'
 import { useParams } from 'react-router'
 import { SummaryService } from '../../../../services/summaryService'
 import { Celebration } from '@mui/icons-material'
-import { Box, Card, CardMedia, CircularProgress, Paper, Typography } from '@mui/material'
+import { Alert, AlertTitle, Box, Card, CardMedia, CircularProgress, List, ListItem, Paper, Typography } from '@mui/material'
 import { FormatDateUtil } from '../../../../utils/formatDate'
 import { VITE_API_URL } from '../../../../constants'
 
@@ -93,8 +93,9 @@ const Summary = () => {
                                 )}
                                 <Typography variant="h6" color="initial" align='center'>{applicantSummaryInfo?.name}</Typography>
                                 <Typography variant="body1" color="initial" align='center' sx={{ mb: 2 }}>{applicantSummaryInfo?.email}</Typography>
+                                <Typography variant="body1" color="initial" align='center' sx={{ mb: 2 }}>LRN: XXXXXXXXXXXX</Typography>
                                 <fieldset style={{ marginBottom: '1rem', padding: '1rem 1.25rem 1.5rem 1.25rem', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <legend style={{padding: '0 0.5rem', margin: '0 -0.5rem'}}>Application Details</legend>
+                                    <legend style={{padding: '0 0.5rem', margin: '0 -0.5rem'}}>Admission Details</legend>
                                     <Typography variant="h6" color="initial" align='center'>{applicantSummaryInfo?.course_description}</Typography>
                                     <Typography variant="body1" color="initial" align='center'>{applicantSummaryInfo?.college_description}</Typography>
                                     <Typography variant="body1" color="initial" align='center'>{applicantSummaryInfo?.campus_to_enroll} Campus</Typography>
@@ -105,6 +106,15 @@ const Summary = () => {
                                     <Typography variant="h6" color="initial" align='center'>{applicantSummaryInfo?.location} Campus</Typography>
                                     <Typography variant="body2" color="initial" align='center' sx={{mb: -1, mt: 2}}>When:</Typography>
                                     <Typography variant="h6" color="initial" align='center'>{FormatDateUtil.formatDateOnly(applicantSummaryInfo?.schedule_date)} {applicantSummaryInfo?.schedule_time}</Typography>
+                                    <Alert severity="info" sx={{ width: '100%', p: 2, pb: 0, borderRadius: 2, mt: 2 }}>
+                                        <AlertTitle>What to bring</AlertTitle>
+                                        <List sx={{ pt: 0 }}>
+                                            <ListItem sx={{ pl: 0 }}>I don't know</ListItem>
+                                            <ListItem sx={{ pl: 0 }}>Lawas kag katarungan</ListItem>
+                                            <ListItem sx={{ pl: 0 }}>Pal-pal, you add</ListItem>
+                                        </List>
+                                        <Typography variant="caption" color="initial"></Typography>
+                                    </Alert> 
                                 </fieldset>
                             </Box>
                         </Box>
