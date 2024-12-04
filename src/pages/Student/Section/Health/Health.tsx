@@ -1,4 +1,4 @@
-import { Place } from '@mui/icons-material'
+import { MedicalInformation } from '@mui/icons-material'
 import { Box, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid2'
 import React from 'react'
@@ -69,20 +69,30 @@ const Health = () => {
                             justifyContent: 'center', 
                             alignItems: 'center',
                             padding: {xs: 2, sm: 4},
-                            gap: 1,
+                            gap: 3,
                             width: '100%',
                         }}
                           onSubmit={handleSubmit}
                     >
-                      <Place sx={{ color: 'primary.main', fontSize: 50, mb: -1.5}}/>
-                      <Typography variant="body1" color="primary" sx={{ mb: 3 }}>Health</Typography>
+
+                      <Box sx={{display: 'flex', flexDirection: {xs: 'column-reverse', sm: 'row'}, rowGap: 2, alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
+                        <Box sx={{display: 'flex', flexDirection: {xs: 'column', sm: 'row'}, columnGap: 1, alignItems: 'center'}}>
+                          <MedicalInformation sx={{ color: 'primary.main', fontSize: '3rem', mt: -1 }} />
+                          <Typography variant="h6" color="primary">Health</Typography>
+                        </Box>
+                        <Box sx={{display: 'flex', flexDirection: 'column', gap: 0, alignItems: {xs: 'center', sm: 'flex-end'}}}>
+                          <Typography variant="body1" color='textSecondary' sx={{fontWeight: 'bold'}}>CHMSU Admission Portal</Typography>
+                          <Typography variant="body1" color='textSecondary' sx={{fontWeight: 'bold'}}>Academic Year 2025 - 2026</Typography>
+                        </Box>
+                    </Box>
+
                         <Grid container rowSpacing={3} columnSpacing={2} width={'100%'}>
                             <Grid size={{xs: 12, md: 6}}>
                                 <FormControl fullWidth>
-                                    <InputLabel id="label-select-is_pwd">Do you have a disability (PWD)</InputLabel>
+                                    <InputLabel id="label-select-is_pwd">Are you a person with disability (PWD)?</InputLabel>
                                     <Select
                                         labelId="label-select-is_pwd"
-                                        label="Do you have a disability (PWD)"
+                                        label="Are you a person with disability (PWD)?"
                                         id="select-is_pwd"
                                         name="is_pwd"
                                         value={health.is_pwd}
@@ -101,7 +111,7 @@ const Health = () => {
                                     <TextField
                                         id="input-pwd_id_no"
                                         name="pwd_id_no"
-                                        label="if yes, please enter your PWD ID number"
+                                        label="If yes, please enter your PWD Identification number"
                                         value={health.pwd_id_no}
                                         onChange={handleChangeInput}
                                         required={health.is_pwd === 'Yes'}
@@ -112,10 +122,10 @@ const Health = () => {
                             </Grid>
                             <Grid size={{xs: 12, md: 6}}>
                                 <FormControl fullWidth>
-                                    <InputLabel id="label-select-is_sped">Do you have a special educational need(s)</InputLabel>
+                                    <InputLabel id="label-select-is_sped">Do you have special educational need(s)?</InputLabel>
                                     <Select
                                         labelId="label-select-is_sped"
-                                        label="Do you have a special educational need(s)"
+                                        label="Do you have special educational need(s)?"
                                         id="select-is_sped"
                                         name="is_sped"
                                         value={health.is_sped}
@@ -145,10 +155,10 @@ const Health = () => {
                             </Grid>
                             <Grid size={{xs: 12, md: 6}}>
                                 <FormControl fullWidth>
-                                    <InputLabel id="label-select-has_siblings_studying_in_chmsu">Do you have siblings studying in CHMSU?</InputLabel>
+                                    <InputLabel id="label-select-has_siblings_studying_in_chmsu">Do you have siblings studying at CHMSU?</InputLabel>
                                     <Select
                                         labelId="label-select-has_siblings_studying_in_chmsu"
-                                        label="Do you have siblings studying in CHMSU?"
+                                        label="Do you have siblings studying at CHMSU?"
                                         id="select-has_siblings_studying_in_chmsu"
                                         name="has_siblings_studying_in_chmsu"
                                         value={health.has_siblings_studying_in_chmsu}
@@ -164,10 +174,10 @@ const Health = () => {
                             </Grid>
                             <Grid size={{xs: 12, md: 6}}>
                                 <FormControl fullWidth>
-                                    <InputLabel id="label-select-has_relatives_studying_in_chmsu">Do you have relatives working in CHMSU?</InputLabel>
+                                    <InputLabel id="label-select-has_relatives_studying_in_chmsu">Do you have relatives working at CHMSU?</InputLabel>
                                     <Select
                                         labelId="label-select-has_relatives_studying_in_chmsu"
-                                        label="Do you have relatives working in CHMSU?"
+                                        label="Do you have relatives working at CHMSU?"
                                         id="select-has_relatives_studying_in_chmsu"
                                         name="has_relatives_studying_in_chmsu"
                                         value={health.has_relatives_studying_in_chmsu}
