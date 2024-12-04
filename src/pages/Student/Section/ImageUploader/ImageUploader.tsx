@@ -137,16 +137,16 @@ const ImageUploader: React.FC = () => {
           component="form"
           onSubmit={handleSubmit}
         >
-          <Typography variant="h4" gutterBottom textAlign={'center'} sx={{ mb: 0 }}>
-            Upload Your Photo
-          </Typography>
-          <Typography variant="h5" gutterBottom textAlign={'center'} sx={{ mb: 2 }}>
-            (Max: 2 MB)
-          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: {xs: 'column', sm: 'row'}, alignItems: 'center', mb: 3, columnGap: 1, width: {xs: 'auto', sm: '100%'} }}>
+            <PhotoCamera sx={{ color: 'primary.main', fontSize: '3rem' }}/>
+            <Typography variant="h4" gutterBottom textAlign={'center'} sx={{ mb: 0 }}>
+              Upload Your Photo
+            </Typography>
+          </Box>
           <Alert severity="info" sx={{ width: '100%', p: 2, pb: 0, borderRadius: 2, mb: 2 }}>
             <AlertTitle>Note</AlertTitle>
             <List sx={{ pt: 0 }}>
-                <ListItem sx={{ pl: 0 }}>Please upload a recent and clear image of yourself. This is required for identity verification as part of the admission process.</ListItem>
+                <ListItem sx={{ pl: 0 }}>Please upload a recent and clear photo of yourself facing the camera. This is required for identity verification as part of the admission process. The file size must not exceed 2 MB.</ListItem>
             </List>
             <Typography variant="caption" color="initial"></Typography>
           </Alert> 
