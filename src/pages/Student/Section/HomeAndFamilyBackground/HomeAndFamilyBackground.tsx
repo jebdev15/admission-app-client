@@ -69,16 +69,23 @@ const HomeAndFamilyBackground = () => {
                             justifyContent: 'center', 
                             alignItems: 'center',
                             padding: {xs: 2, sm: 4},
-                            gap: 1,
+                            gap: 3,
                             width: '100%',
                         }}
                         onSubmit={handleSubmit}
                     >
-                        <Box>
-                            <House sx={{ color: 'primary.main', fontSize: 50, mb: -1.5}}/>
-                            <People sx={{ color: 'primary.main', fontSize: 50, mb: -1.5}}/>
+
+                        <Box sx={{display: 'flex', flexDirection: {xs: 'column-reverse', sm: 'row'}, rowGap: 2, alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
+                        <Box sx={{display: 'flex', flexDirection: {xs: 'column', sm: 'row'}, columnGap: 1, alignItems: 'center'}}>
+                          <House sx={{ color: 'primary.main', fontSize: '3rem' }} />
+                          <Typography variant="h6" color="primary">Home and Family Background</Typography>
                         </Box>
-                        <Typography variant="body1" color="primary" sx={{ mb: 3 }}>Home and Family Background</Typography>
+                        <Box sx={{display: 'flex', flexDirection: 'column', gap: 0, alignItems: {xs: 'center', sm: 'flex-end'}}}>
+                          <Typography variant="body1" color='textSecondary' sx={{fontWeight: 'bold'}}>CHMSU Admission Portal</Typography>
+                          <Typography variant="body1" color='textSecondary' sx={{fontWeight: 'bold'}}>Academic Year 2025 - 2026</Typography>
+                        </Box>
+                      </Box>
+
                         <Grid container size={12} rowSpacing={3} columnSpacing={2} sx={{width: "100%"}}>
                             <Grid size={{xs: 12, sm: 12, md: 6}}>
                                 <FormControl fullWidth>
@@ -86,7 +93,7 @@ const HomeAndFamilyBackground = () => {
                                         sx={{ '& .MuiInputBase-root': { borderRadius: 2 }}}
                                         name="no_of_siblings_gainfully_employed"
                                         type='number'
-                                        label="Number of Siblings gainfully employed"
+                                        label="Number of siblings gainfully employed"
                                         value={homeAndFamilyBackground.no_of_siblings_gainfully_employed}
                                         onChange={handleChangeInputNOSGE}
                                         required
@@ -119,10 +126,10 @@ const HomeAndFamilyBackground = () => {
                             <Grid container size={12}>
                                 <Grid size={"grow"}>
                                     <FormControl fullWidth>
-                                        <InputLabel id="label-select-isFourPsBeneficiary">Are you a 4P's Beneficiary?</InputLabel>
+                                        <InputLabel id="label-select-isFourPsBeneficiary">Are you a 4Ps beneficiary?</InputLabel>
                                         <Select
                                             labelId="label-select-is_four_ps_beneficiary"
-                                            label="Are you a 4P's Beneficiary?"
+                                            label="Are you a 4Ps beneficiary?"
                                             id="select-is_four_ps_beneficiary"
                                             name="is_four_ps_beneficiary"
                                             value={homeAndFamilyBackground.is_four_ps_beneficiary}
@@ -141,7 +148,7 @@ const HomeAndFamilyBackground = () => {
                                             <TextField
                                                 id="select-four_ps_id_no"
                                                 name="four_ps_id_no"
-                                                label="If Yes, Please enter your 4P's ID Number"
+                                                label="If yes, please enter your 4Ps identification number"
                                                 value={homeAndFamilyBackground.four_ps_id_no}
                                                 onChange={handleChangeInput}
                                                 variant="standard"
@@ -153,10 +160,10 @@ const HomeAndFamilyBackground = () => {
                             </Grid>
                             <Grid size={{xs: 12, sm: 12, md: 7}}>
                                 <FormControl fullWidth>
-                                    <InputLabel id="label-select-isFirstGenStudent">Are you the First person in your family to enter college?</InputLabel>
+                                    <InputLabel id="label-select-isFirstGenStudent">Are you the first person in your family to attend college?</InputLabel>
                                     <Select
                                         labelId="label-select-is_first_gen_student"
-                                        label="Are you the First person in your family to enter college?"
+                                        label="Are you the first person in your family to attend college?"
                                         id="select-is_first_gen_student"
                                         name="is_first_gen_student"
                                         value={homeAndFamilyBackground.is_first_gen_student}
@@ -172,10 +179,10 @@ const HomeAndFamilyBackground = () => {
                             </Grid>
                             <Grid size={{xs: 12, sm: 12, md: 5}}>
                                 <FormControl fullWidth>
-                                    <InputLabel id="label-select-household_monthly_income">Household Monthly Income</InputLabel>
+                                    <InputLabel id="label-select-household_monthly_income">Household monthly income</InputLabel>
                                     <Select
                                         labelId="label-select-household_monthly_income"
-                                        label="Household Monthly Income"
+                                        label="Household monthly income"
                                         id="select-household_monthly_income"
                                         name="household_monthly_income"
                                         value={homeAndFamilyBackground.household_monthly_income}
