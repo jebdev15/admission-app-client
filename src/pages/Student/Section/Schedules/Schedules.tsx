@@ -194,17 +194,19 @@ const Schedules = () => {
                                                             '& .MuiPickersDay-root': {
                                                                 backgroundColor: (date: any) =>
                                                                     isAvailableDate(dayjs(date)) ? 'primary.main' : 'inherit',
+                                                                fontWeight: '500'
                                                             },
                                                             '& .MuiPickersDay-root:not(.Mui-disabled)': {
-                                                                backgroundColor: '#eeeeee',
+                                                                backgroundColor: '#a4eda7',
                                                                 color: 'black',
                                                             },
                                                             '& .MuiPickersDay-root.Mui-selected': {
-                                                                backgroundColor: 'primary.main',
+                                                                backgroundColor: 'darkgreen',
                                                                 color: 'white',
                                                             },
                                                             '& .MuiPickersDay-root.Mui-disabled': {
                                                                 textDecoration: 'line-through',
+                                                                color: '#bcbcbc',
                                                             },
                                                         }}
                                                         />
