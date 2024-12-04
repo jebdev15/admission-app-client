@@ -152,14 +152,24 @@ const Schedules = () => {
                                 justifyContent: 'center', 
                                 alignItems: 'center',
                                 padding: {xs: 2, sm: 4},
-                                gap: 1,
+                                gap: 3,
                                 width: '100%',
                             }}
                             component={'form'}
                             onSubmit={handleSubmit}
                         >
-                            <Schedule sx={{ color: 'primary.main', fontSize: 50, mb: -1}}/>
-                            <Typography variant="body1" color="primary" sx={{ mb: 3 }}>Schedules</Typography>
+
+                            <Box sx={{display: 'flex', flexDirection: {xs: 'column-reverse', sm: 'row'}, rowGap: 2, alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
+                                <Box sx={{display: 'flex', flexDirection: {xs: 'column', sm: 'row'}, columnGap: 1, alignItems: 'center'}}>
+                                <Schedule sx={{ color: 'primary.main', fontSize: '3rem'}} />
+                                <Typography variant="h6" color="primary">Schedules</Typography>
+                                </Box>
+                                <Box sx={{display: 'flex', flexDirection: 'column', gap: 0, alignItems: {xs: 'center', sm: 'flex-end'}}}>
+                                <Typography variant="body1" color='textSecondary' sx={{fontWeight: 'bold'}}>CHMSU Admission Portal</Typography>
+                                <Typography variant="body1" color='textSecondary' sx={{fontWeight: 'bold'}}>Academic Year 2025 - 2026</Typography>
+                                </Box>
+                            </Box>
+
                             {/* <Alert severity="info">Slots Remaining isn't real-time</Alert> */}
                             <Grid container rowSpacing={3} columnSpacing={2} width={'100%'}>
                                     <Grid size={{xs: 12, md: 7}}>
@@ -172,8 +182,8 @@ const Schedules = () => {
                                                 }}
                                             >
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                <DemoContainer components={['DateCalendar']} sx={{py: 5, pb: 0}}>
-                                                    <DemoItem label="Available Dates" sx={{ textAlign: 'center' }}>
+                                                <DemoContainer components={['DateCalendar']} sx={{py: 5, pb: 0, px: 2, '.MuiTypography-root': {textAlign: 'center !important'}}}>
+                                                    <DemoItem label="Available Dates:">
                                                         <DateCalendar
                                                             key={calendarKey} // Force re-render on key change
                                                             onChange={handleDateChange} // Handle date change
@@ -184,6 +194,17 @@ const Schedules = () => {
                                                             '& .MuiPickersDay-root': {
                                                                 backgroundColor: (date: any) =>
                                                                     isAvailableDate(dayjs(date)) ? 'primary.main' : 'inherit',
+                                                            },
+                                                            '& .MuiPickersDay-root:not(.Mui-disabled)': {
+                                                                backgroundColor: '#eeeeee',
+                                                                color: 'black',
+                                                            },
+                                                            '& .MuiPickersDay-root.Mui-selected': {
+                                                                backgroundColor: 'primary.main',
+                                                                color: 'white',
+                                                            },
+                                                            '& .MuiPickersDay-root.Mui-disabled': {
+                                                                textDecoration: 'line-through',
                                                             },
                                                         }}
                                                         />
@@ -196,18 +217,19 @@ const Schedules = () => {
                                     <Grid size={{xs: 12, md: 5}}>
                                         <Paper variant='outlined' sx={{ flexGrow: 1, height: '100%', py: 5, px: 2, pb: 2, borderRadius: 2 }}>
                                             <Box sx={{ height: '100%' }}>
-                                                <Typography variant="body2" color="initial" textAlign={'center'}>Available Times:</Typography>
-                                                <List>
+                                                <Typography variant="body2" color="initial" textAlign={'center'} sx={{mb: 1}}>Available Times:</Typography>
+                                                <List sx={{pb:0}}>
                                                     {availableTimes?.length > 0 && availableTimes.map((schedule, index) => (
-                                                        <ListItem key={index} disablePadding>
+                                                        <ListItem key={index} disablePadding sx={{ ':not(:last-child)': {mb: 1}}}>
                                                             <ListItemButton
                                                                 sx={{
-                                                                    backgroundColor: selectedTime === schedule.timeRange ? 'green' : 'initial',
-                                                                    color: selectedTime === schedule.timeRange ? 'white' : 'initial',
+                                                                    backgroundColor: selectedTime === schedule.timeRange ? 'green !important' : 'initial',
+                                                                    color: selectedTime === schedule.timeRange ? 'white !important' : 'initial !important',
                                                                     '&:hover': {
                                                                         backgroundColor: selectedTime === schedule.timeRange ? 'darkgreen' : 'lightgray',
                                                                     },
                                                                     borderRadius: 2,
+                                                                    background: '#eeeeee',
                                                                 }}
                                                                 onClick={() => setSelectedTime(schedule.timeRange)}
                                                             >
