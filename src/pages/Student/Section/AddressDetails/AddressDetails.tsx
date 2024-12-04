@@ -186,15 +186,23 @@ const AddressDetails = () => {
                             justifyContent: 'center', 
                             alignItems: 'center',
                             padding: {xs: 2, sm: 4},
-                            gap: 1,
+                            gap: 3,
                             width: '100%',
                         }}
                         onSubmit={submitForm}
                     >
-                      <Place sx={{ color: 'primary.main', fontSize: 50, mb: -1.5}} />
-                      <Typography variant="body1" color="primary">Address Details</Typography>
+                      <Box sx={{display: 'flex', flexDirection: {xs: 'column-reverse', sm: 'row'}, rowGap: 2, alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
+                        <Box sx={{display: 'flex', flexDirection: {xs: 'column', sm: 'row'}, columnGap: 1, alignItems: 'center'}}>
+                          <Place sx={{ color: 'primary.main', fontSize: '3rem' }} />
+                          <Typography variant="h6" color="primary">Address Details</Typography>
+                        </Box>
+                        <Box sx={{display: 'flex', flexDirection: 'column', gap: 0, alignItems: {xs: 'center', sm: 'flex-end'}}}>
+                          <Typography variant="body1" color='textSecondary' sx={{fontWeight: 'bold'}}>CHMSU Admission Portal</Typography>
+                          <Typography variant="body1" color='textSecondary' sx={{fontWeight: 'bold'}}>Academic Year 2025 - 2026</Typography>
+                        </Box>
+                      </Box>
                       <Grid container rowSpacing={3} columnSpacing={2} sx={{ width: '100%' }}>
-                      <Typography variant="h6" color="initial" textAlign='center' sx={{ width: '100%', mt: 3 }}>Home Address</Typography>
+                      <Typography variant="h6" color="initial" textAlign={{xs: 'center', sm: 'left'}} sx={{ width: '100%', mt: 1 }}>Home Address</Typography>
                       <Grid size={{ xs: 12 }}>
                           <FormControl fullWidth>
                                 <InputLabel id="label-select-region">Region</InputLabel>
@@ -310,7 +318,7 @@ const AddressDetails = () => {
                         </FormControl>
                         { addressDetails.is_same_as_home_address === 'Other' && (
                             <>
-                                <Typography variant="h6" color="initial" textAlign='center' sx={{ width: '100%', mt: 3 }}>Current Address</Typography>
+                                <Typography variant="h6" color="initial" textAlign={{xs: 'center', sm: 'left'}} sx={{ width: '100%', mt: 3 }}>Current Address</Typography>
                                 <FormControl fullWidth>
                                     <InputLabel id="label-select-current_address_region_code">Region</InputLabel>
                                     <Select
