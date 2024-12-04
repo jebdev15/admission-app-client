@@ -75,13 +75,21 @@ const PersonalInformation = () => {
                             justifyContent: 'center', 
                             alignItems: 'center',
                             padding: {xs: 2, sm: 4},
-                            gap: 1,
+                            gap: 3,
                             width: '100%',
                         }}
                         onSubmit={submitForm}
                     >
-                      <Person sx={{ color: 'primary.main', fontSize: 50, mb: -1.5}} />
-                      <Typography variant="body1" color="primary" sx={{ mb: 2 }}>Personal Information</Typography>
+                      <Box sx={{display: 'flex', flexDirection: {xs: 'column-reverse', sm: 'row'}, rowGap: 2, alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
+                        <Box sx={{display: 'flex', flexDirection: {xs: 'column', sm: 'row'}, columnGap: 1, alignItems: 'center'}}>
+                          <Person sx={{ color: 'primary.main', fontSize: '3rem' }} />
+                          <Typography variant="h6" color="primary">Personal Information</Typography>
+                        </Box>
+                        <Box sx={{display: 'flex', flexDirection: 'column', gap: 0, alignItems: {xs: 'center', sm: 'flex-end'}}}>
+                          <Typography variant="body1" color='textSecondary' sx={{fontWeight: 'bold'}}>CHMSU Admission Portal</Typography>
+                          <Typography variant="body1" color='textSecondary' sx={{fontWeight: 'bold'}}>Academic Year 2025 - 2026</Typography>
+                        </Box>
+                      </Box>
                           <Grid container spacing={2} rowSpacing={3} margin='dense' sx={{ width: '100%' }}>
                               <Grid size={{xs: 12, sm: 4}}>
                                   <FormControl fullWidth>
