@@ -1,0 +1,256 @@
+{
+  "College of Arts and Sciences": {
+      "courses": [
+          {
+              "Bachelor of Arts in English Language": {
+                  "course_code": "AB-ENG",
+                  "campuses": ["Talisay"]
+              }
+          },
+          {
+              "Social Science": {
+                  "course_code": "AB SOC-SCI",
+                  "campuses": ["Talisay"]
+              }
+          },
+          {
+              "Bachelor of Public Administration": {
+                  "course_code": "BPA",
+                  "campuses": ["Talisay"]
+              }
+          },
+          {
+              "Bachelor of Science in Applied Mathematics": {
+                  "course_code": "BSAM",
+                  "campuses": ["Talisay"]
+              }
+          },
+          {
+              "Bachelor of Science in Psychology": {
+                  "course_code": "BS PSYCH",
+                  "campuses": ["Talisay"]
+              }
+          }
+      ]
+  },
+  "College of Business Management and Accountancy": {
+      "courses": [
+          {
+              "Bachelor of Science in Hospitality Management": {
+                  "course_code": "BSHM",
+                  "campuses": ["Binalbagan", "Fortune Towne", "Talisay"]
+              }
+          },
+          {
+              "Bachelor of Science in Accountancy": {
+                  "course_code": "BSA",
+                  "campuses": ["Binalbagan", "Fortune Towne", "Talisay"]
+              }
+          },
+          {
+              "Bachelor of Science in Business Administration major in Financial Management": {
+                  "course_code": "BSBA",
+                  "campuses": ["Binalbagan", "Fortune Towne", "Talisay"]
+              }
+          },
+          {
+              "Bachelor of Science in Entrepreneurship": {
+                  "course_code": "BS ENTREP",
+                  "campuses": ["Binalbagan", "Fortune Towne", "Talisay"]
+              }
+          },
+          {
+              "Bachelor of Science in Management Accounting": {
+                  "course_code": "BSMA",
+                  "campuses": ["Binalbagan", "Fortune Towne", "Talisay"]
+              }
+          },
+          {
+              "Bachelor of Science in Office Administration": {
+                  "course_code": "BSOA",
+                  "campuses": ["Binalbagan", "Fortune Towne"]
+              }
+          }
+      ]
+  },
+  "College of Computer Studies": {
+      "courses": [
+          {
+              "Bachelor of Science in Information Systems": {
+                  "course_code": "BSIS",
+                  "campuses": ["Alijis", "Binalbagan", "Fortune Towne", "Talisay"]
+              }
+          },
+          {
+              "Bachelor of Science in Information Technology": {
+                  "course_code": "BSIT",
+                  "campuses": ["Alijis", "Binalbagan", "Fortune Towne", "Talisay"]
+              }
+          }
+      ]
+  },
+  "College of Education": {
+      "courses": [
+          {
+              "Bachelor of Early Childhood Education": {
+                  "course_code": "BECED",
+                  "campuses": ["Alijis", "Binalbagan", "Talisay"]
+              }
+          },
+          {
+              "Bachelor of Elementary Education": {
+                  "course_code": "BEED",
+                  "campuses": ["Alijis", "Binalbagan", "Talisay"]
+              }
+          },
+          {
+              "Bachelor of Physical Education": {
+                  "course_code": "BPED",
+                  "campuses": ["Alijis", "Binalbagan", "Talisay"]
+              }
+          },
+          {
+              "Bachelor of Secondary Education with major in English": {
+                  "course_code": "BSED ENG",
+                  "campuses": ["Alijis", "Binalbagan", "Talisay"]
+              }
+          },
+          {
+              "Bachelor of Secondary Education with major in Filipino": {
+                  "course_code": "BSED FIL",
+                  "campuses": ["Alijis", "Binalbagan", "Talisay"]
+              }
+          },
+          {
+              "Bachelor of Secondary Education with major in Mathematics": {
+                  "course_code": "BSED MATH",
+                  "campuses": ["Alijis", "Binalbagan", "Talisay"]
+              }
+          },
+          {
+              "Bachelor of Secondary Education with major in Science": {
+                  "course_code": "BSED SCIENCE",
+                  "campuses": ["Alijis", "Binalbagan", "Talisay"]
+              }
+          },
+          {
+              "Bachelor of Special Needs Education": {
+                  "course_code": "BSNED",
+                  "campuses": ["Alijis", "Binalbagan", "Talisay"]
+              }
+          },
+          {
+              "Bachelor of Technology and Livelihood Education major in Home Economics": {
+                  "course_code": "BTLED HE",
+                  "campuses": ["Alijis", "Binalbagan", "Talisay"]
+              }
+          },
+          {
+              "Bachelor of Technology and Livelihood Education major in Industrial Arts": {
+                  "course_code": "BTLED IA",
+                  "campuses": ["Alijis", "Binalbagan", "Talisay"]
+              }
+          }
+      ]
+  },
+  "College of Engineering": {
+      "courses": [
+          {
+              "Bachelor of Science in Civil Engineering": {
+                  "course_code": "BSCE",
+                  "campuses": ["Talisay"]
+              }
+          },
+          {
+              "Bachelor of Science in Computer Engineering": {
+                  "course_code": "BSCpE",
+                  "campuses": ["Alijis", "Talisay"]
+              }
+          },
+          {
+              "Bachelor of Science in Electronics Engineering": {
+                  "course_code": "BSECE",
+                  "campuses": ["Alijis", "Talisay"]
+              }
+          }
+      ]
+  },
+  "College of Industrial Technology": {
+      "courses": [
+          {
+              "Bachelor of Industrial Technology major in Architectural Drafting Technology": {
+                  "course_code": "BIT DRAFTING",
+                  "campuses": ["Alijis"]
+              }
+          },
+          {
+              "Bachelor of Industrial Technology major in Automotive Technology": {
+                  "course_code": "BIT AUTOTECH",
+                  "campuses": ["Alijis"]
+              }
+          },
+          {
+              "Bachelor of Industrial Technology major in Electrical Technology": {
+                  "course_code": "BIT ELEC",
+                  "campuses": ["Alijis"]
+              }
+          },
+          {
+              "Bachelor of Industrial Technology major in Electronics Technology": {
+                  "course_code": "BIT ELEX",
+                  "campuses": ["Alijis"]
+              }
+          },
+          {
+              "Bachelor of Industrial Technology major in Fashion and Apparel Technology": {
+                  "course_code": "BIT AFT",
+                  "campuses": ["Alijis"]
+              }
+          },
+          {
+              "Bachelor of Industrial Technology major in Culinary Technology": {
+                  "course_code": "BIT CT",
+                  "campuses": ["Alijis"]
+              }
+          },
+          {
+              "Bachelor of Industrial Technology major in Mechanical Technology": {
+                  "course_code": "BIT MECHTECH",
+                  "campuses": ["Alijis"]
+              }
+          },
+          {
+              "Bachelor of Industrial Technology major in Refrigeration and Air-conditioning Technology": {
+                  "course_code": "BIT HVACRT",
+                  "campuses": ["Alijis"]
+              }
+          },
+          {
+              "Bachelor of Industrial Technology major in Computer Technology": {
+                  "course_code": "BIT COMTECH",
+                  "campuses": ["Alijis"]
+              }
+          }
+      ]
+  },
+  "College of Fisheries": {
+      "courses": [
+          {
+              "Bachelor of Science in Fisheries": {
+                  "course_code": "BSF",
+                  "campuses": ["Binalbagan"]
+              }
+          }
+      ]
+  },
+  "College of Criminal Justice": {
+      "courses": [
+          {
+              "Bachelor of Science in Criminology": {
+                  "course_code": "BSCRIM",
+                  "campuses": ["Binalbagan"]
+              }
+          }
+      ]
+  }
+}
