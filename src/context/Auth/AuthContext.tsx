@@ -60,12 +60,18 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
                     const formData = new FormData(event.currentTarget)
                     console.log(formData.get('email'))
                     const {isValid, error} = validateEmail(formData.get('email') as string)
+                    for(const [key, value] of formData) {
+                        console.log(key, value)
+                    }
                     if(isValid) {
                         setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: true}}))
                         const { data, status } = await axiosInstance.post('/auth/register', formData)
                         alert(data.message)
                         if(status) {
                             setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: false}}))
+                        }
+                        if(status === 201) {
+                            window.location.reload()
                         }
                     } else {
                         alert(error)
