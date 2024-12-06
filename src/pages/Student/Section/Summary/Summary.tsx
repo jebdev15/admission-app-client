@@ -2,7 +2,7 @@ import React from 'react'
 import { useParams } from 'react-router'
 import { SummaryService } from '../../../../services/summaryService'
 import { Celebration } from '@mui/icons-material'
-import { Alert, AlertTitle, Box, Card, CardMedia, CircularProgress, List, ListItem, Paper, Typography } from '@mui/material'
+import { Alert, AlertTitle, Box, Button, Card, CardMedia, CircularProgress, List, ListItem, Paper, Typography } from '@mui/material'
 import { FormatDateUtil } from '../../../../utils/formatDate'
 import { VITE_API_URL } from '../../../../constants'
 
@@ -57,7 +57,7 @@ const Summary = () => {
                             }}
                         >
                             <Celebration sx={{ color: 'primary.main', fontSize: 50, mb: -1}}/>
-                            <Typography variant="body1" color="primary" align="center" sx={{ mb: 3 }}>Thank you for submitting your application!</Typography>
+                            <Typography variant="h6" color="primary" align="center" sx={{ mb: 3 }}>Admission Test slot reserved!</Typography>
                             <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                                 {imageSrc ? (
                                 <Box 
@@ -93,7 +93,7 @@ const Summary = () => {
                                 )}
                                 <Typography variant="h6" color="initial" align='center'>{applicantSummaryInfo?.name}</Typography>
                                 <Typography variant="body1" color="initial" align='center' sx={{ mb: 2 }}>{applicantSummaryInfo?.email}</Typography>
-                                <Typography variant="body1" color="initial" align='center' sx={{ mb: 2 }}>LRN: XXXXXXXXXXXX</Typography>
+                                <Typography variant="body1" color="initial" align='center' sx={{ mb: 2 }}>LRN: {applicantSummaryInfo?.lrn}</Typography>
                                 <fieldset style={{ marginBottom: '1rem', padding: '1rem 1.25rem 1.5rem 1.25rem', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                     <legend style={{padding: '0 0.5rem', margin: '0 -0.5rem'}}>Admission Details</legend>
                                     <Typography variant="h6" color="initial" align='center'>{applicantSummaryInfo?.course_description}</Typography>
@@ -106,16 +106,24 @@ const Summary = () => {
                                     <Typography variant="h6" color="initial" align='center'>{applicantSummaryInfo?.location} Campus</Typography>
                                     <Typography variant="body2" color="initial" align='center' sx={{mb: -1, mt: 2}}>When:</Typography>
                                     <Typography variant="h6" color="initial" align='center'>{FormatDateUtil.formatDateOnly(applicantSummaryInfo?.schedule_date)} {applicantSummaryInfo?.schedule_time}</Typography>
+                                    <Typography variant="body1" color="initial">The verified examinees will take the CHMSU Admission Test on their reserved dates in their chosen exam venues.</Typography>
+                                    <Typography variant="body1" color="initial">Kindly bring the following:</Typography>
                                     <Alert severity="info" sx={{ width: '100%', p: 2, pb: 0, borderRadius: 2, mt: 2 }}>
                                         <AlertTitle>What to bring</AlertTitle>
                                         <List sx={{ pt: 0 }}>
-                                            <ListItem sx={{ pl: 0 }}>I don't know</ListItem>
-                                            <ListItem sx={{ pl: 0 }}>Lawas kag katarungan</ListItem>
-                                            <ListItem sx={{ pl: 0 }}>Pal-pal, you add</ListItem>
+                                            <ListItem sx={{ pl: 0 }}>Duly Accomplished Application Form (to be distributed and filled out on-site)</ListItem>
+                                            <ListItem sx={{ pl: 0 }}>Learner’s Reference Number</ListItem>
+                                            <ListItem sx={{ pl: 0 }}>2 pieces 2×2 ID Picture</ListItem>
+                                            <ListItem sx={{ pl: 0 }}>1 long brown envelope</ListItem>
+                                            <ListItem sx={{ pl: 0 }}>Black ballpen, eraser, and pencil</ListItem>
+                                            <ListItem sx={{ pl: 0 }}>Proof of your successful registration (screenshot or active webpage)</ListItem>
                                         </List>
                                         <Typography variant="caption" color="initial"></Typography>
-                                    </Alert> 
+                                    </Alert>    
+                                    <Typography variant="body1" color="initial"><strong>Reminders:</strong> Be at your assigned testing room at least 45 minutes before the start of the test. Wear your face masks.</Typography>
+                                    <Typography variant="body1" color="initial">For further queries and clarifications, please send a message to the CHMSU Compassion Facebook Page. You may also contact the CHMSU Office of the Guidance Services via email at guidance.talisay@chmsu.edu.ph or call (034) 454 0529 / 454 0584 loc. 136.</Typography>
                                 </fieldset>
+                                <Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }} onClick={() => alert("QR Code Downloaded")}>Generate QR Code</Button>
                             </Box>
                         </Box>
                     </Paper>
