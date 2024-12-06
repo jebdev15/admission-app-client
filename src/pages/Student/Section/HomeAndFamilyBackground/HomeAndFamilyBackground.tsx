@@ -1,4 +1,4 @@
-import { House, People } from '@mui/icons-material'
+import { House } from '@mui/icons-material'
 import { Box, CircularProgress, FormControl,  InputLabel, MenuItem, Paper, Select, Typography, TextField, SelectChangeEvent } from '@mui/material'
 import Grid from '@mui/material/Grid2'
 import React from 'react'

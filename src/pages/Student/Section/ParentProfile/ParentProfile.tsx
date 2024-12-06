@@ -1,4 +1,4 @@
-import { School, Work } from '@mui/icons-material'
+import { Work } from '@mui/icons-material'
 import { Box, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid2'
 import React from 'react'
