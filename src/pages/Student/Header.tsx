@@ -36,7 +36,7 @@ export default function ButtonAppBar() {
             </Typography>
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignContent: 'center', alignItems: 'center' }} className='admissionText'>
-          <Typography variant="h6" textAlign={'end'} sx={{color: "primary.dark", textWrap: 'balance', lineHeight: "1"}}>GREAT future await you!</Typography>
+          <Typography variant="h6" textAlign={'end'} sx={{color: "primary.dark", textWrap: 'balance', lineHeight: "1"}}>GREAT futures await you!</Typography>
           {/* <Typography variant="body2" component="div" color='primary' textAlign={'end'} sx={{ mt: -0.75, color: "primary.dark" }}>
               A.Y 2025-2026
           </Typography> */}
