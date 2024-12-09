@@ -247,7 +247,7 @@ const AddressDetails = () => {
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <FormControl fullWidth>
-                                <InputLabel id="label-select-city">City</InputLabel>
+                                <InputLabel id="label-select-city">City/Municipality</InputLabel>
                                 <Select
                                     labelId="label-select-city"
                                     id="select-city"
@@ -359,7 +359,7 @@ const AddressDetails = () => {
                                 </Grid>
                                 <Grid size={{xs: 12, sm: 6}}>
                                     <FormControl fullWidth>
-                                        <InputLabel id="label-select-current_address_city_code">City</InputLabel>
+                                        <InputLabel id="label-select-current_address_city_code">City/Municipality</InputLabel>
                                         <Select
                                             labelId="label-select-current_address_city_code"
                                             label="City"
