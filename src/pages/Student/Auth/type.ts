@@ -13,3 +13,20 @@ export interface LoginContextType {
 export interface LoginContextProviderProps {
     children: React.ReactNode
 }  
+
+interface CourseDetails {
+    course_code: string;
+    campuses: string[];
+}
+
+interface Course {
+    [courseName: string]: CourseDetails | undefined;
+}
+
+interface College {
+    courses: Course[];
+}
+
+export interface Colleges {
+    [collegeName: string]: College;
+}
