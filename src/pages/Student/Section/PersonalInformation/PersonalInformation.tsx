@@ -44,10 +44,8 @@ const PersonalInformation = () => {
     if (!confirmation) return
     setLoading(true)
     try {
-      
       const formData = new FormData(event.currentTarget)
       formData.append('uuid', uuid ?? '')
-      // const { data, status } = await axiosInstance.post('/personal-information/create', formData)
       const { data, status } = await axiosInstance.put('/personal-information/update', formData)
       if (data) {
         setLoading(false)
