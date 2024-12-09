@@ -6,10 +6,12 @@ import { validateEmail } from '../../utils/emailValidator'
 // Create and export the LoginContext with default values
 export const AuthContext = React.createContext<AuthContextInterface>({
     // Default values
-    agreed: false, 
-    open: true, 
+    nextModal: true,
+    agreed: false,  // If the user has agreed to the privacy policy(second modal)
+    isFirstModalOpen: true, // If the first modal is open
+    isSecondModalOpen: false,
     disableFormContent: true, 
-    closeModal: () => {}, 
+    setOpenNextModal: () => {},
     setAgreed: () => {}, 
     register: {
         passwordVisibility: false,
@@ -30,11 +32,13 @@ export const AuthContext = React.createContext<AuthContextInterface>({
 
 export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
     const [context, setContext] = React.useState<AuthContextInterface>({
-        agreed: false, // If the user has agreed to the privacy policy
-        open: true, // If the modal is open
+        nextModal: true,
+        agreed: false,  // If the user has agreed to the privacy policy(second modal)
+        isFirstModalOpen: true, // If the first modal is open
+        isSecondModalOpen: false,
         disableFormContent: true, // If the form content should be disabled
-        closeModal: () => setContext((prevState) => ({...prevState, open: false, disableFormContent: false })), // Function to close the data privacy policy modal
-        setAgreed: () => setContext((prevState) => ({...prevState, agreed: true, open: false, disableFormContent: false })), // Function to set the agreed state
+        setOpenNextModal: () => setContext((prevState) => ({...prevState, isFirstModalOpen: false, isSecondModalOpen: true })), // Function to set the agreed state
+        setAgreed: () => setContext((prevState) => ({...prevState, agreed: true, isSecondModalOpen: false, disableFormContent: false })), // Function to set the agreed state
         register: {
             passwordVisibility: false,
             loadingButton: false,

@@ -1,8 +1,10 @@
 export interface AuthContextInterface {
+    nextModal: boolean
     agreed: boolean
-    open: boolean
+    isFirstModalOpen: boolean
+    isSecondModalOpen: boolean
     disableFormContent: boolean
-    closeModal?: () => void
+    setOpenNextModal: () => void
     setAgreed?: () => void
     register: {
         passwordVisibility: boolean,
