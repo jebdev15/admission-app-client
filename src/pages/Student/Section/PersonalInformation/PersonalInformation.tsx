@@ -43,13 +43,21 @@ const PersonalInformation = () => {
     const confirmation = window.confirm('Are you sure to proceed to next form? You can\'t edit your personal information after proceeding.');
     if (!confirmation) return
     setLoading(true)
-    const formData = new FormData(event.currentTarget)
-    formData.append('uuid', uuid ?? '')
-    const { data, status } = await axiosInstance.post('/personal-information/create', formData)
-    if (data) {
+    try {
+      
+      const formData = new FormData(event.currentTarget)
+      formData.append('uuid', uuid ?? '')
+      // const { data, status } = await axiosInstance.post('/personal-information/create', formData)
+      const { data, status } = await axiosInstance.put('/personal-information/update', formData)
+      if (data) {
+        setLoading(false)
+        if ([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
+        }
+    } catch (error) {
       setLoading(false)
-      if ([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
-      }
+      console.error(error)
+      alert("Something went wrong")
+    }
   }
   const fetchPersonalInformation = async () => {
     const { data } = await axiosInstance.get(`/personal-information/${uuid}`)
@@ -103,7 +111,6 @@ const PersonalInformation = () => {
               <Grid size={{ xs: 12, sm: 4 }}>
                 <FormControl fullWidth>
                   <TextField
-                    name="first_name"
                     label="First Name"
                     placeholder='e.g. John'
                     type="text"
@@ -134,7 +141,6 @@ const PersonalInformation = () => {
               <Grid size={{ xs: 12, sm: 4 }}>
                 <FormControl fullWidth>
                   <TextField
-                    name="last_name"
                     label="Last Name"
                     placeholder='e.g. Smith'
                     type="text"
@@ -182,7 +188,6 @@ const PersonalInformation = () => {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker 
                       readOnly
-                      name="date_of_birth" 
                       label="Date of Birth" 
                       value={personalInformation.date_of_birth ? dayjs(personalInformation.date_of_birth) : null} 
                       onChange={handleChangeDate} 
