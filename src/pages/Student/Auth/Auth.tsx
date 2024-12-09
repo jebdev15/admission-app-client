@@ -30,11 +30,14 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import collegesJsonData from "../colleges.json"; // Adjust the path as needed
 import { Colleges } from "./type";
 import DataPrivacyPolicyModal from "./DataPrivacyPolicyModal";
+import { AuthService } from "../../../services/authService";
+import { useLoaderData } from "react-router-dom";
 const collegesJson: Colleges = collegesJsonData;
 
 
 
 const Register = () => {
+    const { dailyReservationLimitData, dailyReservationLimitStatus } = useLoaderData()
     const theme = useTheme();
     const belowMediumScreenSize = useMediaQuery(theme.breakpoints.down("md"));
     const context = React.useContext(AuthContext);
@@ -86,7 +89,12 @@ const Register = () => {
     };
 
     const [tooltipOpen1, setTooltipOpen1] = React.useState(false);
-    console.log({disableFormContent})
+    const [dailyReservationLimit, setDailyReservationLimit] = React.useState(0);
+    React.useEffect(() => {
+        if(dailyReservationLimitData || dailyReservationLimitStatus) {
+            setDailyReservationLimit(dailyReservationLimitData.daily_reservation_limit ?? 0)
+        }
+    },[dailyReservationLimitData, dailyReservationLimitStatus])
     return (
         <React.Suspense fallback={<CustomCircularProgress />}>
             <Box
@@ -100,7 +108,7 @@ const Register = () => {
                 }}
             >
                 <Paper sx={{ width: { xs: "100%", sm: "500px", md: "60%" }, maxWidth: "700px", borderRadius: { xs: 0, sm: 2 } }}>
-                {!disableFormContent && (
+                {(dailyReservationLimit > 0) ? (
                     <Box
                         component="form"
                         sx={{
@@ -312,23 +320,34 @@ const Register = () => {
                                     color="primary"
                                     // disabled={disableButton}
                                     sx={{ py: 1.75, pt: 2, color: "white", borderRadius: 2 }}
+                                    disabled={disableFormContent}
                                     fullWidth
                                 >
                                 Register
                                 </Button>
                             </FormControl>
                         </Grid>
+                        <DataPrivacyPolicyModal />
                     </Box>
                 ) 
-                // : (
-                //     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-                //         <Typography variant="body1" color="initial">Please wait...</Typography>
-                //     </Box>
-                // )
+                : (
+                    <Box 
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            padding: { xs: 2, sm: 4 },
+                            gap: 1,
+                            width: "100%",
+                        }}
+                    >
+                        <Typography variant="body1" color="initial">We regret to inform you that the daily reservation limit has been reached. Please try again tomorrow. Thank you for your understanding.</Typography>
+                    </Box>
+                )
                 }
                 </Paper>
             </Box>
-            <DataPrivacyPolicyModal />
         </React.Suspense>
     );
 };
@@ -342,3 +361,20 @@ const Authentication = () => {
 };
 
 export default Authentication;
+
+export const loader = async () => {
+    const { data: dailyReservationLimitData, status: dailyReservationLimitStatus } = await AuthService.getDailyReservationLimit();
+    const { data: noOfSlotsRemaingByCampus, status: noOfSlotsRemaingByCampusStatus } = await AuthService.getNoOfSlotsRemaingByCampus()
+    console.log({
+        dailyReservationLimitData,
+        dailyReservationLimitStatus,
+        noOfSlotsRemaingByCampus,
+        noOfSlotsRemaingByCampusStatus  
+    })
+    return {
+        dailyReservationLimitData,
+        dailyReservationLimitStatus,
+        noOfSlotsRemaingByCampus,
+        noOfSlotsRemaingByCampusStatus
+    }
+}
