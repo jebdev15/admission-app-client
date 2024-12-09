@@ -7,10 +7,7 @@ import {
     TextField,
     Typography,
     Button,
-    Divider,
-    Dialog,
-    DialogTitle,
-    DialogContent,
+
     SelectChangeEvent,
     Select,
     InputLabel,
@@ -31,108 +28,11 @@ import CustomCircularProgress from "../../../components/CustomCircularProgress";
 // Import JSON data
 import useMediaQuery from "@mui/material/useMediaQuery";
 import collegesJsonData from "../colleges.json"; // Adjust the path as needed
-
+import { Colleges } from "./type";
+import DataPrivacyPolicyModal from "./DataPrivacyPolicyModal";
 const collegesJson: Colleges = collegesJsonData;
-interface CourseDetails {
-    course_code: string;
-    campuses: string[];
-}
 
-interface Course {
-    [courseName: string]: CourseDetails;
-}
 
-interface College {
-    courses: Course[];
-}
-
-interface Colleges {
-    [collegeName: string]: College;
-}
-
-const DataPrivacyPolicyModal = () => {
-    const theme = useTheme();
-    const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-    const { open, setAgreed } = React.useContext(AuthContext);
-    return (
-        <Dialog
-            open={open}
-            maxWidth="md"
-            fullScreen={fullScreen}
-            fullWidth
-            sx={{
-                "& .MuiDialog-paper": {
-                    borderRadius: 2,
-                },
-            }}
-        >
-            <DialogTitle>CHMSU Data Privacy Policy</DialogTitle>
-            <DialogContent>
-                <Typography color="primary.main" fontWeight={500} textTransform="uppercase">
-                    Who we are
-                </Typography>
-                <Typography variant="caption">
-                    {" "}
-                    Carlos Hilado Memorial State University is a GREEN university committed to empower learners through academic excellence, relevant research, active community engagement,
-                    and good governance in order to build a just and sustainable world. The Office of the Guidance Services is responsible for managing the CHMSU Addmission Test.
-                </Typography>
-                <Divider sx={{ my: 2 }} />
-                <Typography color="primary.main" fontWeight={500} textTransform="uppercase">
-                    What information we collect and how
-                </Typography>
-                <Typography variant="caption">
-                    {" "}
-                    The information we collect via the website may include: <br />
-                    <br />
-                    1. Personal details - Any personal details you knowingly provide us through forms and our email, such as name, address, mobile/telephone number, etc. Under no
-                    circumstances will we hold sensitive payment details such as your credit/debit card number, expiry date, one-time password, CVV number, and security code. <br />
-                    <br />
-                    2. IP Address - This is a string of numbers unique to your computer that our web server records when you request any page or component on the website. This information is
-                    used to monitor your usage of the website.
-                    <br />
-                    <br />
-                    3. Preferred settings – The website will record data that will allows us to recognize you and your preferred settings. This saves you from re-entering information on
-                    return visits to the site. Such data is recorded locally on your computer through the use of cookies. Most browsers can be programmed to reject or warn you before
-                    downloading cookies. Information regarding this may be found in your browser’s help facility.
-                </Typography>
-                <Divider sx={{ my: 2 }} />
-                <Typography color="primary.main" fontWeight={500} textTransform="uppercase">
-                    What we do with your information
-                </Typography>
-                <Typography variant="caption">
-                    {" "}
-                    Any personal information we collect from this website will be used in accordance with the Republic Act 10173 – Data Privacy Act of 2012 and other applicable laws.
-                    Specifically, the details we collect will be used to: <br />
-                    <br />
-                    1. Process your request for taking the university’s Admission Test, and provide the information required by the Commission on Higher Education (CHED) for billing and
-                    related purposes under the REPUBLIC ACT 10687 or CHED UNIFAST Law; and <br />
-                    <br />
-                    2. Carry out certain activities such as processing and sorting data, monitoring how customers use the website, and issuing our e-mails for us. Third parties may be asked
-                    to do this but will not be allowed to use your personal information for their purposes. We may need to pass the information we collect to authorized persons under the
-                    university’s student admission and screening committee.
-                </Typography>
-                <Divider sx={{ my: 2 }} />
-                <Typography color="primary.main" fontWeight={500} textTransform="uppercase">
-                    Your Rights
-                </Typography>
-                <Typography variant="caption">
-                    {" "}
-                    You have the right to request a copy of any information that we currently hold about you.
-                    <strong>
-                        To receive such information, please send your contact details and address using our support form. you will receive additional instructions upon submitting the support
-                        form.
-                    </strong>
-                </Typography>
-                <Divider sx={{ my: 2 }} />
-                <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-                    <Button variant="contained" color="primary" sx={{ pt: 1, color: "white", borderRadius: 2 }} onClick={setAgreed}>
-                        Agree & Continue
-                    </Button>
-                </Box>
-            </DialogContent>
-        </Dialog>
-    );
-};
 
 const Register = () => {
     const theme = useTheme();
@@ -186,6 +86,7 @@ const Register = () => {
     };
 
     const [tooltipOpen1, setTooltipOpen1] = React.useState(false);
+    console.log({disableFormContent})
     return (
         <React.Suspense fallback={<CustomCircularProgress />}>
             <Box
@@ -199,6 +100,7 @@ const Register = () => {
                 }}
             >
                 <Paper sx={{ width: { xs: "100%", sm: "500px", md: "60%" }, maxWidth: "700px", borderRadius: { xs: 0, sm: 2 } }}>
+                {!disableFormContent && (
                     <Box
                         component="form"
                         sx={{
@@ -211,6 +113,7 @@ const Register = () => {
                             width: "100%",
                         }}
                         onSubmit={submitForm}
+                        
                     >
                         <Typography variant={belowMediumScreenSize ? "h6" : "h6"} color="primary" textAlign={"center"} sx={{ mb: 0, mt: { xs: 1, sm: 0 } }}>
                             Welcome to the CHMSU Admission Portal
@@ -234,18 +137,38 @@ const Register = () => {
                         <Grid container size={12} rowSpacing={3} columnSpacing={2} sx={{ width: "100%" }}>
                             <Grid size={{ xs: 12, sm: 6 }}>
                                 <FormControl fullWidth>
-                                    <TextField name="first_name" label="First name" placeholder="e.g. John" type="text" sx={{ "& .MuiInputBase-root": { borderRadius: 2 } }} />
+                                    <TextField 
+                                        name="first_name" 
+                                        label="First name" 
+                                        placeholder="e.g. John" 
+                                        type="text" 
+                                        sx={{ "& .MuiInputBase-root": { borderRadius: 2 } }} 
+                                        disabled={disableFormContent}
+                                    />
                                 </FormControl>
                             </Grid>
                             <Grid size={{ xs: 12, sm: 6 }}>
                                 <FormControl fullWidth>
-                                    <TextField name="last_name" label="Last name" placeholder="e.g. Smith" type="text" sx={{ "& .MuiInputBase-root": { borderRadius: 2 } }} />
+                                    <TextField 
+                                        name="last_name" 
+                                        label="Last name" 
+                                        placeholder="e.g. Smith" 
+                                        type="text" 
+                                        sx={{ "& .MuiInputBase-root": { borderRadius: 2 } }} 
+                                        disabled={disableFormContent}
+                                    />
                                 </FormControl>
                             </Grid>
                             <Grid size={{ xs: 12, sm: 6 }}>
                                 <FormControl fullWidth>
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <DatePicker name="date_of_birth" label="Date of birth" format="YYYY-MM-DD" sx={{ "& .MuiInputBase-root": { borderRadius: 2 } }} />
+                                        <DatePicker 
+                                            name="date_of_birth" 
+                                            label="Date of birth" 
+                                            format="YYYY-MM-DD" 
+                                            sx={{ "& .MuiInputBase-root": { borderRadius: 2 } }} 
+                                            disabled={disableFormContent}
+                                        />
                                     </LocalizationProvider>
                                 </FormControl>
                             </Grid>
@@ -284,6 +207,7 @@ const Register = () => {
                                         },
                                     }}
                                     sx={{ borderRadius: 2 }}
+                                    disabled={disableFormContent}
                                 >
                                     {Object.keys(collegesJson).map((college) => (
                                         <MenuItem key={college} value={college} sx={{ whiteSpace: "normal" }}>
@@ -309,6 +233,7 @@ const Register = () => {
                                         },
                                     }}
                                     sx={{ borderRadius: 2 }}
+                                    disabled={disableFormContent}
                                     >
                                     {availableCourses.map((course) => (
                                         <MenuItem key={course} value={course} sx={{ whiteSpace: "normal" }}>
@@ -339,7 +264,8 @@ const Register = () => {
                                             sx={{ borderRadius: 2 }}
                                             onFocus={() => setTooltipOpen1(true)}
                                             onBlur={() => setTooltipOpen1(false)}
-                                            >
+                                            disabled={disableFormContent}
+                                        >
                                             {availableCampuses.map((campus) => (
                                                 <MenuItem key={campus} value={campus} sx={{ whiteSpace: "normal" }}>
                                                     {campus === "Talisay" ? `${campus} (Main) Campus` : `${campus} Campus`}
@@ -367,6 +293,7 @@ const Register = () => {
                                                 whiteSpace: "normal !important",
                                             },
                                         }}
+                                        disabled={disableFormContent}
                                     >
                                         <MenuItem value="Alijis" sx={{ whiteSpace: "normal" }}>Alijis Campus</MenuItem>
                                         <MenuItem value="Binalbagan" sx={{ whiteSpace: "normal" }}>Binalbagan Campus</MenuItem>
@@ -377,19 +304,28 @@ const Register = () => {
                                     <FormHelperText>**You may choose the exam venue nearest you regardless of your preferred to enroll in.</FormHelperText>
                                 </FormControl>
                             </Grid>
+                            
                             <FormControl fullWidth>
                                 <Button
-                            type='submit'
-                            variant="contained"
-                            color="primary"
-                            // disabled={disableButton}
-                            sx={{ py: 1.75, pt: 2, color: "white", borderRadius: 2 }}
-                            fullWidth>
+                                    type='submit'
+                                    variant="contained"
+                                    color="primary"
+                                    // disabled={disableButton}
+                                    sx={{ py: 1.75, pt: 2, color: "white", borderRadius: 2 }}
+                                    fullWidth
+                                >
                                 Register
-                            </Button>
+                                </Button>
                             </FormControl>
                         </Grid>
                     </Box>
+                ) 
+                // : (
+                //     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                //         <Typography variant="body1" color="initial">Please wait...</Typography>
+                //     </Box>
+                // )
+                }
                 </Paper>
             </Box>
             <DataPrivacyPolicyModal />
