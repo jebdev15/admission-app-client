@@ -5,6 +5,7 @@ import Home, {loader as HomeLoader} from '../pages/Student/Home/Home'
 import { AuthContextProvider } from '../context/Auth/AuthContext'
 import App from '../App'
 import { HomeContextProvider } from '../pages/Student/Home/HomeContext'
+import { loader as AuthLoader } from '../pages/Student/Auth/Auth'
 
 export const router = createBrowserRouter([
     {
@@ -13,7 +14,7 @@ export const router = createBrowserRouter([
                     <App />
                 </AuthContextProvider>,
         errorElement: <ErrorPage />,
-        
+        loader: AuthLoader
     },
     {
         path: '/home/:uuid',
