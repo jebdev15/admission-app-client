@@ -158,7 +158,6 @@ const Schedules = () => {
                             component={'form'}
                             onSubmit={handleSubmit}
                         >
-
                             <Box sx={{display: 'flex', flexDirection: {xs: 'column-reverse', sm: 'row'}, rowGap: 2, alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
                                 <Box sx={{display: 'flex', flexDirection: {xs: 'column', sm: 'row'}, columnGap: 1, alignItems: 'center'}}>
                                 <Schedule sx={{ color: 'primary.main', fontSize: '3rem'}} />
@@ -169,8 +168,6 @@ const Schedules = () => {
                                 <Typography variant="body1" color='textSecondary' sx={{fontWeight: 'bold'}}>Academic Year 2025 - 2026</Typography>
                                 </Box>
                             </Box>
-
-                            {/* <Alert severity="info">Slots Remaining isn't real-time</Alert> */}
                             <Grid container rowSpacing={3} columnSpacing={2} width={'100%'}>
                                     <Grid size={{xs: 12, md: 7}}>
                                         <Paper variant='outlined' sx={{ flexGrow: 1, borderRadius: 2 }}>
