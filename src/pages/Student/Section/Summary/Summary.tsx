@@ -27,7 +27,8 @@ const Summary = () => {
             setImageSrc(fullImageUrl); // Set the constructed URL as the image source
         }
     }
-    const qrValue = `${VITE_API_URL}/home/${uuid}`; // Replace with your value
+    const domain = window.location.hostname;
+    const qrValue = `${domain}/home/${uuid}`; // Replace with your value
     const containerRef = React.useRef<HTMLDivElement | null>(null);
 
     const handleDownload = () => {
