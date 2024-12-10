@@ -12,7 +12,7 @@ export const AuthService = {
     },
     getNoOfSlotsRemaingByCampus: async () => {
         try {
-            const { data, status } = await axiosInstance.get('/schedules/slots-remaining');
+            const { data, status } = await axiosInstance.get('/schedules/slots');
             return { data, status }
         } catch (error) {
             console.error('Error fetching no of slots remaining:', error);
