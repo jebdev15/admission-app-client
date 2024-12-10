@@ -59,7 +59,7 @@ interface CampusSlots {
     [key: string]: number; // Campus name as the key, and slots as the value
 }
 const Register = () => {
-    const { dailyReservationLimitData, dailyReservationLimitStatus, noOfSlotsRemaingByCampus, noOfSlotsRemaingByCampusStatus } = useLoaderData<LoaderData>()
+    const { dailyReservationLimitData, dailyReservationLimitStatus, noOfSlotsRemaingByCampus, noOfSlotsRemaingByCampusStatus } = useLoaderData() as LoaderData
     const theme = useTheme();
     const belowMediumScreenSize = useMediaQuery(theme.breakpoints.down("md"));
     const context = React.useContext(AuthContext);
