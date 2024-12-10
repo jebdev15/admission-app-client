@@ -68,14 +68,23 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
                         console.log(key, value)
                     }
                     if(isValid) {
-                        setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: true}}))
-                        const { data, status } = await axiosInstance.post('/auth/register', formData)
-                        alert(data.message)
-                        if(status) {
+                        try {
+                            setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: true}}))
+                            const { data, status } = await axiosInstance.post('/auth/register', formData)
+                            alert(data.message)
+                            if(status) {
+                                if(status === 201) {
+                                    window.location.reload()
+                                }
+                                setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: false}}))
+                            }
+                            if(data.refresh_frontend) {
+                                window.location.reload()
+                            }
+                        } catch (error) {
                             setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: false}}))
-                        }
-                        if(status === 201) {
-                            window.location.reload()
+                            console.error(error)
+                            alert("Something went wrong")
                         }
                     } else {
                         alert(error)
