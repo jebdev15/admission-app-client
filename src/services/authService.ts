@@ -19,4 +19,13 @@ export const AuthService = {
             throw error;
         }
     },
+    checkIfDailyReservationIsClosed: async () => {
+        try {
+            const { data, status } = await axiosInstance.get('/daily-reservation-limit/closed');
+            return { data, status }
+        } catch (error) {
+            console.error('Error fetching daily reservation limit:', error);
+            throw error;
+        }
+    },
 }
