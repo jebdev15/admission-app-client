@@ -6,7 +6,11 @@ import CustomCircularProgress from '../../../components/CustomCircularProgress';
 import Summary from '../Section/Summary/Summary';
 import Picture from '../Section/ImageUploader/ImageUploader';
 import { LoaderData } from './type';
-import { AxiosError } from 'axios';
+import axios from 'axios';
+
+interface LoaderParams {
+  params: { uuid: string }
+}
 const PersonalInformation = React.lazy(() => import('../Section/PersonalInformation/PersonalInformation'))
 const AddressDetails = React.lazy(() => import('../Section/AddressDetails/AddressDetails'))
 const ParentProfile = React.lazy(() => import('../Section/ParentProfile/ParentProfile'))
@@ -65,7 +69,7 @@ const Home = () => {
     )
 }
 
-export const loader = async ({ params }: any) => {
+export const loader = async ({ params }: LoaderParams) => {
   try {
     const { data } = await axiosInstance.get(`/applicants/${params.uuid}`);
     return {
@@ -74,24 +78,20 @@ export const loader = async ({ params }: any) => {
       isUuidExists: data.isUuidExists,
       forms_status: data.forms_status[0],
     };
-  } catch (error: AxiosError | any) {
+  } catch (error: unknown) {
     console.error('Error loading data:', error);
-    // Handle different error types based on HTTP status
-    if (error.response) {
-      // Throw a custom error with status and message
-      const customError = new Error(error.response.data.message || 'An error occurred') as any;
-      customError.status = error.response.status;
-      customError.statusText = error.response.statusText;
-      customError.data = { message: error.response?.data?.message || 'Failed to load data.' };
 
-      throw customError;
+    if(axios.isAxiosError(error)) {
+      
+      // Handle different error types based on HTTP status
+      if (error.response) {
+        throw {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          data: { message: error.response?.data?.message }
+        };
+      }
     }
-
-    // Fallback for unexpected errors
-    const fallbackError = new Error('Internal Server Error') as any;
-    fallbackError.status = 500;
-    fallbackError.statusText = 'Internal Server Error';
-    throw fallbackError;
   }
 }
 export default Home
