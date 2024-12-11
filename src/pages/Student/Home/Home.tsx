@@ -7,10 +7,6 @@ import Summary from '../Section/Summary/Summary';
 import Picture from '../Section/ImageUploader/ImageUploader';
 import { LoaderData } from './type';
 import axios from 'axios';
-
-interface LoaderParams {
-  params: { uuid: string }
-}
 const PersonalInformation = React.lazy(() => import('../Section/PersonalInformation/PersonalInformation'))
 const AddressDetails = React.lazy(() => import('../Section/AddressDetails/AddressDetails'))
 const ParentProfile = React.lazy(() => import('../Section/ParentProfile/ParentProfile'))
@@ -68,8 +64,7 @@ const Home = () => {
       </React.Suspense>
     )
 }
-
-export const loader = async ({ params }: LoaderParams) => {
+export const loader = async ({ params }: any) => {
   try {
     const { data } = await axiosInstance.get(`/applicants/${params.uuid}`);
     return {
