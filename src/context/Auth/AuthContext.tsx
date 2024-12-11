@@ -61,6 +61,8 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
                 )),
                 submitForm: async (event: React.FormEvent<HTMLFormElement>) => {
                     event.preventDefault(); 
+                    const confirmation = window.confirm('Are all your details correct? You can\'t edit your registration after proceeding.')
+                    if(!confirmation) return;
                     const formData = new FormData(event.currentTarget)
                     console.log(formData.get('email'))
                     const {isValid, error} = validateEmail(formData.get('email') as string)
