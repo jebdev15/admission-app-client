@@ -61,35 +61,59 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
                 )),
                 submitForm: async (event: React.FormEvent<HTMLFormElement>) => {
                     event.preventDefault(); 
-                    const confirmation = window.confirm('Are all your details correct? You can\'t edit your registration after proceeding.')
+                    const confirmation = window.confirm('Are all your are details correct? You can\'t edit your registration after proceeding.')
                     if(!confirmation) return;
+                    setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: true}}))
                     const formData = new FormData(event.currentTarget)
-                    console.log(formData.get('email'))
+                    // Check for blank fields
+                    for (const [key, value] of formData.entries()) {
+                        if (value === "") {
+                            alert(`Please fill out all the fields. Missing: ${key}`);
+                            setContext((prevState: AuthContextInterface) => ({
+                                ...prevState,
+                                register: { ...prevState.register, loadingButton: false },
+                            }));
+                            return;
+                        }
+                    }
+                    // Validate an email
                     const {isValid, error} = validateEmail(formData.get('email') as string)
                     for(const [key, value] of formData) {
                         console.log(key, value)
                     }
-                    if(isValid) {
-                        try {
-                            setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: true}}))
-                            const { data, status } = await axiosInstance.post('/auth/register', formData)
-                            alert(data.message)
-                            if(status) {
-                                if(status === 201) {
-                                    window.location.reload()
-                                }
-                                setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: false}}))
-                            }
-                            if(data.refresh_frontend) {
-                                window.location.reload()
-                            }
-                        } catch (error) {
-                            setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: false}}))
-                            console.error(error)
-                            alert("Something went wrong")
+                    if (!isValid) {
+                        alert(error);
+                        setContext((prevState: AuthContextInterface) => ({
+                            ...prevState,
+                            register: { ...prevState.register, loadingButton: false },
+                        }));
+                        return;
+                    }
+                
+                    // Log form data for debugging
+                    formData.forEach((value, key) => console.log(key, value));
+                
+                    // Submit form data to API
+                    try {
+                        const { data, status } = await axiosInstance.post("/auth/register", formData);
+                
+                        alert(data.message);
+                
+                        if (status === 201) {
+                            window.location.reload();
                         }
-                    } else {
-                        alert(error)
+                
+                        if (data.refresh_frontend) {
+                            window.location.reload();
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        alert("Something went wrong");
+                    } finally {
+                        setContext((prevState: AuthContextInterface) => ({
+                            ...prevState,
+                            register: { ...prevState.register, loadingButton: false },
+                        }));
                     }
                 },
                 handleChange: (event) => setContext((prevState: AuthContextInterface) => (
