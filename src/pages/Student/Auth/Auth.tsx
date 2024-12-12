@@ -481,7 +481,7 @@ const Register = () => {
                                     width: "100%",
                                 }}
                             >
-                                <Typography variant="body1" color="initial">Sincere apologies but we regret to inform you that there are no reservation slots available at any campus, and no extra slots will be opened tomorrow. Thank you for your understanding.</Typography>
+                                <Typography variant="body1" color="initial">Sincere apologies but we regret to inform you that there are no reservation slots available at any campus, and no new slots will be added for tomorrow. Thank you for your understanding.</Typography>
                             </Box>
                         )
                 }
