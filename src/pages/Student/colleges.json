@@ -94,61 +94,61 @@
       {
         "Bachelor of Early Childhood Education": {
           "course_code": "BECED",
-          "campuses": ["Alijis", "Talisay"]
+          "campuses": ["Talisay"]
         }
       },
       {
         "Bachelor of Elementary Education": {
           "course_code": "BEED",
-          "campuses": ["Alijis", "Binalbagan", "Talisay"]
+          "campuses": ["Binalbagan", "Talisay"]
         }
       },
       {
         "Bachelor of Physical Education": {
           "course_code": "BPED",
-          "campuses": ["Alijis", "Talisay"]
+          "campuses": ["Talisay"]
         }
       },
       {
         "Bachelor of Secondary Education major in English": {
           "course_code": "BSED ENG",
-          "campuses": ["Alijis", "Talisay"]
+          "campuses": ["Talisay"]
         }
       },
       {
         "Bachelor of Secondary Education major in Filipino": {
           "course_code": "BSED FIL",
-          "campuses": ["Alijis", "Talisay"]
+          "campuses": ["Talisay"]
         }
       },
       {
         "Bachelor of Secondary Education major in Mathematics": {
           "course_code": "BSED MATH",
-          "campuses": ["Alijis", "Talisay"]
+          "campuses": ["Talisay"]
         }
       },
       {
         "Bachelor of Secondary Education major in Science": {
           "course_code": "BSED SCIENCE",
-          "campuses": ["Alijis", "Binalbagan", "Talisay"]
+          "campuses": ["Binalbagan", "Talisay"]
         }
       },
       {
         "Bachelor of Special Needs Education": {
           "course_code": "BSNED",
-          "campuses": ["Alijis", "Talisay"]
+          "campuses": ["Talisay"]
         }
       },
       {
         "Bachelor of Technology and Livelihood Education major in Home Economics": {
           "course_code": "BTLED HE",
-          "campuses": ["Alijis", "Binalbagan", "Talisay"]
+          "campuses": ["Binalbagan", "Talisay"]
         }
       },
       {
         "Bachelor of Technology and Livelihood Education major in Industrial Arts": {
           "course_code": "BTLED IA",
-          "campuses": ["Alijis", "Talisay"]
+          "campuses": ["Talisay"]
         }
       },
       {
@@ -240,7 +240,7 @@
       {
         "Bachelor of Industrial Technology major in Heating, Ventilating, Air Conditioning, and Refrigeration Technology": {
           "course_code": "BIT HVACRT",
-          "campuses": ["Alijis", "Talisay"]
+          "campuses": ["Talisay"]
         }
       }
     ]
