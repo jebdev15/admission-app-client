@@ -192,11 +192,8 @@ const Register = () => {
                                     width: "100%",
                                 }}
                             >
-                                <Typography variant="h4" color="initial" textAlign={"left"}>Important Notice: Last Day of Admission
-                                </Typography>
-                                <Typography variant="body1" color="initial" textAlign={"left"}>Today, is the last day of Admission Pre-Registration for the Academic Year 2025-2026.</Typography>
-                                <Typography variant="body1" color="initial" textAlign={"left"}>If you have any questions or concerns, please don't hesitate to reach out to us.</Typography>
-                                <Typography variant="body1" color="initial" textAlign={"left"}>For assistance, contact us via messenger, CHMSU ICT-MIS Support.</Typography>
+                                <Typography variant="h4" color="initial" textAlign={"left"}>Important Notice: Admission for the Academic Year 2025-2026 is Closed</Typography>
+                                <Typography variant="body1" color="initial" textAlign={"left"}>For updates and more information, visit our website, chmsu.edu.ph, or Facebook page Carlos Hilado Memorial State University</Typography>
                                 <Typography variant="body1" color="initial" textAlign={"left"}>Thank you!</Typography>
                             </Box>
                         )
@@ -244,7 +241,7 @@ const Register = () => {
                                                 <Alert severity="info" sx={{ width: "100%", p: 2, pb: 0, borderRadius: 2 }}>
                                                     <AlertTitle>Information</AlertTitle>
                                                     <List sx={{ pt: 0 }}>
-                                                        <ListItem sx={{ pl: 0 }}>Please fill up the form below</ListItem>
+                                                        <ListItem sx={{ pl: 0 }}>Please fill out the form below</ListItem>
                                                         <ListItem sx={{ pl: 0 }}>Use your active email address</ListItem>
                                                     </List>
                                                     <Typography variant="caption" color="initial"></Typography>
