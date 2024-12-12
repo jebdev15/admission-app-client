@@ -118,7 +118,7 @@ const PersonalInformation = () => {
                     slotProps={{
                       input: {
                         readOnly: true,
-                      }
+                      },
                     }}
                   />
                 </FormControl>
@@ -164,6 +164,11 @@ const PersonalInformation = () => {
                     onChange={handleChange}
                     required
                     sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
+                    slotProps={{
+                      htmlInput: {
+                        maxLength: 30, // Set maxLength to 30 characters
+                      }
+                    }}
                   />
                 </FormControl>
               </Grid>
@@ -178,6 +183,12 @@ const PersonalInformation = () => {
                     onChange={handleChange}
                     required
                     sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
+                    slotProps={{
+                      htmlInput: {
+                        minLength: 11, // Set minLength to 11 characters
+                        maxLength: 11, // Set maxLength to 11 characters
+                      }
+                    }}
                   />
                 </FormControl>
               </Grid>
@@ -271,6 +282,11 @@ const PersonalInformation = () => {
                         variant='standard'
                         required
                         sx={{ '& .MuiInputBase-root': { borderRadius: 2 }, mt: { xs: -2, sm: 0 } }}
+                        slotProps={{
+                          htmlInput: {
+                            maxLength: 128, // Set maxLength to 128 characters
+                          }
+                        }}
                       />
                     </FormControl>
                   </Grid>
@@ -327,6 +343,11 @@ const PersonalInformation = () => {
                         required
                         variant='standard'
                         sx={{ '& .MuiInputBase-root': { borderRadius: 2 }, mt: { xs: -2, sm: 0 } }}
+                        slotProps={{
+                          htmlInput: {
+                            maxLength: 255, // Set maxLength to 255 characters
+                          }
+                        }}
                       />
                     </FormControl>
                   </Grid>
@@ -398,6 +419,11 @@ const PersonalInformation = () => {
                         required
                         variant='standard'
                         sx={{ '& .MuiInputBase-root': { borderRadius: 2 }, mt: { sm: -2, md: 0 } }}
+                        slotProps={{
+                          htmlInput: {
+                            maxLength: 255, // Set maxLength to 255 characters
+                          }
+                        }}
                       />
                     </FormControl>
                   </Grid>
