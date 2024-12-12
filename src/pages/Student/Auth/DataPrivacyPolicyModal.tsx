@@ -88,7 +88,7 @@ const DataPrivacyPolicyModal = () => {
                         1. Process your request for taking the university’s Admission Test, and provide the information required by the Commission on Higher Education (CHED) for billing and
                         related purposes under the REPUBLIC ACT 10687 or CHED UNIFAST Law; and <br />
                         <br />
-                        2. Carry out certain activities such as processing and sorting data, monitoring how customers use the website, and issuing our e-mails for us. Third parties may be asked
+                        2. Carry out certain activities such as processing and sorting data, monitoring how customers use the website, and issuing e-mails for us. Third parties may be asked
                         to do this but will not be allowed to use your personal information for their purposes. We may need to pass the information we collect to authorized persons under the
                         university’s student admission and screening committee.
                     </Typography>
