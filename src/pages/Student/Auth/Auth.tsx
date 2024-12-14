@@ -212,7 +212,7 @@ const Register = () => {
                                             width: "100%",
                                         }}
                                     >
-                                        <Typography variant="h4" color="initial">System is currently closed. Comeback tomorrow at 8:00 AM</Typography>
+                                        <Typography variant="h4" color="initial">System is currently closed.</Typography>
                                     </Box>
                                 )
                                 : (dailyReservationLimit > 0) 
