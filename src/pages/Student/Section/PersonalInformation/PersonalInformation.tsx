@@ -185,10 +185,12 @@ const PersonalInformation = () => {
                     sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
                     slotProps={{
                       htmlInput: {
-                        minLength: 11, // Set minLength to 11 characters
                         maxLength: 11, // Set maxLength to 11 characters
+                        pattern: "[0-9]*", // Allows only numeric input
                       }
                     }}
+                    helperText="Mobile number must be 11 digits"
+                    error={personalInformation?.mobile_no?.length > 11}
                   />
                 </FormControl>
               </Grid>
