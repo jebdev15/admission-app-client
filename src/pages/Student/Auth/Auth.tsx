@@ -192,7 +192,7 @@ const Register = () => {
                                     width: "100%",
                                 }}
                             >
-                                <Typography variant="h4" color="initial" textAlign={"left"}>Important Notice: Admission for the Academic Year 2025-2026 is Closed</Typography>
+                                <Typography variant="h4" color="initial" textAlign={"left"}>Important Notice: Admission for the Academic Year 2025-2026 is closed</Typography>
                                 <Typography variant="body1" color="initial" textAlign={"left"}>For updates and more information, visit our website, chmsu.edu.ph, or Facebook page Carlos Hilado Memorial State University</Typography>
                                 <Typography variant="body1" color="initial" textAlign={"left"}>Thank you!</Typography>
                             </Box>
@@ -212,7 +212,7 @@ const Register = () => {
                                             width: "100%",
                                         }}
                                     >
-                                        <Typography variant="h4" color="initial">System is currently closed.</Typography>
+                                        <Typography variant="h4" color="initial">The system is currently unavailable. Registration will reopen at 8:00 AM. Thank you for your patience and understanding.</Typography>
                                     </Box>
                                 )
                                 : (dailyReservationLimit > 0) 
@@ -466,7 +466,7 @@ const Register = () => {
                                                 width: "100%",
                                             }}
                                         >
-                                            <Typography variant="body1" color="initial">We regret to inform you that the daily reservation limit has been reached. Please try again tomorrow. Thank you for your understanding.</Typography>
+                                            <Typography variant="body1" color="initial">We’re sorry to inform you that the daily reservation limit has been reached. Registration will reopen at 8:00 AM. Thank you for your patience and understanding.</Typography>
                                         </Box>
                                     ) 
                         : (
@@ -481,7 +481,7 @@ const Register = () => {
                                     width: "100%",
                                 }}
                             >
-                                <Typography variant="body1" color="initial">Sincere apologies but we regret to inform you that there are no reservation slots available at any campus, and no new slots will be added for tomorrow. Thank you for your understanding.</Typography>
+                                <Typography variant="body1" color="initial">We're sorry to inform you that all reservation slots are filled at every campus, and no new slots will be added for tomorrow. Thank you for your understanding.</Typography>
                             </Box>
                         )
                 }
