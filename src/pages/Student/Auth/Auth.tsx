@@ -505,14 +505,14 @@ export const loader = async (): Promise<LoaderData> => {
     const { data: dailyReservationLimitData, status: dailyReservationLimitStatus } = await AuthService.getDailyReservationLimit();
     const { data: noOfSlotsRemaingByCampus, status: noOfSlotsRemaingByCampusStatus } = await AuthService.getNoOfSlotsRemaingByCampus()
     const { data: isDailyReservationClosed, status: isDailyReservationClosedStatus } = await AuthService.checkIfDailyReservationIsClosed()
-    console.log({
-        dailyReservationLimitData,
-        dailyReservationLimitStatus,
-        noOfSlotsRemaingByCampus,
-        noOfSlotsRemaingByCampusStatus ,
-        isDailyReservationClosed,
-        isDailyReservationClosedStatus
-    })
+    // console.log({
+    //     dailyReservationLimitData,
+    //     dailyReservationLimitStatus,
+    //     noOfSlotsRemaingByCampus,
+    //     noOfSlotsRemaingByCampusStatus ,
+    //     isDailyReservationClosed,
+    //     isDailyReservationClosedStatus
+    // })
     return {
         dailyReservationLimitData: dailyReservationLimitData as DailyReservationLimitData,
         dailyReservationLimitStatus: dailyReservationLimitStatus as number,
