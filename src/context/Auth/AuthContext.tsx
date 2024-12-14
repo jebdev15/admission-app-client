@@ -61,7 +61,7 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
                 )),
                 submitForm: async (event: React.FormEvent<HTMLFormElement>) => {
                     event.preventDefault(); 
-                    const confirmation = window.confirm('Are all your are details correct? You can\'t edit your registration after proceeding.')
+                    const confirmation = window.confirm('Please confirm: Are all the details correct? Once you proceed, you will not be able to edit your registration.')
                     if(!confirmation) return;
                     setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: true}}))
                     const formData = new FormData(event.currentTarget)
