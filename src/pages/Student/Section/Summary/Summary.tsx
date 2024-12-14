@@ -132,7 +132,7 @@ const Summary = () => {
                             <fieldset style={{ padding: '1rem 1.25rem 1.5rem 1.25rem', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 <legend style={{ padding: '0 0.5rem', margin: '0 -0.5rem' }}>Examination Details</legend>
                                 <Typography variant="body2" color="initial" align='center' sx={{ mb: -1 }}>Where:</Typography>
-                                <Typography variant="h6" color="initial" align='center'>{applicantSummaryInfo?.location} Campus</Typography>
+                                <Typography variant="h6" color="initial" align='center'>{applicantSummaryInfo?.location}</Typography>
                                 <Typography variant="body2" color="initial" align='center' sx={{ mb: -1, mt: 2 }}>When:</Typography>
                                 <Typography variant="h6" color="initial" align='center'>{FormatDateUtil.formatDateOnly(applicantSummaryInfo?.schedule_date)} {applicantSummaryInfo?.schedule_time}</Typography>
                                 <Typography variant="body1" color="initial">The verified examinees will take the CHMSU Admission Test on their reserved dates in their chosen exam venues.</Typography>
