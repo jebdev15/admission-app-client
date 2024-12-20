@@ -7,9 +7,33 @@ import { FormatDateUtil } from '../../../../utils/formatDate'
 import { VITE_API_URL } from '../../../../constants'
 import { QRCodeSVG } from 'qrcode.react'
 
+interface SummaryInfo {
+    name: string
+    email: string
+    lrn: string
+    course_description: string
+    college_description: string
+    campus_to_enroll: string
+    location: string
+    schedule_date: string
+    schedule_time: string
+}
+
+const defaultSummaryInfo: SummaryInfo = {
+    name: '',  
+    email: '',
+    lrn: '',
+    course_description: '',
+    college_description: '',
+    campus_to_enroll: '',
+    location: '',
+    schedule_date: '',
+    schedule_time: ''
+}
+
 const Summary = () => {
     const { uuid } = useParams<{ uuid: string | undefined }>()
-    const [applicantSummaryInfo, setApplicantSummaryInfo] = React.useState<any>({})
+    const [applicantSummaryInfo, setApplicantSummaryInfo] = React.useState<SummaryInfo>(defaultSummaryInfo)
     const [imageSrc, setImageSrc] = React.useState<string>('')
     const getApplicantSummary = async (uuid: string | undefined) => {
         const { data } = await SummaryService.getApplicantSummary(uuid)
@@ -146,6 +170,7 @@ const Summary = () => {
                                         <ListItem sx={{ pl: 0 }}>1 long brown envelope</ListItem>
                                         <ListItem sx={{ pl: 0 }}>Black ballpen, eraser, and pencil</ListItem>
                                         <ListItem sx={{ pl: 0 }}>Proof of your successful registration (screenshot or active webpage)</ListItem>
+                                        <ListItem sx={{ pl: 0 }}>Senior High School ID or any valid identifcation card (that you uploaded in the portal)</ListItem>
                                     </List>
                                     <Typography variant="caption" color="initial"></Typography>
                                 </Alert>
