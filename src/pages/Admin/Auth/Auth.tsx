@@ -1,9 +1,16 @@
 import React from "react";
-import { Box, Checkbox, Container, FormControlLabel, Paper, Typography } from "@mui/material";
+import { Box, Container, Paper, Typography } from "@mui/material";
 import chmsuLogo from "../../../assets/chmsu-small.jpg";
 import "../../../assets/style.css";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Auth: React.FC = () => {
+    const [loading, setLoading] = React.useState<boolean>(false);
+    const login = (credentials: any) => {
+        setLoading(true)
+        console.log(credentials)
+        setTimeout(() => setLoading(false), 1000)
+    }
   return (
     <Box sx={{ display: "flex", flexGrow: 1, alignItems: "center" }}>
       <Container maxWidth="lg" fixed sx={{ height: "inherit" }}>
@@ -51,7 +58,19 @@ const Auth: React.FC = () => {
                   alignItems: "center",
                 }}
                 className="loginForm"
-              ></Box>
+              >
+                {
+                    loading
+                        ? <Typography>Signing you in...</Typography>
+                         : <GoogleLogin 
+                            // className="googleLoginBtn" 
+                            onSuccess={login} 
+                            onError={() => {
+                                console.log('Login Failed');
+                            }}
+                         />
+                 }
+              </Box>
             </Box>
           </Paper>
         </Box>
@@ -94,4 +113,4 @@ const Auth: React.FC = () => {
 //   )
 // }
 
-export default Auth;
+export default Auth;    
