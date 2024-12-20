@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 import ErrorPage from '../pages/ErrorPage'
+import AdminErrorPage from '../pages/AdminErrorPage'
 import HomeErrorPage from '../pages/HomeErrorPage'
 import Home, {loader as HomeLoader} from '../pages/Student/Home/Home'
 import { AuthContextProvider } from '../context/Auth/AuthContext'
@@ -26,6 +27,7 @@ export const router = createBrowserRouter([
     {
         path: '/admin',
         element: <AdminLayout />,
+        errorElement: <AdminErrorPage />,
     },
     {
         path: "*",
