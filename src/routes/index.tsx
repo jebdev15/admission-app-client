@@ -6,6 +6,7 @@ import { AuthContextProvider } from '../context/Auth/AuthContext'
 import App from '../App'
 import { HomeContextProvider } from '../pages/Student/Home/HomeContext'
 import { loader as AuthLoader } from '../pages/Student/Auth/Auth'
+import AdminLayout from '../pages/Admin/Layout'
 
 export const router = createBrowserRouter([
     {
@@ -21,6 +22,10 @@ export const router = createBrowserRouter([
         element: <HomeContextProvider><Home /></HomeContextProvider>,
         loader: HomeLoader,
         errorElement: <HomeErrorPage  />,
+    },
+    {
+        path: '/admin',
+        element: <AdminLayout />,
     },
     {
         path: "*",
