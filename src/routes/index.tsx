@@ -8,6 +8,7 @@ import App from '../App'
 import { HomeContextProvider } from '../pages/Student/Home/HomeContext'
 import { loader as AuthLoader } from '../pages/Student/Auth/Auth'
 import AdminLayout from '../pages/Admin/Layout'
+import AdminMain from '../pages/Admin/Main/Main'
 
 export const router = createBrowserRouter([
     {
@@ -27,6 +28,11 @@ export const router = createBrowserRouter([
     {
         path: '/admin',
         element: <AdminLayout />,
+        errorElement: <AdminErrorPage />,
+    },
+    {
+        path: '/admin/main',
+        element: <AdminMain />,
         errorElement: <AdminErrorPage />,
     },
     {
