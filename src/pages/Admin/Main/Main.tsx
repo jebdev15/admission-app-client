@@ -34,17 +34,16 @@ import { Outlet, useNavigate } from "react-router-dom";
 // import { useCookies } from "react-cookie";
 // import { googleLogout } from "@react-oauth/google";
 import chmsuLogo from "../../../assets/chmsu-small.jpg";
+import "../../Student/header.css";
 
 const Admin: React.FC = () => {
   const navigate = useNavigate();
-//   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+  //   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
 
   const [drawerMinimize, setDrawerMinimize] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState(null);
 
-  const [activeItem, setActiveItem] = useState(
-    localStorage.getItem("activeItem")
-  );
+  const [activeItem, setActiveItem] = useState(localStorage.getItem("activeItem"));
 
   const [backdropOpen, setBackdropOpen] = useState(false);
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("sm"));
@@ -53,16 +52,13 @@ const Admin: React.FC = () => {
     localStorage.setItem("activeItem", activeItem as string);
   }, [activeItem]);
 
-  useEffect(
-    () => {
-      if (drawerMinimize) {
-        setBackdropOpen(false);
-      } else {
-        setBackdropOpen(true);
-      }
-    },
-    [drawerMinimize]
-  );
+  useEffect(() => {
+    if (drawerMinimize) {
+      setBackdropOpen(false);
+    } else {
+      setBackdropOpen(true);
+    }
+  }, [drawerMinimize]);
 
   return (
     <Box
@@ -81,32 +77,39 @@ const Admin: React.FC = () => {
           zIndex: "1000",
         }}
       >
-        <AppBar
-          className="header"
-          position="static"
-          elevation={0}
-          sx={{ position: "relative" }}
-        >
-          <Toolbar>
-            <IconButton
-              size="large"
-              edge="start"
-            //   color="primary.dark"
-              aria-label="menu"
-              sx={{ color: "primary.dark", mr: 1 }}
-              onClick={() => {
-                setDrawerMinimize(!drawerMinimize);
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <img className="logo" src={chmsuLogo} alt="CHMSU Logo" />
-            <Typography
-              className="systemName"
-              variant="h6"
-              component="div"
-              sx={{ color: "primary.dark", flexGrow: 1, lineHeight: "1" }}
-            >
+        <AppBar className="header" position="static" elevation={0} sx={{ position: "relative" }}>
+          <Toolbar
+            sx={{
+              display: { xs: "flex", md: "flex" },
+              alignContent: "center",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingY: 1,
+              paddingX: 5,
+              borderBottom: 3,
+              borderColor: "primary.main",
+              width: "100%",
+              // height: {xs: 'auto', md: '100px'}
+              height: "auto",
+              backgroundColor: "#fff",
+            }}
+          >
+            <Box sx={{ display: "flex" }}>
+              <IconButton
+                size="large"
+                edge="start"
+                //   color="primary.dark"
+                aria-label="menu"
+                sx={{ color: "primary.dark", mr: 1 }}
+                onClick={() => {
+                  setDrawerMinimize(!drawerMinimize);
+                }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <img src={chmsuLogo} alt="CHMSU Logo" width={50} height={50} className="logo" />
+            </Box>
+            <Typography className="systemName" variant="h6" component="div" sx={{ color: "primary.dark", flexGrow: 1, lineHeight: "1" }}>
               <span></span>
               <span></span>
             </Typography>
@@ -129,69 +132,67 @@ const Admin: React.FC = () => {
                 src={"cookies.picture"}
               />
             </Button>
-            <MenuList>
-              <Menu
-                anchorEl={menuAnchor}
-                open={Boolean(menuAnchor)}
-                onClose={() => setMenuAnchor(null)}
-                PaperProps={{
-                  elevation: 0,
-                  sx: {
-                    overflow: "visible",
-                    filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                    mt: 1.5,
-                    "& .MuiAvatar-root": {
-                      width: 32,
-                      height: 32,
-                      ml: -0.5,
-                      mr: 1,
-                    },
-                    "&:before": {
-                      content: '""',
-                      display: "block",
-                      position: "absolute",
-                      top: 0,
-                      right: 20,
-                      width: 10,
-                      height: 10,
-                      bgcolor: "background.paper",
-                      transform: "translateY(-50%) rotate(45deg)",
-                      zIndex: 0,
-                    },
+            <Menu
+              anchorEl={menuAnchor}
+              open={Boolean(menuAnchor)}
+              onClose={() => setMenuAnchor(null)}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.5,
+                  "& .MuiAvatar-root": {
+                    width: 32,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
                   },
-                }}
-                transformOrigin={{ horizontal: "right", vertical: "top" }}
-                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-              >
-                <MenuItem>
-                  <ListItemIcon>
-                    <HomeIcon />
-                  </ListItemIcon>
-                  <ListItemText sx={{ ml: 3 }} primary={"campusAccessing"} />
-                </MenuItem>
-                <MenuItem>
-                  <ListItemIcon>
-                    <AccountCircleIcon />
-                  </ListItemIcon>
-                  <ListItemText sx={{ ml: 3 }} primary={"cookies.accessLevel"} />
-                </MenuItem>
-                <MenuItem>
-                  <ListItemAvatar>
-                    <Avatar
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    right: 20,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
+                  },
+                },
+              }}
+              transformOrigin={{ horizontal: "right", vertical: "top" }}
+              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            >
+              <MenuItem>
+                <ListItemIcon>
+                  <HomeIcon />
+                </ListItemIcon>
+                <ListItemText sx={{ ml: 3 }} primary={"campusAccessing"} />
+              </MenuItem>
+              <MenuItem>
+                <ListItemIcon>
+                  <AccountCircleIcon />
+                </ListItemIcon>
+                <ListItemText sx={{ ml: 3 }} primary={"cookies.accessLevel"} />
+              </MenuItem>
+              <MenuItem>
+                <ListItemAvatar>
+                  <Avatar
                     //   src={cookies.picture}
-                      sx={{ width: 24, height: 24 }}
-                    />
-                  </ListItemAvatar>
-                  <ListItemText primary={"cookies.name"} />
-                </MenuItem>
-                <MenuItem >
-                  <ListItemIcon>
-                    <Logout />
-                  </ListItemIcon>
-                  <ListItemText sx={{ ml: 3 }} primary="Sign Out" />
-                </MenuItem>
-              </Menu>
-            </MenuList>
+                    sx={{ width: 24, height: 24 }}
+                  />
+                </ListItemAvatar>
+                <ListItemText primary={"cookies.name"} />
+              </MenuItem>
+              <MenuItem>
+                <ListItemIcon>
+                  <Logout />
+                </ListItemIcon>
+                <ListItemText sx={{ ml: 3 }} primary="Sign Out" />
+              </MenuItem>
+            </Menu>
           </Toolbar>
         </AppBar>
       </Box>
@@ -221,12 +222,7 @@ const Admin: React.FC = () => {
             },
           }}
         >
-          <Paper
-            className="navigation"
-            elevation={4}
-            square
-            sx={{ height: "inherit", overflow: "auto" }}
-          >
+          <Paper className="navigation" elevation={4} square sx={{ height: "inherit", overflow: "auto" }}>
             <List>
               {/* Home */}
               <ListItemButton
@@ -262,8 +258,7 @@ const Admin: React.FC = () => {
               </ListItemButton>
               {/* Students */}
 
-              
-                <>
+              <>
                 {/* Faculty */}
                 <ListItemButton
                   className={activeItem === "faculty" ? "navbtn active" : "navbtn"}
@@ -277,9 +272,7 @@ const Admin: React.FC = () => {
                       <ScheduleIcon />
                     </ListItemIcon>
                   </Tooltip>
-                  {drawerMinimize ? null : (
-                    <ListItemText primary="Faculty" />
-                  )}
+                  {drawerMinimize ? null : <ListItemText primary="Faculty" />}
                 </ListItemButton>
                 {/* Faculty */}
                 {/* Users */}
@@ -359,12 +352,12 @@ const Admin: React.FC = () => {
             ></Backdrop>
           )}
           <Outlet />
-        {/* <Box sx={{ flexGrow: 1, p: 3 }}>
+          {/* <Box sx={{ flexGrow: 1, p: 3 }}>
           <Outlet context={[schoolyear, semester, from, to]}/> */}
         </Box>
       </Box>
     </Box>
   );
-}
+};
 
-export default React.memo(Admin)
+export default React.memo(Admin);
