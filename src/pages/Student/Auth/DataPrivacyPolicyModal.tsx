@@ -35,7 +35,7 @@ const DataPrivacyPolicyModal = () => {
                     </Typography>
                     <Typography variant="caption">
                         {" "}
-                        Carlos Hilado Memorial State University is a GREEN university committed to empower learners through academic excellence, relevant research, active community engagement, and good governance in order to build a just and sustainable world. The Office of the Guidance Services is responsible for managing the CHMSU Addmission Test.
+                        Carlos Hilado Memorial State University is a GREEN university committed to empower learners through academic excellence, relevant research, active community engagement, and good governance in order to build a just and sustainable world. The Office of the Guidance Services is responsible for managing the CHMSU Admission Test.
                     </Typography>
                     <Divider sx={{ my: 2 }} />
                     <Typography color="primary.main" fontWeight={500} /* textTransform="uppercase" */>
@@ -100,7 +100,7 @@ const DataPrivacyPolicyModal = () => {
                         {" "}
                         You have the right to request a copy of any information that we currently hold about you.
                         <strong>
-                            To receive such information, report any issues, or request for assistance, please don't hesitate to email us at ict.mis@chmsu.edu.ph.
+                            To receive such information, report any issues, or request for assistance, please don't hesitate to message us at Facebook Messenger: CHMSU ICT MIS Support.
                         </strong>
                     </Typography>
                     <Divider sx={{ my: 2 }} />
