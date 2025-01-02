@@ -9,16 +9,16 @@ import { router } from './routes/index.tsx'
 import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles'
 import { IndexTheme } from './theme/index.ts'
-import { GoogleOAuthProvider } from '@react-oauth/google';
-import { VITE_GOOGLE_CLIENT_ID } from './constants/index.ts';
+// import { GoogleOAuthProvider } from '@react-oauth/google';
+// import { VITE_GOOGLE_CLIENT_ID } from './constants/index.ts';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <CssBaseline />
     <ThemeProvider theme={IndexTheme}>
-      <GoogleOAuthProvider clientId={VITE_GOOGLE_CLIENT_ID}>
+      {/* <GoogleOAuthProvider clientId={VITE_GOOGLE_CLIENT_ID}> */}
         <RouterProvider router={router} />
-      </GoogleOAuthProvider>;
+      {/* </GoogleOAuthProvider>; */}
     </ThemeProvider>
   </StrictMode>,
 )
