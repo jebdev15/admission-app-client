@@ -1,7 +1,7 @@
 // import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import chmsuLogo from '../../assets/chmsu.png';
+import chmsuLogo from '../../assets/chmsu.jpg';
 import './header.css'
 
 export default function ButtonAppBar() {
