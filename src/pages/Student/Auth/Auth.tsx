@@ -30,6 +30,7 @@ import collegesJsonData from "../colleges.json"; // Adjust the path as needed
 import { Colleges } from "./type";
 import DataPrivacyPolicyModal from "./DataPrivacyPolicyModal";
 import dayjs from "dayjs";
+import { checkApiUrl } from "../../../utils/checkApiUrl";
 const collegesJson: Colleges = collegesJsonData;
 
 const isWithinBusinessHours = (): boolean => {
@@ -95,10 +96,12 @@ const Register = () => {
     const defaultDate = dayjs('2006-01-01'); // Set default date
     const areSlotsFull = false;
     const isHolidayBreak = false;
+    const apiUrl = checkApiUrl();
     console.log({
         isHolidayBreak,
         withInBusinessHours,
-        areSlotsFull
+        areSlotsFull,
+        apiUrl
     })
     return (
         <React.Suspense fallback={<CustomCircularProgress />}>
