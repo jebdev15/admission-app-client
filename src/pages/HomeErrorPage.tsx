@@ -36,7 +36,7 @@ const ErrorPage: React.FC = () => {
             </>);
             break;
         default:
-            errorMessage = 'Something went wrong';
+            errorMessage = 'Server is busy. The system is currently processing volume of requests. Please try again later';
             break;
     }
     return (
