@@ -35,14 +35,14 @@ const Summary = () => {
     const { uuid } = useParams<{ uuid: string | undefined }>()
     const [applicantSummaryInfo, setApplicantSummaryInfo] = React.useState<SummaryInfo>(defaultSummaryInfo)
     const [imageSrc, setImageSrc] = React.useState<string>('')
-    const getApplicantSummary = async (uuid: string | undefined) => {
-        const { data } = await SummaryService.getApplicantSummary(uuid)
+    const getApplicantSummary = async (uuid: string | undefined, signal: AbortSignal) => {
+        const { data } = await SummaryService.getApplicantSummary(uuid, signal)
         if (data.length > 0) {
             setApplicantSummaryInfo(data[0])
         }
     }
-    const getApplicantImage = async (uuid: string | undefined) => {
-        const { data } = await SummaryService.getApplicantImage(uuid)
+    const getApplicantImage = async (uuid: string | undefined, signal: AbortSignal) => {
+        const { data } = await SummaryService.getApplicantImage(uuid, signal)
         if (data.length > 0) {
             const imageName = data[0].image_name;
             // Construct the full URL by combining the base URL and the image path
@@ -82,8 +82,11 @@ const Summary = () => {
     };
 
     React.useEffect(() => {
-        getApplicantSummary(uuid)
-        getApplicantImage(uuid)
+        const controller = new AbortController();
+        const signal = controller.signal;
+        getApplicantSummary(uuid, signal)
+        getApplicantImage(uuid, signal)
+        return () => controller.abort();
     }, [uuid])
     return (
         <React.Suspense fallback={<CircularProgress />}>

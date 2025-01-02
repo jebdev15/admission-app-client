@@ -34,6 +34,7 @@ const PersonalInformation = () => {
     scholarship_or_financial_aid: '',
   })
   const [loading, setLoading] = React.useState<boolean>(false)
+  const [hasInfo, setHasInfo] = React.useState<boolean>(false)
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setPersonalInformation((prevState: PersonalInformationType) => ({ ...prevState, [event?.target.name]: event?.target.value }))
   const handleChangeSelect = (event: SelectChangeEvent<string>) => setPersonalInformation((prevState: PersonalInformationType) => ({ ...prevState, [event?.target.name]: event?.target.value }))
   const handleChangeDate = (newValue: Dayjs | null) => setPersonalInformation((prevState: PersonalInformationType) => ({ ...prevState, date_of_birth: newValue ?? dayjs() }))  // Update date_of_birth in `dayjs` format
@@ -46,24 +47,43 @@ const PersonalInformation = () => {
     try {
       const formData = new FormData(event.currentTarget)
       formData.append('uuid', uuid ?? '')
-      const { data, status } = await axiosInstance.put('/personal-information/update', formData)
-      if (data) {
-        setLoading(false)
-        if ([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
+      if(hasInfo) {
+        formData.delete('first_name')
+        formData.delete('last_name')
+        formData.delete('date_of_birth')
+        const { data, status } = await axiosInstance.put('/personal-information/update', formData)
+        if (data) {
+          setLoading(false)
+          if ([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
         }
+      } else {
+        const { data, status } = await axiosInstance.post('/personal-information/create', formData)
+        if (data) {
+          setLoading(false)
+          if ([200, 201, 204].includes(status)) setTimeout(() => navigate('.'), 1000)
+        }
+      }
     } catch (error) {
       setLoading(false)
       console.error(error)
       alert("Something went wrong")
     }
   }
-  const fetchPersonalInformation = async () => {
-    const { data } = await axiosInstance.get(`/personal-information/${uuid}`)
-    setPersonalInformation(data[0])
+  const fetchPersonalInformation = async (signal: AbortSignal) => {
+    const { data } = await axiosInstance.get(`/personal-information/${uuid}`, { signal })
+    if(data.length > 0) {
+      setHasInfo(true)
+      setPersonalInformation(data[0])
+    }
   }
   React.useEffect(() => {
+    const controller = new AbortController()
+    const signal = controller.signal
     if (uuid) {
-      fetchPersonalInformation()
+      fetchPersonalInformation(signal)
+    }
+    return () => {
+      controller.abort()
     }
   }, [uuid])
   const disableButton = !personalInformation.mobile_no || !personalInformation.lrn || !personalInformation.gender || !personalInformation.civil_status || !personalInformation.religion || !personalInformation.is_solo_parent || !personalInformation.is_indigenous_group || !personalInformation.school_last_attended || !personalInformation.type_of_school || !personalInformation.has_scholarship_or_financial_aid
@@ -109,15 +129,17 @@ const PersonalInformation = () => {
               <Grid size={{ xs: 12, sm: 4 }}>
                 <FormControl fullWidth>
                   <TextField
+                    name="first_name"
                     label="First Name"
                     placeholder='e.g. John'
                     type="text"
                     value={personalInformation.first_name}
+                    onChange={handleChange}
                     required
                     sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
                     slotProps={{
                       input: {
-                        readOnly: true,
+                        readOnly: hasInfo,
                       },
                     }}
                   />
@@ -139,6 +161,7 @@ const PersonalInformation = () => {
               <Grid size={{ xs: 12, sm: 4 }}>
                 <FormControl fullWidth>
                   <TextField
+                    name="last_name"
                     label="Last Name"
                     placeholder='e.g. Smith'
                     type="text"
@@ -148,7 +171,7 @@ const PersonalInformation = () => {
                     sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
                     slotProps={{
                       input: {
-                        readOnly: true,
+                        readOnly: hasInfo,
                       }
                     }}
                   />
@@ -198,7 +221,8 @@ const PersonalInformation = () => {
                 <FormControl fullWidth>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker 
-                      readOnly
+                      readOnly={hasInfo}
+                      name="date_of_birth"
                       label="Date of Birth" 
                       value={personalInformation.date_of_birth ? dayjs(personalInformation.date_of_birth) : null} 
                       onChange={handleChangeDate} 
