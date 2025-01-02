@@ -108,7 +108,7 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
                         }
                     } catch (error) {
                         console.error(error);
-                        alert("Something went wrong");
+                        alert("Server is busy. The system is currently processing volume of requests. Please try again");
                     } finally {
                         setContext((prevState: AuthContextInterface) => ({
                             ...prevState,
