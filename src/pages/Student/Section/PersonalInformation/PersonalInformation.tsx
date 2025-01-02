@@ -50,7 +50,6 @@ const PersonalInformation = () => {
       if(hasInfo) {
         formData.delete('first_name')
         formData.delete('last_name')
-        formData.delete('date_of_birth')
         const { data, status } = await axiosInstance.put('/personal-information/update', formData)
         if (data) {
           setLoading(false)
@@ -66,7 +65,7 @@ const PersonalInformation = () => {
     } catch (error) {
       setLoading(false)
       console.error(error)
-      alert("Something went wrong")
+      alert("Server is busy. The system is currently processing volume of requests. Please try again")
     }
   }
   const fetchPersonalInformation = async (signal: AbortSignal) => {
@@ -221,7 +220,6 @@ const PersonalInformation = () => {
                 <FormControl fullWidth>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker 
-                      readOnly={hasInfo}
                       name="date_of_birth"
                       label="Date of Birth" 
                       value={personalInformation.date_of_birth ? dayjs(personalInformation.date_of_birth) : null} 
