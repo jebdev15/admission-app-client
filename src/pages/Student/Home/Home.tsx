@@ -1,68 +1,64 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
 import { useLoaderData } from 'react-router';
-import axiosInstance from '../../../api';
-import CustomCircularProgress from '../../../components/CustomCircularProgress';
+import axiosInstance from '@api/index';
+import CustomCircularProgress from '@components/CustomCircularProgress';
 import Summary from '../Section/Summary/Summary';
-import Picture from '../Section/ImageUploader/ImageUploader';
 import { LoaderData } from './type';
 import axios from 'axios';
-const PersonalInformation = React.lazy(() => import('../Section/PersonalInformation/PersonalInformation'))
-const AddressDetails = React.lazy(() => import('../Section/AddressDetails/AddressDetails'))
-const ParentProfile = React.lazy(() => import('../Section/ParentProfile/ParentProfile'))
-const HomeAndFamilyBackground = React.lazy(() => import('../Section/HomeAndFamilyBackground/HomeAndFamilyBackground'))
-const Health = React.lazy(() => import('../Section/Health/Health'))
-const Schedules = React.lazy(() => import('../Section/Schedules/Schedules'))
+import { UnifiedFormProvider, UnifiedForm } from '../Section/UnifiedForm';
+
 const Header = React.lazy(() => import('../Header'))
 
 const Home = () => {
   const { apiMessage, isUuidExpired, isUuidExists, forms_status } = useLoaderData() as LoaderData
-  const currentForm = () => {
-    if (!forms_status.personal_information_status) {
-      return <PersonalInformation />
-    } else if (!forms_status.address_detail_status) {
-      return <AddressDetails />
-    } else if (!forms_status.parent_profile_status) {
-      return <ParentProfile />
-    } else if (!forms_status.home_and_family_background_status) {
-      return <HomeAndFamilyBackground />
-    } else if (!forms_status.health_status) {
-      return <Health />
-    } else if (!forms_status.image_status) {
-      return <Picture />
-    } else if(!forms_status.schedule_status) {
-      return <Schedules />
-    } else {
-      return <Summary />
+  
+  // Check if all forms are already completed (show summary)
+  const isAllFormsCompleted = forms_status.personal_information_status &&
+    forms_status.address_detail_status &&
+    forms_status.parent_profile_status &&
+    forms_status.home_and_family_background_status &&
+    forms_status.health_status &&
+    forms_status.image_status &&
+    forms_status.schedule_status;
+
+  const renderContent = () => {
+    if (!isUuidExists || !isUuidExpired) {
+      return (
+        <Box sx={{ textAlign: 'center', padding: 3 }}>
+          <Typography variant="h4" color="error">{apiMessage}</Typography>
+        </Box>
+      );
     }
-  }
-  React.useEffect(() => {
-    if(forms_status) {
-      console.log(forms_status)
+
+    if (isAllFormsCompleted) {
+      return <Summary />;
     }
-  },[forms_status])
+
     return (
-      <React.Suspense fallback={<CustomCircularProgress />}>
-          <Box
-            sx={{ 
-              display: 'flex',
-              flexDirection: 'column',
-              // jusstifyContent: 'center',
-              width: '100%',
-              height: 'auto',
-              minHeight: '100dvh',
-              backgroundColor: '#e0e0e0'
-            }}
-          >
-            <Header />
-            {(!isUuidExists || !isUuidExpired) ? currentForm() : (
-              <Box sx={{ textAlign: 'center', padding: 3 }}>
-                <Typography variant="h4" color="error">{apiMessage}</Typography>
-              </Box>
-            )}
-          </Box>
-      </React.Suspense>
-    )
+      <UnifiedFormProvider>
+        <UnifiedForm />
+      </UnifiedFormProvider>
+    );
+  };
+
+  return (
+    <React.Suspense fallback={<CustomCircularProgress />}>
+      <Box
+        sx={{ 
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100%',
+          height: 'auto',
+          minHeight: '100dvh',
+          backgroundColor: '#e0e0e0'
+        }}
+      >
+        <Header />
+        {renderContent()}
+      </Box>
+    </React.Suspense>
+  )
 }
 export const loader = async ({ params }: any) => {
   try {

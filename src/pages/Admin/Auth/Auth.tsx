@@ -1,12 +1,12 @@
 import React from "react";
 import { Box, Container, Paper, Typography } from "@mui/material";
-import chmsuLogo from "../../../assets/chmsu.jpg";
-import "../../../assets/style.css";
+import chmsuLogo from "@assets/chmsu.jpg";
+import "@assets/style.css";
 import { GoogleLogin } from "@react-oauth/google";
-import axiosInstance from "../../../api";
+import axiosInstance from "@api/index";
 import { useNavigate } from "react-router";
 import { useCookies } from "react-cookie";
-import CustomCircularProgress from "../../../components/CustomCircularProgress";
+import CustomCircularProgress from "@components/CustomCircularProgress";
 
 const Auth: React.FC = () => {
     const [cookie, setCookie] = useCookies(['token']);

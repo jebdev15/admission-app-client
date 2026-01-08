@@ -1,4 +1,4 @@
-import axiosInstance from "../api"
+import axiosInstance from "@api/index"
 
 export const SummaryService = {
     getApplicantSummary: async (uuid: string | undefined, signal: AbortSignal) => {

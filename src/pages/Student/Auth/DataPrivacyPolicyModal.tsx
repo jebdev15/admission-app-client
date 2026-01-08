@@ -10,7 +10,7 @@ import {
     useTheme,
     useMediaQuery,
 } from "@mui/material";
-import { AuthContext } from "../../../context/Auth/AuthContext";
+import { AuthContext } from "@context/Auth/AuthContext";
 const DataPrivacyPolicyModal = () => {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("md"));

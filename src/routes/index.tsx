@@ -1,44 +1,97 @@
+import React, { Suspense } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
-import ErrorPage from '../pages/ErrorPage'
-import HomeErrorPage from '../pages/HomeErrorPage'
-import Home, {loader as HomeLoader} from '../pages/Student/Home/Home'
-import { AuthContextProvider } from '../context/Auth/AuthContext'
-import App from '../App'
-import { HomeContextProvider } from '../pages/Student/Home/HomeContext'
+import { AuthContextProvider } from '@context/Auth/AuthContext'
+import App from '@/App'
+import CustomCircularProgress from '@components/CustomCircularProgress'
 
-import AdminErrorPage from '../pages/AdminErrorPage'
-import AdminAuth from '../pages/Admin/Layout'
-import AdminMain from '../pages/Admin/Main/Main'
-import ProtectedRoute from '../pages/Admin/ProtectedRoute'
+// Import loader separately (loaders cannot be lazy loaded)
+import { loader as HomeLoader } from '@pages/Student/Home/Home'
+import { HomeContextProvider } from '@pages/Student/Home/HomeContext'
+
+// Lazy load pages that are not immediately needed
+const ErrorPage = React.lazy(() => import('@pages/ErrorPage'))
+const HomeErrorPage = React.lazy(() => import('@pages/HomeErrorPage'))
+const AdminErrorPage = React.lazy(() => import('@pages/AdminErrorPage'))
+
+// Lazy load Home page
+const Home = React.lazy(() => import('@pages/Student/Home/Home'))
+
+// Lazy load Admin pages
+const AdminAuth = React.lazy(() => import('@pages/Admin/Layout'))
+const AdminMain = React.lazy(() => import('@pages/Admin/Main/Main'))
+const ProtectedRoute = React.lazy(() => import('@pages/Admin/ProtectedRoute'))
+
+// Suspense wrapper for lazy components
+const SuspenseWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+    <Suspense fallback={<CustomCircularProgress />}>
+        {children}
+    </Suspense>
+)
 
 export const router = createBrowserRouter([
     {
         path: '/',
-        element: <AuthContextProvider>
-                    <App />
-                </AuthContextProvider>,
-        errorElement: <ErrorPage />,
+        element: (
+            <AuthContextProvider>
+                <App />
+            </AuthContextProvider>
+        ),
+        errorElement: (
+            <SuspenseWrapper>
+                <ErrorPage />
+            </SuspenseWrapper>
+        ),
     },
     {
         path: '/home/:uuid',
-        element: <HomeContextProvider><Home /></HomeContextProvider>,
+        element: (
+            <HomeContextProvider>
+                <SuspenseWrapper>
+                    <Home />
+                </SuspenseWrapper>
+            </HomeContextProvider>
+        ),
         loader: HomeLoader,
-        errorElement: <HomeErrorPage  />,
+        errorElement: (
+            <SuspenseWrapper>
+                <HomeErrorPage />
+            </SuspenseWrapper>
+        ),
     },
     {
         path: '/admin',
-        element: <AdminAuth />,
-        errorElement: <AdminErrorPage />,
+        element: (
+            <SuspenseWrapper>
+                <AdminAuth />
+            </SuspenseWrapper>
+        ),
+        errorElement: (
+            <SuspenseWrapper>
+                <AdminErrorPage />
+            </SuspenseWrapper>
+        ),
     },
     {
         path: '/admin/main',
-        element: <ProtectedRoute>
-                <AdminMain />
-            </ProtectedRoute>, // Wrap AdminMain with ProtectedRoute
-        errorElement: <AdminErrorPage />,
+        element: (
+            <SuspenseWrapper>
+                <ProtectedRoute>
+                    <AdminMain />
+                </ProtectedRoute>
+            </SuspenseWrapper>
+        ),
+        errorElement: (
+            <SuspenseWrapper>
+                <AdminErrorPage />
+            </SuspenseWrapper>
+        ),
     },
     {
-        path: "*",
-        element: <ErrorPage />
-    }
+        path: '*',
+        element: (
+            <SuspenseWrapper>
+                <ErrorPage />
+            </SuspenseWrapper>
+        ),
+    },
 ])

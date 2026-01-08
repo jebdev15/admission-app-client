@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import React from 'react'
 import Authentication from './Auth/Auth'
-import CustomCircularProgress from '../../components/CustomCircularProgress'
+import CustomCircularProgress from '@components/CustomCircularProgress'
 const Header: React.LazyExoticComponent<() => JSX.Element> = React.lazy(() => import('./Header'))
 
 const Layout = () => {

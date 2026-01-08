@@ -3,7 +3,7 @@ import { IconButton, Tooltip } from '@mui/material';
 import { Badge as BadgeIcon, Description } from '@mui/icons-material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useCookies } from 'react-cookie';
-import useFetch from '../../../hooks/useFetch.js';
+import useFetch from '@hooks/useFetch';
 import StatusDialog from '../Dialog/Status';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 

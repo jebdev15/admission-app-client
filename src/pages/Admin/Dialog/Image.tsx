@@ -1,6 +1,6 @@
 import React from 'react'
-import axiosInstance from '../../../api';
-import CustomCircularProgress from '../../../components/CustomCircularProgress';
+import axiosInstance from '@api/index';
+import CustomCircularProgress from '@components/CustomCircularProgress';
 import { Box, Card, CardMedia, Dialog, DialogContent, Typography } from '@mui/material';
 
 const Image = ({open, onClose, data}: any) => {

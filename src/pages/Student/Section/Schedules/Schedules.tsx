@@ -7,9 +7,11 @@ import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import React from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 import { useNavigate, useParams } from 'react-router'
-import { SchedulesService } from '../../../../services/schedulesService';
+import { SchedulesService } from '@services/schedulesService';
 import { LoadingButton } from '@mui/lab';
 import { AccumulatorItem, AvailableDateType, ScheduleType } from './type';
+import SubmissionService, { JobStatus, QueueResponse } from '@services/submissionService';
+import QueueStatusDialog from '@components/QueueStatusDialog';
 const Schedules = () => {
     const navigate = useNavigate()
     const { uuid } = useParams<{uuid: string | undefined}>()
@@ -19,6 +21,8 @@ const Schedules = () => {
     const [selectedTime, setSelectedTime] = React.useState<string>('')
     const [calendarKey, setCalendarKey] = React.useState<number>(0)
     const [loading, setLoading] = React.useState<boolean>(false)
+    const [showQueueDialog, setShowQueueDialog] = React.useState<boolean>(false)
+    const [queueStatus, setQueueStatus] = React.useState<JobStatus | QueueResponse | null>(null)
     // Define available dates for highlighting and group schedule time start and end
     const availableDates = availableSchedules?.reduce((acc, schedule: ScheduleType) => {
         const formattedDate = dayjs(schedule.schedule_date).format('YYYY-MM-DD');
@@ -88,34 +92,71 @@ const Schedules = () => {
     //     console.log(eventSelectedTime)
     //     setSelectedTime(eventSelectedTime);
     // }
+    
+    /**
+     * Handle form submission with queue-based processing
+     * This allows handling high traffic (10,000+ submissions)
+     */
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const confirmation = window.confirm('Are you sure you want to submit the selected schedule?');
+        const confirmation = window.confirm('Are you sure you want to submit the selected schedule? This will complete your registration.');
         if(!confirmation) return
+        
         setLoading(true)
-        const formData = new FormData();
-        formData.append('schedule_date', selectedDate?.format('YYYY-MM-DD') ?? '')
-        formData.append('schedule_time', selectedTime ?? '')
-        formData.append('uuid', uuid ?? '')
-        const { data, status } = await SchedulesService.updateApplicantScheduleId(formData)
-        if(data || data.message) {
+        setShowQueueDialog(true)
+        setQueueStatus(null)
+        
+        try {
+            // Prepare submission data with schedule
+            const submissionData = {
+                uuid: uuid ?? '',
+                schedule: {
+                    schedule_date: selectedDate?.format('YYYY-MM-DD') ?? '',
+                    schedule_time: selectedTime ?? ''
+                }
+            };
 
-            if(data.slots_remaining < 1) {
-                // Reset state and refresh schedules
-                setSelectedDate(null); // Reset selected date
-                setSelectedTime(''); // Reset selected time
-                setAvailableTimes([]); // Clear available times
-                setAvailableSchedules([]); // Clear schedules
-                setCalendarKey((prevKey) => prevKey + 1); // Increment key to force re-render
-                await getSchedules(uuid); // Refresh schedules
+            // Submit using queue-based service and wait for result
+            const result = await SubmissionService.submitAndWait(
+                submissionData,
+                (status) => setQueueStatus(status) // Update status in real-time
+            );
+
+            if (result.status === 'completed' && result.result?.success) {
+                // Success - let the dialog show the result
+                setQueueStatus(result);
+            } else {
+                // Failed - show error in dialog
+                setQueueStatus(result);
+                
+                // Refresh schedules in case slots changed
+                setSelectedDate(null);
+                setSelectedTime('');
+                setAvailableTimes([]);
+                setAvailableSchedules([]);
+                setCalendarKey((prevKey) => prevKey + 1);
+                await getSchedules(uuid);
             }
-            if([200,201,204].includes(status)){
-                alert(data.message)
-                navigate('.')
-            }
-            // Simulate a network request
-            setTimeout(() => setLoading(false), 2000);
+        } catch (error: any) {
+            console.error('Submission error:', error);
+            setQueueStatus({
+                success: false,
+                jobId: '',
+                status: 'failed',
+                error: error.message || 'Failed to submit. Please try again.'
+            });
+        } finally {
+            setLoading(false);
         }
+    }
+
+    const handleQueueDialogClose = () => {
+        setShowQueueDialog(false);
+        setQueueStatus(null);
+    }
+
+    const handleSubmissionComplete = () => {
+        navigate('.');
     }
 
     const getSchedules = async (uuid: string | undefined) => {
@@ -258,6 +299,14 @@ const Schedules = () => {
                             </Grid>
                         </Box>
                     </Paper>
+                    
+                    {/* Queue Status Dialog */}
+                    <QueueStatusDialog
+                        open={showQueueDialog}
+                        onClose={handleQueueDialogClose}
+                        status={queueStatus}
+                        onComplete={handleSubmissionComplete}
+                    />
                 </Box>
             </React.Suspense>
     )
