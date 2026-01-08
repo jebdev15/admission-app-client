@@ -18,7 +18,6 @@ const Layout = () => {
             <Header />
             <Admin />
         </Box>
-
     )
 }
 

@@ -36,7 +36,7 @@ const collegesJson: Colleges = collegesJsonData;
 const isWithinBusinessHours = (): boolean => {
     const now = dayjs();
     const startOfBusiness = now.set('hour', 8).set('minute', 0).set('second', 0).set('millisecond', 0);
-    const endOfBusiness = now.set('hour', 17).set('minute', 0).set('second', 0).set('millisecond', 0);
+    const endOfBusiness = now.set('hour', 18).set('minute', 0).set('second', 0).set('millisecond', 0);
     return now.isAfter(startOfBusiness) && now.isBefore(endOfBusiness);
 };
 
@@ -97,11 +97,15 @@ const Register = () => {
     const areSlotsFull = false;
     const isHolidayBreak = false;
     const apiUrl = checkApiUrl();
+    const serverIsBusy = true;
+    const lastDayOfRegistration = false;
     console.log({
         isHolidayBreak,
         withInBusinessHours,
         areSlotsFull,
-        apiUrl
+        apiUrl,
+        serverIsBusy,
+        lastDayOfRegistration
     })
     return (
         <React.Suspense fallback={<CustomCircularProgress />}>
@@ -116,7 +120,23 @@ const Register = () => {
                 }}
             >
                 <Paper sx={{ width: { xs: "100%", sm: "500px", md: "60%" }, maxWidth: "700px", borderRadius: { xs: 0, sm: 2 } }}>
-                    {(isHolidayBreak)
+                    {(lastDayOfRegistration)
+                    ? (
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                padding: { xs: 2, sm: 4 },
+                                gap: 1,
+                                width: "100%",
+                            }}
+                        >
+                            <Typography variant="body1" component={"p"} color="initial">The Admission Portal is officially closed. For further updates and information, please visit the CHMSU Official Page on Facebook: <a href="https://www.facebook.com/@chmsuofficialpage">CHMSU Official Page</a></Typography>
+                        </Box>
+                    ) 
+                    :(isHolidayBreak)
                             ? (
                                 <Box
                                     sx={{
@@ -170,7 +190,7 @@ const Register = () => {
                                                 Welcome to the CHMSU Admission Portal
                                             </Typography>
                                             <Typography variant={belowMediumScreenSize ? "h6" : "h6"} color="primary" textAlign={"center"} sx={{ mb: 2, mt: -1 }}>
-                                                AY 2025-2026
+                                                AY 2026-2027
                                             </Typography>
                                             <Alert severity="info" sx={{ width: "100%", p: 2, pb: 0, borderRadius: 2 }}>
                                                 <AlertTitle>Information</AlertTitle>
@@ -400,15 +420,15 @@ const Register = () => {
                 </Paper>
             </Box>
         </React.Suspense>
-    );
-};
+    )
+}
 
 const Authentication = () => {
     return (
         <React.Suspense fallback={<CustomCircularProgress />}>
             <Register />
         </React.Suspense>
-    );
-};
+    )
+}
 
-export default Authentication;
+export default Authentication

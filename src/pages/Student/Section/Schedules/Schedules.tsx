@@ -184,8 +184,8 @@ const Schedules = () => {
                                                         <DateCalendar
                                                             key={calendarKey} // Force re-render on key change
                                                             onChange={handleDateChange} // Handle date change
-                                                            minDate={dayjs('2025-02-01')}
-                                                            maxDate={dayjs('2025-02-28')}
+                                                            minDate={dayjs('2026-01-07')}
+                                                            maxDate={dayjs('2026-01-31')}
                                                             shouldDisableDate={(date: Dayjs) => !isAvailableDate(date)} // Disable dates not in availableDates
                                                             sx={{
                                                             '& .MuiPickersDay-root': {
