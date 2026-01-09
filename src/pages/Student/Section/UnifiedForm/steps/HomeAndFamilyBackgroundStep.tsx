@@ -36,16 +36,24 @@ const HomeAndFamilyBackgroundStep: React.FC = () => {
     };
 
     const handleChangeNumber = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const value = parseInt(event.target.value) || 0;
+        const clampedValue = Math.min(Math.max(value, 0), 99);
         updateFormData('homeAndFamilyBackground', {
-            [event.target.name]: parseInt(event.target.value) || 0
+            [event.target.name]: clampedValue
         } as Partial<HomeAndFamilyBackgroundType>);
     };
 
     return (
         <Box sx={{ width: '100%' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-                <House sx={{ color: 'primary.main', fontSize: '2.5rem' }} />
-                <Typography variant="h6" color="primary">Home & Family Background</Typography>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column-reverse', sm: 'row' }, rowGap: 2, alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, columnGap: 1, alignItems: 'center' }}>
+                    <House sx={{ color: 'primary.main', fontSize: '3rem' }} />
+                    <Typography variant="h6" color="primary">Home and Family Background</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0, alignItems: { xs: 'center', sm: 'flex-end' } }}>
+                    <Typography variant="body1" color='textSecondary' sx={{ fontWeight: 'bold' }}>CHMSU Admission Portal</Typography>
+                    <Typography variant="body1" color='textSecondary' sx={{ fontWeight: 'bold' }}>Academic Year 2026 - 2027</Typography>
+                </Box>
             </Box>
 
             <Grid container spacing={2} rowSpacing={3}>
@@ -58,16 +66,16 @@ const HomeAndFamilyBackgroundStep: React.FC = () => {
                             value={homeAndFamily.no_of_siblings_gainfully_employed}
                             onChange={handleChangeNumber}
                             sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
-                            slotProps={{ htmlInput: { min: 0 } }}
+                            slotProps={{ htmlInput: { min: 0, max: 99 } }}
                         />
                     </FormControl>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <FormControl fullWidth>
-                        <InputLabel id="label-finances">Who finances your schooling?</InputLabel>
+                        <InputLabel id="label-finances">Who is financing your education?</InputLabel>
                         <Select
                             labelId="label-finances"
-                            label="Who finances your schooling?"
+                            label="Who is financing your education?"
                             name="who_finances_your_schooling"
                             value={homeAndFamily.who_finances_your_schooling}
                             onChange={handleChangeSelect}
@@ -111,6 +119,7 @@ const HomeAndFamilyBackgroundStep: React.FC = () => {
                                 onChange={handleChange}
                                 required
                                 sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
+                                slotProps={{ htmlInput: { maxLength: 20 } }}
                             />
                         </FormControl>
                     </Grid>
@@ -158,10 +167,10 @@ const HomeAndFamilyBackgroundStep: React.FC = () => {
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <FormControl fullWidth>
-                        <InputLabel id="label-residence">Nature of Residence</InputLabel>
+                        <InputLabel id="label-residence">Nature of residence while attending school</InputLabel>
                         <Select
                             labelId="label-residence"
-                            label="Nature of Residence"
+                            label="Nature of residence while attending school"
                             name="nature_of_residence"
                             value={homeAndFamily.nature_of_residence}
                             onChange={handleChangeSelect}

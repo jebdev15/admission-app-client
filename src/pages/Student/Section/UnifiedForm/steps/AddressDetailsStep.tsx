@@ -8,7 +8,8 @@ import {
     Select,
     Typography,
     SelectChangeEvent,
-    CircularProgress // Import loader
+    CircularProgress, // Import loader
+    FormHelperText
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { Place } from '@mui/icons-material';
@@ -50,7 +51,7 @@ const AddressDetailsStep: React.FC = () => {
     const [provinces, setProvinces] = useState<ProvinceItem[]>([]);
     const [cities, setCities] = useState<CityItem[]>([]);
     const [barangays, setBarangays] = useState<BarangayItem[]>([]);
-    
+
     // 2. Add a loading state
     const [isLoading, setIsLoading] = useState(true);
 
@@ -60,9 +61,9 @@ const AddressDetailsStep: React.FC = () => {
             try {
                 // Execute imports in parallel for faster loading
                 const [
-                    regionsModule, 
-                    provincesModule, 
-                    citiesModule, 
+                    regionsModule,
+                    provincesModule,
+                    citiesModule,
                     barangaysModule
                 ] = await Promise.all([
                     import('../../AddressDetails/AddressJson/regions.json'),
@@ -98,7 +99,7 @@ const AddressDetailsStep: React.FC = () => {
             const region = regions.find(r => r.code === value);
             if (region) {
                 updates.region_name = region.name;
-                updates.regione_region_name = region.regionName;
+                updates.region_region_name = region.regionName;
             }
         } else if (name === 'province_code') {
             updates.city_code = '';
@@ -187,14 +188,20 @@ const AddressDetailsStep: React.FC = () => {
     return (
         <Box sx={{ width: '100%' }}>
             {/* The rest of your JSX remains exactly the same */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-                <Place sx={{ color: 'primary.main', fontSize: '2.5rem' }} />
-                <Typography variant="h6" color="primary">Address Details</Typography>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column-reverse', sm: 'row' }, rowGap: 2, alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, columnGap: 1, alignItems: 'center' }}>
+                    <Place sx={{ color: 'primary.main', fontSize: '3rem' }} />
+                    <Typography variant="h6" color="primary">Address Details</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0, alignItems: { xs: 'center', sm: 'flex-end' } }}>
+                    <Typography variant="body1" color='textSecondary' sx={{ fontWeight: 'bold' }}>CHMSU Admission Portal</Typography>
+                    <Typography variant="body1" color='textSecondary' sx={{ fontWeight: 'bold' }}>Academic Year 2026 - 2027</Typography>
+                </Box>
             </Box>
 
-            {/* Home Address Section */}
+            {/* Permanent Address Section */}
             <Typography variant="subtitle1" color="textSecondary" sx={{ mb: 2, fontWeight: 'bold' }}>
-                Home Address
+                Permanent Address
             </Typography>
             <Grid container spacing={2} rowSpacing={3} sx={{ mb: 4 }}>
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -305,10 +312,10 @@ const AddressDetailsStep: React.FC = () => {
             <Grid container spacing={2} sx={{ mb: 3 }}>
                 <Grid size={{ xs: 12 }}>
                     <FormControl fullWidth>
-                        <InputLabel id="label-same-address">Is your current address the same as your home address?</InputLabel>
+                        <InputLabel id="label-same-address">Is your current address the same as your permanent address?</InputLabel>
                         <Select
                             labelId="label-same-address"
-                            label="Is your current address the same as your home address?"
+                            label="Is your current address the same as your permanent address?"
                             name="is_same_as_home_address"
                             value={addressDetails.is_same_as_home_address}
                             onChange={handleChange}
@@ -319,6 +326,7 @@ const AddressDetailsStep: React.FC = () => {
                             <MenuItem value="Yes">Yes</MenuItem>
                             <MenuItem value="No">No</MenuItem>
                         </Select>
+                        <FormHelperText>*For students staying in a board and lodging or relative's residence away from home.</FormHelperText>
                     </FormControl>
                 </Grid>
             </Grid>

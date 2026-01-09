@@ -29,7 +29,7 @@ export interface AddressDetailsType {
     region: string;
     region_code: string;
     region_name: string;
-    regione_region_name: string;
+    region_region_name: string;
     province: string;
     province_code: string;
     province_name: string;

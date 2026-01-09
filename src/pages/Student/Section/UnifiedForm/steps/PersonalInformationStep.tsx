@@ -13,6 +13,10 @@ import {
     Select,
     Typography,
     SelectChangeEvent,
+    Alert,
+    AlertTitle,
+    List,
+    ListItem,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -46,11 +50,24 @@ const PersonalInformationStep: React.FC = () => {
 
     return (
         <Box sx={{ width: '100%' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-                <Person sx={{ color: 'primary.main', fontSize: '2.5rem' }} />
-                <Typography variant="h6" color="primary">Personal Information</Typography>
-            </Box>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column-reverse', sm: 'row' }, rowGap: 2, alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', columnGap: 1 }}>
+                    <Person sx={{ color: 'primary.main', fontSize: '3rem' }} />
+                    <Typography variant="h6" color="primary" textAlign={'left'}>Personal Information</Typography>
 
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0, alignItems: { xs: 'center', sm: 'flex-end' } }}>
+                    <Typography variant="body1" color='textSecondary' sx={{ fontWeight: 'bold' }}>CHMSU Admission Portal</Typography>
+                    <Typography variant="body1" color='textSecondary' sx={{ fontWeight: 'bold' }}>Academic Year 2026 - 2027</Typography>
+                </Box>
+            </Box>
+            <Alert severity="info" sx={{ p: 2, pb: 0, borderRadius: 2, mb: 2 }}>
+                <AlertTitle>We Value your Data Privacy</AlertTitle>
+                <List sx={{ pt: 0 }}>
+                    <ListItem sx={{ pl: 0 }}>By registering, you consent to CHMSU collecting and processing your personal information for admissions, communication, and legal compliance. Your data is used only for admissions-related purposes and may be shared with authorized staff and contracted service providers bound to protect it. For privacy concerns, please email support.ictmis@chmsu.edu.ph.</ListItem>
+                </List>
+                <Typography variant="caption" color="initial"></Typography>
+            </Alert>
             <Grid container spacing={2} rowSpacing={3}>
                 <Grid size={{ xs: 12, sm: 4 }}>
                     <FormControl fullWidth>
@@ -61,6 +78,7 @@ const PersonalInformationStep: React.FC = () => {
                             value={personalInformation.first_name}
                             onChange={handleChange}
                             required
+                            disabled
                             sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
                         />
                     </FormControl>
@@ -86,6 +104,7 @@ const PersonalInformationStep: React.FC = () => {
                             value={personalInformation.last_name}
                             onChange={handleChange}
                             required
+                            disabled
                             sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
                         />
                     </FormControl>
@@ -99,7 +118,7 @@ const PersonalInformationStep: React.FC = () => {
                             onChange={handleChange}
                             required
                             sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
-                            slotProps={{ htmlInput: { maxLength: 30 } }}
+                            slotProps={{ htmlInput: { maxLength: 20 } }}
                         />
                     </FormControl>
                 </Grid>
@@ -109,14 +128,13 @@ const PersonalInformationStep: React.FC = () => {
                             name="mobile_no"
                             label="Mobile Number"
                             placeholder="e.g. 09123456789"
-                            type="number"
                             value={personalInformation.mobile_no}
                             onChange={handleChange}
                             required
                             sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
-                            slotProps={{ htmlInput: { maxLength: 11, pattern: "[0-9]*" } }}
+                            slotProps={{ htmlInput: { maxLength: 11, inputMode: 'numeric', pattern: '[0-9]*' } }}
                             helperText="Mobile number must be 11 digits"
-                            error={personalInformation.mobile_no.length > 11}
+                            error={personalInformation.mobile_no.length > 0 && personalInformation.mobile_no.length !== 11}
                         />
                     </FormControl>
                 </Grid>
@@ -129,6 +147,7 @@ const PersonalInformationStep: React.FC = () => {
                                 value={personalInformation.date_of_birth ? dayjs(personalInformation.date_of_birth) : null}
                                 onChange={handleChangeDate}
                                 format="YYYY-MM-DD"
+                                disabled
                                 sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
                             />
                         </LocalizationProvider>

@@ -13,6 +13,7 @@ import {
     ListItemButton,
     ListItemText,
     CircularProgress,
+    Alert,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { Schedule } from '@mui/icons-material';
@@ -29,6 +30,7 @@ interface ScheduleData {
     schedule_time_start: string;
     schedule_time_end: string;
     slots_remaining: number;
+    campus: string;
 }
 
 interface AccumulatorItem {
@@ -45,6 +47,15 @@ const ScheduleStep: React.FC = () => {
         formData.schedule.schedule_date ? dayjs(formData.schedule.schedule_date) : null
     );
     const [loading, setLoading] = React.useState(true);
+    const [campusName, setCampusName] = React.useState<string>('');
+
+    // Format campus name for display
+    const formatCampusName = (campus: string) => {
+        if (campus === 'Talisay') {
+            return 'Talisay (Main) Campus';
+        }
+        return `${campus} Campus`;
+    };
 
     // Group schedules by date
     const availableDates = React.useMemo(() => {
@@ -99,6 +110,7 @@ const ScheduleStep: React.FC = () => {
     };
 
     // Fetch schedules
+    const hasFetched = React.useRef(false);
     React.useEffect(() => {
         const fetchSchedules = async () => {
             try {
@@ -106,6 +118,10 @@ const ScheduleStep: React.FC = () => {
                 const { data } = await SchedulesService.getSchedules(uuid);
                 if (data?.length > 0) {
                     setAvailableSchedules(data);
+                    // Extract campus name from first schedule
+                    if (data[0]?.campus) {
+                        setCampusName(data[0].campus);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching schedules:', error);
@@ -114,7 +130,8 @@ const ScheduleStep: React.FC = () => {
             }
         };
 
-        if (uuid) {
+        if (uuid && !hasFetched.current) {
+            hasFetched.current = true;
             fetchSchedules();
         }
     }, [uuid]);
@@ -141,10 +158,17 @@ const ScheduleStep: React.FC = () => {
 
     return (
         <Box sx={{ width: '100%' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-                <Schedule sx={{ color: 'primary.main', fontSize: '2.5rem' }} />
-                <Typography variant="h6" color="primary">Select Your Schedule</Typography>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column-reverse', sm: 'row' }, rowGap: 2, alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, columnGap: 1, alignItems: 'center' }}>
+                    <Schedule sx={{ color: 'primary.main', fontSize: '3rem' }} />
+                    <Typography variant="h6" color="primary">Schedules</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0, alignItems: { xs: 'center', sm: 'flex-end' } }}>
+                    <Typography variant="body1" color='textSecondary' sx={{ fontWeight: 'bold' }}>CHMSU Admission Portal</Typography>
+                    <Typography variant="body1" color='textSecondary' sx={{ fontWeight: 'bold' }}>Academic Year 2026 - 2027</Typography>
+                </Box>
             </Box>
+            <Alert sx={{ ml: 'auto', mb: 2 }} severity="info">Choose a test date and time that doesn't conflict with any personal commitments or school activities. Once you click Register, your admission test appointment is final and cannot be rescheduled.</Alert>
 
             <Grid container spacing={2}>
                 <Grid size={{ xs: 12, md: 7 }}>
@@ -155,12 +179,12 @@ const ScheduleStep: React.FC = () => {
                                     components={['DateCalendar']}
                                     sx={{ py: 3, pb: 0, px: 2, '.MuiTypography-root': { textAlign: 'center !important' } }}
                                 >
-                                    <DemoItem label="Available Dates:">
+                                    <DemoItem label={`Available Dates at${campusName ? ` ${formatCampusName(campusName)}` : ''}:`}>
                                         <DateCalendar
                                             value={selectedDate}
                                             onChange={handleDateChange}
-                                            minDate={dayjs('2026-01-07')}
-                                            maxDate={dayjs('2026-01-31')}
+                                            minDate={dayjs('2026-02-09')}
+                                            maxDate={dayjs('2026-03-07')}
                                             shouldDisableDate={(date) => !isAvailableDate(date)}
                                             sx={{
                                                 '& .MuiPickersDay-root': {
@@ -189,7 +213,7 @@ const ScheduleStep: React.FC = () => {
                 <Grid size={{ xs: 12, md: 5 }}>
                     <Paper variant="outlined" sx={{ height: '100%', py: 3, px: 2, borderRadius: 2 }}>
                         <Typography variant="body2" textAlign="center" sx={{ mb: 1 }}>
-                            Available Times:
+                            Available Times at{campusName ? ` ${formatCampusName(campusName)}` : ''}:
                         </Typography>
                         {availableTimes.length > 0 ? (
                             <List sx={{ pb: 0 }}>

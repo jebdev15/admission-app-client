@@ -16,7 +16,7 @@ const initialAddressDetails: AddressDetailsType = {
     region: '',
     region_code: '',
     region_name: '',
-    regione_region_name: '',
+    region_region_name: '',
     province: '',
     province_code: '',
     province_name: '',

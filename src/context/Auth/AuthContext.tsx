@@ -36,7 +36,7 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
         agreed: false,  // If the user has agreed to the privacy policy(second modal)
         isFirstModalOpen: true, // If the first modal is open
         isSecondModalOpen: false,
-        disableFormContent: true, // If the form content should be disabled
+        disableFormContent: false, // If the form content should be disabled
         setOpenNextModal: () => setContext((prevState) => ({...prevState, isFirstModalOpen: false, isSecondModalOpen: true })), // Function to set the agreed state
         setAgreed: () => setContext((prevState) => ({...prevState, agreed: true, isSecondModalOpen: false, disableFormContent: false })), // Function to set the agreed state
         register: {

@@ -18,8 +18,9 @@ export interface HomeContextProviderProps {
  // Define the type for the loader data
 export interface LoaderData {
   apiMessage: string;
-  isUuidExpired: string;
-  isUuidExists: string;
+  isUuidExpired: boolean | null;
+  isUuidExists: boolean | null;
+  isCompleted?: boolean;
   forms_status: {
     personal_information_status: boolean;
     address_detail_status: boolean;

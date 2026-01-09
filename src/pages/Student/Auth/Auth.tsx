@@ -28,7 +28,7 @@ import CustomCircularProgress from "@components/CustomCircularProgress";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import collegesJsonData from "../colleges.json"; // Adjust the path as needed
 import { Colleges } from "./type";
-import DataPrivacyPolicyModal from "./DataPrivacyPolicyModal";
+// import DataPrivacyPolicyModal from "./DataPrivacyPolicyModal";
 import dayjs from "dayjs";
 import { checkApiUrl } from "@utils/checkApiUrl";
 const collegesJson: Colleges = collegesJsonData;
@@ -190,13 +190,12 @@ const Register = () => {
                                                 Welcome to the CHMSU Admission Portal
                                             </Typography>
                                             <Typography variant={belowMediumScreenSize ? "h6" : "h6"} color="primary" textAlign={"center"} sx={{ mb: 2, mt: -1 }}>
-                                                AY 2026-2027
+                                                Academic Year 2026-2027
                                             </Typography>
                                             <Alert severity="info" sx={{ width: "100%", p: 2, pb: 0, borderRadius: 2 }}>
-                                                <AlertTitle>Information</AlertTitle>
+                                                <AlertTitle>We Value your Data Privacy</AlertTitle>
                                                 <List sx={{ pt: 0 }}>
-                                                    <ListItem sx={{ pl: 0 }}>Please fill out the form below</ListItem>
-                                                    <ListItem sx={{ pl: 0 }}>Use your active email address</ListItem>
+                                                    <ListItem sx={{ pl: 0 }}>By registering, you consent to CHMSU collecting and processing your personal information for admissions, communication, and legal compliance. Your data is used only for admissions-related purposes and may be shared with authorized staff and contracted service providers bound to protect it. For privacy concerns, please email support.ictmis@chmsu.edu.ph.</ListItem>
                                                 </List>
                                                 <Typography variant="caption" color="initial"></Typography>
                                             </Alert>
@@ -398,7 +397,7 @@ const Register = () => {
                                                     </Button>
                                                 </FormControl>
                                             </Grid>
-                                            <DataPrivacyPolicyModal />
+                                            {/* <DataPrivacyPolicyModal /> */}
                                         </Box>
                                     )
                                 : (

@@ -37,18 +37,24 @@ const HealthStep: React.FC = () => {
 
     return (
         <Box sx={{ width: '100%' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-                <MedicalInformation sx={{ color: 'primary.main', fontSize: '2.5rem' }} />
-                <Typography variant="h6" color="primary">Health Information</Typography>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column-reverse', sm: 'row' }, rowGap: 2, alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, columnGap: 1, alignItems: 'center' }}>
+                    <MedicalInformation sx={{ color: 'primary.main', fontSize: '3rem', mt: -1 }} />
+                    <Typography variant="h6" color="primary">Health</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0, alignItems: { xs: 'center', sm: 'flex-end' } }}>
+                    <Typography variant="body1" color='textSecondary' sx={{ fontWeight: 'bold' }}>CHMSU Admission Portal</Typography>
+                    <Typography variant="body1" color='textSecondary' sx={{ fontWeight: 'bold' }}>Academic Year 2026 - 2027</Typography>
+                </Box>
             </Box>
 
             <Grid container spacing={2} rowSpacing={3}>
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <FormControl fullWidth>
-                        <InputLabel id="label-pwd">Are you a Person with Disability (PWD)?</InputLabel>
+                        <InputLabel id="label-pwd">Are you a person with disability (PWD)?</InputLabel>
                         <Select
                             labelId="label-pwd"
-                            label="Are you a Person with Disability (PWD)?"
+                            label="Are you a person with disability (PWD)?"
                             name="is_pwd"
                             value={health.is_pwd}
                             onChange={handleChangeSelect}
@@ -71,16 +77,17 @@ const HealthStep: React.FC = () => {
                                 onChange={handleChange}
                                 required
                                 sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
+                                slotProps={{ htmlInput: { maxLength: 20 } }}
                             />
                         </FormControl>
                     </Grid>
                 )}
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <FormControl fullWidth>
-                        <InputLabel id="label-sped">Are you a SPED student?</InputLabel>
+                        <InputLabel id="label-sped">Do you have a special education needs?</InputLabel>
                         <Select
                             labelId="label-sped"
-                            label="Are you a SPED student?"
+                            label="Do you have a special education needs?"
                             name="is_sped"
                             value={health.is_sped}
                             onChange={handleChangeSelect}
@@ -109,10 +116,10 @@ const HealthStep: React.FC = () => {
                 )}
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <FormControl fullWidth>
-                        <InputLabel id="label-siblings-chmsu">Do you have siblings studying in CHMSU?</InputLabel>
+                        <InputLabel id="label-siblings-chmsu">Do you have siblings currently enrolled in CHMSU?</InputLabel>
                         <Select
                             labelId="label-siblings-chmsu"
-                            label="Do you have siblings studying in CHMSU?"
+                            label="Do you have siblings currently enrolled in CHMSU?"
                             name="has_siblings_studying_in_chmsu"
                             value={health.has_siblings_studying_in_chmsu}
                             onChange={handleChangeSelect}
@@ -127,10 +134,10 @@ const HealthStep: React.FC = () => {
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <FormControl fullWidth>
-                        <InputLabel id="label-relatives-chmsu">Do you have relatives studying in CHMSU?</InputLabel>
+                        <InputLabel id="label-relatives-chmsu">Do you have relatives employed in CHMSU?</InputLabel>
                         <Select
                             labelId="label-relatives-chmsu"
-                            label="Do you have relatives studying in CHMSU?"
+                            label="Do you have relatives employed in CHMSU?"
                             name="has_relatives_studying_in_chmsu"
                             value={health.has_relatives_studying_in_chmsu}
                             onChange={handleChangeSelect}

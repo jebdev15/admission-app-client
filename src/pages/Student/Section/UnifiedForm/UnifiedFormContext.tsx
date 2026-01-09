@@ -3,7 +3,7 @@
  * Manages the state for the entire multi-step form
  */
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import dayjs from 'dayjs';
 import {
@@ -19,6 +19,7 @@ import {
     TOTAL_STEPS,
 } from './types';
 import SubmissionService, { JobStatus, QueueResponse } from '@services/submissionService';
+import { PersonalInformationService } from '@services/personalInformationService';
 
 // Initial state for each form section
 const initialPersonalInformation: PersonalInformationType = {
@@ -45,7 +46,7 @@ const initialAddressDetails: AddressDetailsType = {
     region: '',
     region_code: '',
     region_name: '',
-    regione_region_name: '',
+    region_region_name: '',
     province: '',
     province_code: '',
     province_name: '',
@@ -123,6 +124,39 @@ export const UnifiedFormProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submissionStatus, setSubmissionStatus] = useState<SubmissionStatus | null>(null);
 
+    // Fetch initial applicant info on mount
+    const hasFetchedInitialInfo = React.useRef(false);
+    useEffect(() => {
+        // Skip if already fetched or no uuid
+        if (hasFetchedInitialInfo.current || !uuid) {
+            return;
+        }
+        
+        // Mark as fetched immediately to prevent race conditions
+        hasFetchedInitialInfo.current = true;
+        
+        const fetchInitialInfo = async () => {
+            try {
+                const initialInfo = await PersonalInformationService.getInitialApplicantInfo(uuid);
+                if (initialInfo) {
+                    setFormData(prev => ({
+                        ...prev,
+                        personalInformation: {
+                            ...prev.personalInformation,
+                            first_name: initialInfo.first_name || '',
+                            last_name: initialInfo.last_name || '',
+                            date_of_birth: initialInfo.date_of_birth ? dayjs(initialInfo.date_of_birth) : dayjs('2000-01-01'),
+                        }
+                    }));
+                }
+            } catch (error) {
+                console.error('Error fetching initial info:', error);
+            }
+        };
+        
+        fetchInitialInfo();
+    }, [uuid]);
+
     // Update form data for a specific section
     const updateFormData = useCallback(<K extends keyof UnifiedFormData>(
         section: K,
@@ -170,12 +204,28 @@ export const UnifiedFormProvider: React.FC<{ children: React.ReactNode }> = ({ c
             }
             case 1: { // Address Details
                 const ad = formData.addressDetails;
-                return !!(
+                const permanentAddressValid = !!(
                     ad.region_name &&
                     ad.province_name &&
                     ad.city_name &&
-                    ad.barangay_name
+                    ad.barangay_name &&
+                    ad.street &&
+                    ad.is_same_as_home_address
                 );
+                
+                // If current address is different, validate current address fields too
+                if (ad.is_same_as_home_address === 'No') {
+                    const currentAddressValid = !!(
+                        ad.current_address_region_name &&
+                        ad.current_address_province_name &&
+                        ad.current_address_city_name &&
+                        ad.current_address_barangay_name &&
+                        ad.current_address_street
+                    );
+                    return permanentAddressValid && currentAddressValid;
+                }
+                
+                return permanentAddressValid;
             }
             case 2: { // Parent Profile
                 const pp = formData.parentProfile;
@@ -249,29 +299,83 @@ export const UnifiedFormProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setSubmissionStatus(null);
 
         try {
-            // Prepare submission data
+            // Prepare personal information (exclude dayjs object and format date)
+            const { date_of_birth, ...restPersonalInfo } = formData.personalInformation;
+            
+            // Prepare submission data - ensure all fields match database schema
             const submissionData = {
                 uuid,
+                // personal_information table - most fields nullable except first_name, last_name
                 personalInformation: {
-                    ...formData.personalInformation,
-                    date_of_birth: formData.personalInformation.date_of_birth?.format('YYYY-MM-DD'),
+                    first_name: restPersonalInfo.first_name,
+                    middle_name: restPersonalInfo.middle_name || null,
+                    last_name: restPersonalInfo.last_name,
+                    mobile_no: restPersonalInfo.mobile_no || null,
+                    lrn: restPersonalInfo.lrn || null,
+                    date_of_birth: date_of_birth ? date_of_birth.format('YYYY-MM-DD') : null,
+                    gender: restPersonalInfo.gender || null,
+                    civil_status: restPersonalInfo.civil_status || null,
+                    religion: restPersonalInfo.religion || null,
+                    other_religion: restPersonalInfo.other_religion || null,
+                    is_solo_parent: restPersonalInfo.is_solo_parent || null,
+                    is_indigenous_group: restPersonalInfo.is_indigenous_group || null,
+                    indigenous_group: restPersonalInfo.indigenous_group || null,
+                    school_last_attended: restPersonalInfo.school_last_attended || null,
+                    type_of_school: restPersonalInfo.type_of_school || null,
+                    has_scholarship_or_financial_aid: restPersonalInfo.has_scholarship_or_financial_aid || null,
+                    scholarship_or_financial_aid: restPersonalInfo.scholarship_or_financial_aid || null,
                 },
+                // address_details table - region/province/street/is_same_as_home_address are NOT NULL
                 addressDetails: {
-                    region: formData.addressDetails.region_name,
-                    province: formData.addressDetails.province_name,
-                    city_municipality: formData.addressDetails.city_name,
-                    barangay: formData.addressDetails.barangay_name,
+                    region_code: formData.addressDetails.region_code,
+                    region_name: formData.addressDetails.region_name,
+                    region_region_name: formData.addressDetails.region_region_name || '',
+                    province_code: formData.addressDetails.province_code,
+                    province_name: formData.addressDetails.province_name,
+                    city_code: formData.addressDetails.city_code || null,
+                    city_name: formData.addressDetails.city_name || null,
+                    barangay_code: formData.addressDetails.barangay_code || null,
+                    barangay_name: formData.addressDetails.barangay_name || null,
                     street: formData.addressDetails.street,
                     is_same_as_home_address: formData.addressDetails.is_same_as_home_address,
-                    current_address_region: formData.addressDetails.current_address_region_name,
-                    current_address_province: formData.addressDetails.current_address_province_name,
-                    current_address_city_municipality: formData.addressDetails.current_address_city_name,
-                    current_address_barangay: formData.addressDetails.current_address_barangay_name,
-                    current_address_street: formData.addressDetails.current_address_street,
+                    current_address_region_code: formData.addressDetails.current_address_region_code || null,
+                    current_address_region_name: formData.addressDetails.current_address_region_name || null,
+                    current_address_region_region_name: formData.addressDetails.current_address_region_region_name || null,
+                    current_address_province_code: formData.addressDetails.current_address_province_code || null,
+                    current_address_province_name: formData.addressDetails.current_address_province_name || null,
+                    current_address_city_code: formData.addressDetails.current_address_city_code || null,
+                    current_address_city_name: formData.addressDetails.current_address_city_name || null,
+                    current_address_barangay_code: formData.addressDetails.current_address_barangay_code || null,
+                    current_address_barangay_name: formData.addressDetails.current_address_barangay_name || null,
+                    current_address_street: formData.addressDetails.current_address_street || null,
                 },
-                parentProfile: formData.parentProfile,
-                homeAndFamilyBackground: formData.homeAndFamilyBackground,
-                health: formData.health,
+                // parent_profiles table - all fields NOT NULL
+                parentProfile: {
+                    father_highest_educational_attainment: formData.parentProfile.father_highest_educational_attainment,
+                    father_occupation: formData.parentProfile.father_occupation,
+                    mother_highest_educational_attainment: formData.parentProfile.mother_highest_educational_attainment,
+                    mother_occupation: formData.parentProfile.mother_occupation,
+                    is_living_with_guardian: formData.parentProfile.is_living_with_guardian,
+                },
+                // home_and_family_backgrounds table - all fields NOT NULL (four_ps_id_no needs empty string if not provided)
+                homeAndFamilyBackground: {
+                    no_of_siblings_gainfully_employed: formData.homeAndFamilyBackground.no_of_siblings_gainfully_employed || 0,
+                    who_finances_your_schooling: formData.homeAndFamilyBackground.who_finances_your_schooling,
+                    is_four_ps_beneficiary: formData.homeAndFamilyBackground.is_four_ps_beneficiary,
+                    four_ps_id_no: formData.homeAndFamilyBackground.four_ps_id_no || '',
+                    is_first_gen_student: formData.homeAndFamilyBackground.is_first_gen_student,
+                    household_monthly_income: formData.homeAndFamilyBackground.household_monthly_income,
+                    nature_of_residence: formData.homeAndFamilyBackground.nature_of_residence,
+                },
+                // health table - all fields NOT NULL (pwd_id_no, specify_sped need empty string if not provided)
+                health: {
+                    is_pwd: formData.health.is_pwd,
+                    pwd_id_no: formData.health.pwd_id_no || '',
+                    is_sped: formData.health.is_sped,
+                    specify_sped: formData.health.specify_sped || '',
+                    has_siblings_studying_in_chmsu: formData.health.has_siblings_studying_in_chmsu,
+                    has_relatives_studying_in_chmsu: formData.health.has_relatives_studying_in_chmsu,
+                },
                 schedule: formData.schedule,
                 image: formData.image, // Base64 image data
             };

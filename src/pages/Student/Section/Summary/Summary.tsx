@@ -5,7 +5,7 @@ import { Celebration } from '@mui/icons-material'
 import { Alert, AlertTitle, Box, Button, Card, CardMedia, CircularProgress, List, ListItem, Paper, Typography } from '@mui/material'
 import { FormatDateUtil } from '@utils/formatDate'
 import { VITE_API_URL } from '@constants/index'
-import { QRCodeSVG } from 'qrcode.react'
+// import { QRCodeSVG } from 'qrcode.react'
 
 interface SummaryInfo {
     name: string
@@ -20,7 +20,7 @@ interface SummaryInfo {
 }
 
 const defaultSummaryInfo: SummaryInfo = {
-    name: '',  
+    name: '',
     email: '',
     lrn: '',
     course_description: '',
@@ -51,8 +51,8 @@ const Summary = () => {
             setImageSrc(fullImageUrl); // Set the constructed URL as the image source
         }
     }
-    const domain = window.location.hostname;
-    const qrValue = `${domain}/home/${uuid}`; // Replace with your value
+    // const domain = window.location.hostname;
+    // const qrValue = `${domain}/home/${uuid}`; // Replace with your value
     const containerRef = React.useRef<HTMLDivElement | null>(null);
 
     const handleDownload = () => {
@@ -67,15 +67,15 @@ const Summary = () => {
         const img = new Image();
 
         img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx?.drawImage(img, 0, 0);
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx?.drawImage(img, 0, 0);
 
-        const url = canvas.toDataURL('image/png');
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${applicantSummaryInfo?.name}-QRCode.png`;
-        a.click();
+            const url = canvas.toDataURL('image/png');
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${applicantSummaryInfo?.name}-QRCode.png`;
+            a.click();
         };
 
         img.src = `data:image/svg+xml;base64,${btoa(svgData)}`;
@@ -114,6 +114,31 @@ const Summary = () => {
                     >
                         <Celebration sx={{ color: 'primary.main', fontSize: 50, mb: -1 }} />
                         <Typography variant="h6" color="primary" align="center" sx={{ mb: 3 }}>Admission Test slot reserved!</Typography>
+                        <Alert severity="info" sx={{ width: '100%', p: 2, borderRadius: 2 }}>Please take a screenshot of this page or download your QR code for entry.</Alert>
+                        <Button variant="contained" color="primary" fullWidth sx={{ my: 2, color: 'white' }} onClick={handleDownload}>Download QR Code</Button>
+                        {/* <div
+                            style={{
+                                height: "auto",
+                                margin: "16px auto",
+                                maxWidth: 128, // Restrict the maximum width of the QR code
+                                width: "100%", // Make it responsive
+                                visibility: "hidden"
+                            }}
+                            ref={containerRef}
+                        >
+                            <QRCodeSVG
+                                value={qrValue}
+                                size={256}
+                                bgColor="#ffffff"
+                                fgColor="#000000"
+                            // imageSettings={{
+                            //     src: "../../assets/chmsu-small.jpg/150", // Replace with your logo URL
+                            //     height: 50, // Logo height
+                            //     width: 50, // Logo width
+                            //     excavate: true, // Ensures the logo does not block important parts of the QR code
+                            // }}
+                            />
+                        </div> */}
                         <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                             {imageSrc ? (
                                 <Box
@@ -161,49 +186,26 @@ const Summary = () => {
                                 <Typography variant="body2" color="initial" align='center' sx={{ mb: -1 }}>Where:</Typography>
                                 <Typography variant="h6" color="initial" align='center'>{applicantSummaryInfo?.location}</Typography>
                                 <Typography variant="body2" color="initial" align='center' sx={{ mb: -1, mt: 2 }}>When:</Typography>
-                                <Typography variant="h6" color="initial" align='center'>{FormatDateUtil.formatDateOnly(applicantSummaryInfo?.schedule_date)} {applicantSummaryInfo?.schedule_time}</Typography>
+                                <Typography variant="h6" color="initial" align='center'>{FormatDateUtil.formatDateOnly(applicantSummaryInfo?.schedule_date)} {FormatDateUtil.formatTimeTo12Hour(applicantSummaryInfo?.schedule_time)}</Typography>
                                 <Typography variant="body1" color="initial">The verified examinees will take the CHMSU Admission Test on their reserved dates in their chosen exam venues.</Typography>
                                 <Typography variant="body1" color="initial">Kindly bring the following:</Typography>
                                 <Alert severity="info" sx={{ width: '100%', p: 2, pb: 0, borderRadius: 2, mt: 2 }}>
                                     <AlertTitle>What to bring</AlertTitle>
                                     <List sx={{ pt: 0 }}>
-                                        <ListItem sx={{ pl: 0 }}>Duly Accomplished Application Form (to be distributed and filled out on-site)</ListItem>
-                                        <ListItem sx={{ pl: 0 }}>Learner’s Reference Number</ListItem>
-                                        <ListItem sx={{ pl: 0 }}>2 pieces 2×2 ID Picture</ListItem>
-                                        <ListItem sx={{ pl: 0 }}>1 long brown envelope</ListItem>
-                                        <ListItem sx={{ pl: 0 }}>Black ballpen, eraser, and pencil</ListItem>
+                                        <ListItem sx={{ pl: 0 }}>Senior High School ID or any valid identifcation card</ListItem>
+                                        <ListItem sx={{ pl: 0 }}>Learner’s Reference Number (for incoming first-year)</ListItem>
+                                        <ListItem sx={{ pl: 0 }}>Two (2) pieces 2×2 ID Picture</ListItem>
+                                        <ListItem sx={{ pl: 0 }}>Black ballpoint pen, eraser, and pencil</ListItem>
                                         <ListItem sx={{ pl: 0 }}>Proof of your successful registration (screenshot or active webpage)</ListItem>
-                                        <ListItem sx={{ pl: 0 }}>Senior High School ID or any valid identifcation card (that you uploaded in the portal)</ListItem>
+                                        <ListItem sx={{ pl: 0 }}>Water bottle - stay hydrated</ListItem>
+                                        <ListItem sx={{ pl: 0 }}>Face mask for health and safety</ListItem>
                                     </List>
                                     <Typography variant="caption" color="initial"></Typography>
                                 </Alert>
-                                <Typography variant="body1" color="initial"><strong>Reminders:</strong> Be at your assigned testing room at least 45 minutes before the start of the test. Wear your face masks.</Typography>
-                                <Typography variant="body1" color="initial">For further queries and clarifications, please send a message to the CHMSU Compassion Facebook Page. You may also contact the CHMSU Office of the Guidance Services via email at guidance.talisay@chmsu.edu.ph or call (034) 454 0529 / 454 0584 loc. 136.</Typography>
+                                <Typography variant="body1" color="initial"><strong>Reminder:</strong> Arrive at your assigned testing room at least 45 minutes before the test start time.</Typography>
+                                <Typography variant="body1" color="initial"><strong>Contact and Support:</strong> For questions and clarifications, send a message to the CHMSU Compassion Facebook Page. You may also contact the <strong>CHMSU Office of the Guidance Services</strong> by email at <strong>guidance.talisay@chmsu.edu.ph or by phone at (034) 454 0529 / 454 0529 / (034) 454-584, local 136.</strong></Typography>
                             </fieldset>
-                            <Button variant="contained" color="primary" fullWidth sx={{ my: 2, color: 'white' }} onClick={handleDownload}>Download QR Code</Button>
-                            <div
-                                style={{
-                                    height: "auto",
-                                    margin: "16px auto",
-                                    maxWidth: 128, // Restrict the maximum width of the QR code
-                                    width: "100%", // Make it responsive
-                                    visibility: "hidden"
-                                }}
-                                ref={containerRef}
-                            >
-                               <QRCodeSVG
-                                    value={qrValue}
-                                    size={256}
-                                    bgColor="#ffffff"
-                                    fgColor="#000000"
-                                    // imageSettings={{
-                                    //     src: "../../assets/chmsu-small.jpg/150", // Replace with your logo URL
-                                    //     height: 50, // Logo height
-                                    //     width: 50, // Logo width
-                                    //     excavate: true, // Ensures the logo does not block important parts of the QR code
-                                    // }}
-                                />
-                            </div>
+
                         </Box>
                     </Box>
                 </Paper>
