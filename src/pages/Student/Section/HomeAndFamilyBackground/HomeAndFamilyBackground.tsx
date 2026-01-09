@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid2'
 import React from 'react'
 import { HomeAndFamilyBackgroundType } from './type'
 import { useNavigate, useParams } from 'react-router'
-import { HomeAndFamilyBackgroundService } from '../../../../services/homeAndFamilyBackgroundService'
+import { HomeAndFamilyBackgroundService } from '@services/homeAndFamilyBackgroundService'
 import { LoadingButton } from '@mui/lab'
 
 const initialHomeAndFamilyBackground: HomeAndFamilyBackgroundType = {

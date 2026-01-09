@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid2'
 import React from 'react'
 import { HealthType } from './type'
 import { useNavigate, useParams } from 'react-router'
-import { HealthService } from '../../../../services/healthService'
+import { HealthService } from '@services/healthService'
 import { LoadingButton } from '@mui/lab'
 
 const initialHealth: HealthType = {

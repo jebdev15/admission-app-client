@@ -1,7 +1,7 @@
 import React from 'react'
 import { AuthContextInterface, AuthContextProviderProps } from './type'
-import axiosInstance from '../../api/index'
-import { validateEmail } from '../../utils/emailValidator'
+import axiosInstance from '@api/index'
+import { validateEmail } from '@utils/emailValidator'
 
 // Create and export the LoginContext with default values
 export const AuthContext = React.createContext<AuthContextInterface>({

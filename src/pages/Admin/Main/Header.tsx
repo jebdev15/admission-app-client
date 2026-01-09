@@ -17,7 +17,7 @@ import {
     Logout,
     AccountCircle as AccountCircleIcon,
 } from "@mui/icons-material";
-import chmsuLogo from "../../../assets/chmsu.jpg";
+import chmsuLogo from "@assets/chmsu.jpg";
 import { ProtectedRouteContext } from '../ProtectedRoute';
 import { jwtDecode } from 'jwt-decode';
 interface DecodedToken {

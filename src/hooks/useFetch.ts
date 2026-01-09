@@ -1,8 +1,8 @@
 import React from "react";
-import axiosInstance from "../api";
+import axiosInstance from "@api/index";
 import axios from "axios";
-import { FormatDateUtil } from "../utils/formatDate";
-import { ProtectedRouteContext } from "../pages/Admin/ProtectedRoute";
+import { FormatDateUtil } from "@utils/formatDate";
+import { ProtectedRouteContext } from "@pages/Admin/ProtectedRoute";
 
 const useFetch = (url: string, token: string) => {
   const { refresh } = React.useContext(ProtectedRouteContext)

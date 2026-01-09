@@ -7,9 +7,9 @@ import React from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 import { PersonalInformationType } from './type'
 import { useNavigate, useParams } from 'react-router'
-import axiosInstance from '../../../../api'
+import axiosInstance from '@api/index'
 import { LoadingButton } from '@mui/lab'
-// import { PersonalInformationService } from '../../../../services/personalInformationService'
+// import { PersonalInformationService } from '@services/personalInformationService'
 
 const PersonalInformation = () => {
   const navigate = useNavigate()

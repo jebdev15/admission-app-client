@@ -1,10 +1,10 @@
 import React from 'react'
 import { useParams } from 'react-router'
-import { SummaryService } from '../../../../services/summaryService'
+import { SummaryService } from '@services/summaryService'
 import { Celebration } from '@mui/icons-material'
 import { Alert, AlertTitle, Box, Button, Card, CardMedia, CircularProgress, List, ListItem, Paper, Typography } from '@mui/material'
-import { FormatDateUtil } from '../../../../utils/formatDate'
-import { VITE_API_URL } from '../../../../constants'
+import { FormatDateUtil } from '@utils/formatDate'
+import { VITE_API_URL } from '@constants/index'
 import { QRCodeSVG } from 'qrcode.react'
 
 interface SummaryInfo {

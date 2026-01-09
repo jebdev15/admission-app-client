@@ -22,15 +22,15 @@ import {
 import Grid from "@mui/material/Grid2";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { AuthContext } from "../../../context/Auth/AuthContext";
-import CustomCircularProgress from "../../../components/CustomCircularProgress";
+import { AuthContext } from "@context/Auth/AuthContext";
+import CustomCircularProgress from "@components/CustomCircularProgress";
 // Import JSON data
 import useMediaQuery from "@mui/material/useMediaQuery";
 import collegesJsonData from "../colleges.json"; // Adjust the path as needed
 import { Colleges } from "./type";
 import DataPrivacyPolicyModal from "./DataPrivacyPolicyModal";
 import dayjs from "dayjs";
-import { checkApiUrl } from "../../../utils/checkApiUrl";
+import { checkApiUrl } from "@utils/checkApiUrl";
 const collegesJson: Colleges = collegesJsonData;
 
 const isWithinBusinessHours = (): boolean => {

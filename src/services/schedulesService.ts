@@ -1,4 +1,4 @@
-import axiosInstance from "../api"
+import axiosInstance from "@api/index"
 
 export const SchedulesService = {
     getApplicantInitialInfo: async (uuid: string) => {

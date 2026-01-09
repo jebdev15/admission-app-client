@@ -1,6 +1,6 @@
 import { Box, Dialog, DialogContent, FormControl, FormLabel, Select, MenuItem, Typography, CardMedia, Card, Button, SelectChangeEvent } from '@mui/material'
 import React from 'react'
-import axiosInstance from '../../../api'
+import axiosInstance from '@api/index'
 import axios from 'axios';
 import { ProtectedRouteContext } from '../ProtectedRoute';
 

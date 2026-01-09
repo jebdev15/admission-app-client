@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid2'
 import React from 'react'
 import { ParentProfileType } from './type'
 import { useNavigate, useParams } from 'react-router'
-import { ParentProfileService } from '../../../../services/parentProfileService'
+import { ParentProfileService } from '@services/parentProfileService'
 import { LoadingButton } from '@mui/lab'
 
 const initialParentProfile: ParentProfileType = {

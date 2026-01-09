@@ -7,7 +7,7 @@ import provinces from './AddressJson/provinces.json'
 import cities from './AddressJson/cities-municipalities.json'
 import barangays from './AddressJson/barangays.json'
 import { AddressDetailsType, AddressItem } from './type'
-import axiosInstance from '../../../../api'
+import axiosInstance from '@api/index'
 import { useNavigate, useParams } from 'react-router'
 import { LoadingButton } from '@mui/lab'
 // Define types for better type safety

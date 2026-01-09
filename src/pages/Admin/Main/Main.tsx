@@ -3,8 +3,8 @@ import {
     Box,
     Paper,
 } from "@mui/material";
-import "../../Student/header.css";
-import CustomCircularProgress from "../../../components/CustomCircularProgress";
+import "@pages/Student/header.css";
+import CustomCircularProgress from "@components/CustomCircularProgress";
 import ApplicantsData from "../Main/Data";
 import Header from "./Header";
 const Dashboard: React.FC = () => {

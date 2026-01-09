@@ -4,7 +4,7 @@ import { PhotoCamera } from "@mui/icons-material";
 import imageCompression from "browser-image-compression";
 import { LoadingButton } from "@mui/lab";
 import { useNavigate, useParams } from "react-router";
-import axiosInstance from "../../../../api";
+import axiosInstance from "@api/index";
 
 // Helper function to convert base64 to Blob
 function base64ToBlob(base64: string, mimeType: string = 'image/jpeg'): Blob {

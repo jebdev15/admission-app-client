@@ -1,23 +1,26 @@
 import { Box } from '@mui/material'
 import React from 'react'
 import Admin from './Auth/Auth'
+import CustomCircularProgress from '@components/CustomCircularProgress'
 const Header: React.LazyExoticComponent<() => JSX.Element> = React.lazy(() => import('./Header'))
 
 const Layout = () => {
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '100%',
-                height: 'auto',
-                minHeight: '100dvh',
-                backgroundColor: '#e0e0e0'
-            }}
-        >
-            <Header />
-            <Admin />
-        </Box>
+        <React.Suspense fallback={<CustomCircularProgress />}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '100%',
+                    height: 'auto',
+                    minHeight: '100dvh',
+                    backgroundColor: '#e0e0e0'
+                }}
+            >
+                <Header />
+                <Admin />
+            </Box>
+        </React.Suspense>
     )
 }
 
