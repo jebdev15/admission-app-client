@@ -13,7 +13,7 @@ dist-ssr
 *.local
 *.zip
 *.tsbuildinfo
-
+.env
 # Deployment
 cpanel_deploy_key
 cpanel_deploy_key.pub
