@@ -10,5 +10,9 @@ export const FormatDateUtil = {
     },
     formatDateOnly: (date: string) => {
         return dayjs(date).format('MMMM D, YYYY');
+    },
+    formatTimeTo12Hour: (time: string) => {
+        const scheduleTimeStart = time.split('-')[0].trim();
+        return dayjs(`1970-01-01T${scheduleTimeStart}`).format('h:mm A');
     }
 }

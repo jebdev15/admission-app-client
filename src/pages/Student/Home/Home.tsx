@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import React from 'react'
 import { useLoaderData } from 'react-router';
 import axiosInstance from '@api/index';
@@ -11,7 +11,7 @@ import { UnifiedFormProvider, UnifiedForm } from '../Section/UnifiedForm';
 const Header = React.lazy(() => import('../Header'))
 
 const Home = () => {
-  const { apiMessage, isUuidExpired, isUuidExists, forms_status } = useLoaderData() as LoaderData
+  const { forms_status } = useLoaderData() as LoaderData
   
   // Check if all forms are already completed (show summary)
   const isAllFormsCompleted = forms_status.personal_information_status &&
@@ -23,13 +23,13 @@ const Home = () => {
     forms_status.schedule_status;
 
   const renderContent = () => {
-    if (!isUuidExists || !isUuidExpired) {
-      return (
-        <Box sx={{ textAlign: 'center', padding: 3 }}>
-          <Typography variant="h4" color="error">{apiMessage}</Typography>
-        </Box>
-      );
-    }
+    // if (isUuidExpired|| !isUuidExists) {
+    //   return (
+    //     <Box sx={{ textAlign: 'center', padding: 3 }}>
+    //       <Typography variant="h4" color="error">{apiMessage}</Typography>
+    //     </Box>
+    //   );
+    // }
 
     if (isAllFormsCompleted) {
       return <Summary />;

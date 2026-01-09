@@ -80,13 +80,9 @@ const ImageUploadStep: React.FC = () => {
             </Box>
 
             <Alert severity="info" sx={{ mb: 3 }}>
-                <AlertTitle>Photo Requirements</AlertTitle>
+                <AlertTitle>Note</AlertTitle>
                 <List dense sx={{ py: 0 }}>
-                    <ListItem sx={{ py: 0.5 }}>• Recent passport-size photo (2x2 inches)</ListItem>
-                    <ListItem sx={{ py: 0.5 }}>• White background</ListItem>
-                    <ListItem sx={{ py: 0.5 }}>• Clear and well-lit</ListItem>
-                    <ListItem sx={{ py: 0.5 }}>• Face clearly visible, no accessories covering the face</ListItem>
-                    <ListItem sx={{ py: 0.5 }}>• Maximum file size: 2 MB</ListItem>
+                    <ListItem sx={{ py: 0.5 }}>Please upload a recent clear headshot facing the camera for identity verification. The file must not exceed 2MB.</ListItem>
                 </List>
             </Alert>
 

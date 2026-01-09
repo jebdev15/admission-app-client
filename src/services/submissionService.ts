@@ -14,41 +14,51 @@ export interface SubmissionData {
     uuid: string;
     personalInformation?: {
         first_name: string;
-        middle_name?: string;
+        middle_name?: string | null;
         last_name: string;
-        suffix?: string;
-        lrn: string;
-        date_of_birth?: string;
-        place_of_birth?: string;
-        gender?: string;
-        civil_status?: string;
-        nationality?: string;
-        religion?: string;
-        other_religion?: string;
-        mobile_no?: string;
-        student_type?: string;
-        strand?: string;
-        track?: string;
-        is_solo_parent?: string;
-        is_indigenous_group?: string;
-        indigenous_group?: string;
-        school_last_attended?: string;
-        type_of_school?: string;
-        has_scholarship_or_financial_aid?: string;
-        scholarship_or_financial_aid?: string;
+        suffix?: string | null;
+        lrn?: string | null;
+        date_of_birth?: string | null;
+        place_of_birth?: string | null;
+        gender?: string | null;
+        civil_status?: string | null;
+        nationality?: string | null;
+        religion?: string | null;
+        other_religion?: string | null;
+        mobile_no?: string | null;
+        student_type?: string | null;
+        strand?: string | null;
+        track?: string | null;
+        is_solo_parent?: string | null;
+        is_indigenous_group?: string | null;
+        indigenous_group?: string | null;
+        school_last_attended?: string | null;
+        type_of_school?: string | null;
+        has_scholarship_or_financial_aid?: string | null;
+        scholarship_or_financial_aid?: string | null;
     };
     addressDetails?: {
-        region?: string;
-        province?: string;
-        city_municipality?: string;
-        barangay?: string;
-        street?: string;
-        is_same_as_home_address?: string;
-        current_address_region?: string;
-        current_address_province?: string;
-        current_address_city_municipality?: string;
-        current_address_barangay?: string;
-        current_address_street?: string;
+        region_code?: string | null;
+        region_name?: string | null;
+        region_region_name?: string | null;
+        province_code?: string | null;
+        province_name?: string | null;
+        city_code?: string | null;
+        city_name?: string | null;
+        barangay_code?: string | null;
+        barangay_name?: string | null;
+        street?: string | null;
+        is_same_as_home_address?: string | null;
+        current_address_region_code?: string | null;
+        current_address_region_name?: string | null;
+        current_address_region_region_name?: string | null;
+        current_address_province_code?: string | null;
+        current_address_province_name?: string | null;
+        current_address_city_code?: string | null;
+        current_address_city_name?: string | null;
+        current_address_barangay_code?: string | null;
+        current_address_barangay_name?: string | null;
+        current_address_street?: string | null;
     };
     parentProfile?: {
         father_highest_educational_attainment?: string;
@@ -195,6 +205,8 @@ export const SubmissionService = {
         onStatusUpdate?: (status: JobStatus) => void
     ): Promise<JobStatus> => {
         let attempts = 0;
+        let notFoundCount = 0;
+        const maxNotFoundAttempts = 3; // Stop after 3 consecutive "not found" errors
 
         return new Promise((resolve, reject) => {
             const poll = async () => {
@@ -202,8 +214,22 @@ export const SubmissionService = {
                     attempts++;
                     const status = await SubmissionService.getJobStatus(jobId);
                     
+                    // Reset notFoundCount on successful response
+                    notFoundCount = 0;
+                    
                     if (onStatusUpdate) {
                         onStatusUpdate(status);
+                    }
+
+                    // Check if job was not found (success: false from API)
+                    if (status.success === false) {
+                        notFoundCount++;
+                        if (notFoundCount >= maxNotFoundAttempts) {
+                            reject(new Error(status.error || 'Job not found or already processed'));
+                            return;
+                        }
+                        setTimeout(poll, intervalMs);
+                        return;
                     }
 
                     if (status.status === 'completed' || status.status === 'failed') {
@@ -217,7 +243,14 @@ export const SubmissionService = {
                     }
 
                     setTimeout(poll, intervalMs);
-                } catch (error) {
+                } catch (error: any) {
+                    // Handle 404 or other errors
+                    notFoundCount++;
+                    if (notFoundCount >= maxNotFoundAttempts) {
+                        reject(new Error(error.message || 'Job not found or already processed'));
+                        return;
+                    }
+                    
                     if (attempts >= maxAttempts) {
                         reject(error);
                         return;
