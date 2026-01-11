@@ -65,6 +65,13 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
                     if(!confirmation) return;
                     setContext((prevState: AuthContextInterface) => ({...prevState, register: {...prevState.register, loadingButton: true}}))
                     const formData = new FormData(event.currentTarget)
+                    
+                    // Sanitize email: remove all spaces and convert to lowercase
+                    const email = formData.get('email') as string;
+                    if (email) {
+                        formData.set('email', email.replace(/\s/g, '').toLowerCase());
+                    }
+                    
                     // Check for blank fields
                     for (const [key, value] of formData.entries()) {
                         if (value === "") {
@@ -116,18 +123,23 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
                         }));
                     }
                 },
-                handleChange: (event) => setContext((prevState: AuthContextInterface) => (
-                    {
+                handleChange: (event) => {
+                    let value = event.target.value;
+                    // Sanitize email: remove all spaces and convert to lowercase
+                    if (event.target.name === 'email') {
+                        value = value.replace(/\s/g, '').toLowerCase();
+                    }
+                    setContext((prevState: AuthContextInterface) => ({
                         ...prevState,
                         register: {
                             ...prevState.register,
                             data: {
                                 ...prevState.register.data,
-                                [event.target.name]: event.target.value
+                                [event.target.name]: value
                             }
                         }
-                    }
-                ))
+                    }))
+                }
             }
         },
     })

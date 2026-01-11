@@ -33,8 +33,10 @@ const initialPersonalInformation: PersonalInformationType = {
     civil_status: '',
     religion: '',
     other_religion: '',
-    is_solo_parent: '',
-    is_indigenous_group: '',
+    is_solo_parent: 'No',
+    is_pwd: 'No',
+    pwd_id_no: '',
+    is_indigenous_group: 'No',
     indigenous_group: '',
     school_last_attended: '',
     type_of_school: '',
@@ -89,8 +91,6 @@ const initialHomeAndFamilyBackground: HomeAndFamilyBackgroundType = {
 };
 
 const initialHealth: HealthType = {
-    is_pwd: '',
-    pwd_id_no: '',
     is_sped: '',
     specify_sped: '',
     has_siblings_studying_in_chmsu: '',
@@ -187,20 +187,27 @@ export const UnifiedFormProvider: React.FC<{ children: React.ReactNode }> = ({ c
         switch (step) {
             case 0: { // Personal Information
                 const pi = formData.personalInformation;
-                return !!(
+                const baseValid = !!(
                     pi.first_name &&
                     pi.last_name &&
                     pi.mobile_no &&
+                    pi.mobile_no.length === 11 && // Must be exactly 11 digits
                     pi.lrn &&
                     pi.gender &&
                     pi.civil_status &&
                     pi.religion &&
-                    pi.is_solo_parent &&
-                    pi.is_indigenous_group &&
                     pi.school_last_attended &&
                     pi.type_of_school &&
                     pi.has_scholarship_or_financial_aid
                 );
+                
+                // Conditional validations
+                const pwdValid = pi.is_pwd !== 'Yes' || !!(pi.is_pwd === 'Yes' && pi.pwd_id_no);
+                const indigenousValid = pi.is_indigenous_group !== 'Yes' || !!(pi.is_indigenous_group === 'Yes' && pi.indigenous_group);
+                const scholarshipValid = pi.has_scholarship_or_financial_aid !== 'Yes' || !!(pi.has_scholarship_or_financial_aid === 'Yes' && pi.scholarship_or_financial_aid);
+                const religionValid = pi.religion !== 'Others' || !!(pi.religion === 'Others' && pi.other_religion);
+                
+                return baseValid && pwdValid && indigenousValid && scholarshipValid && religionValid;
             }
             case 1: { // Address Details
                 const ad = formData.addressDetails;
@@ -239,22 +246,31 @@ export const UnifiedFormProvider: React.FC<{ children: React.ReactNode }> = ({ c
             }
             case 3: { // Home and Family Background
                 const hf = formData.homeAndFamilyBackground;
-                return !!(
+                const baseValid = !!(
                     hf.who_finances_your_schooling &&
                     hf.is_four_ps_beneficiary &&
                     hf.is_first_gen_student &&
                     hf.household_monthly_income &&
                     hf.nature_of_residence
                 );
+                
+                // Conditional validation for 4Ps ID
+                const fourPsValid = hf.is_four_ps_beneficiary !== 'Yes' || !!(hf.is_four_ps_beneficiary === 'Yes' && hf.four_ps_id_no);
+                
+                return baseValid && fourPsValid;
             }
             case 4: { // Health
                 const h = formData.health;
-                return !!(
-                    h.is_pwd &&
+                const baseValid = !!(
                     h.is_sped &&
                     h.has_siblings_studying_in_chmsu &&
                     h.has_relatives_studying_in_chmsu
                 );
+                
+                // Conditional validation for SPED category
+                const spedValid = h.is_sped !== 'Yes' || !!(h.is_sped === 'Yes' && h.specify_sped);
+                
+                return baseValid && spedValid;
             }
             case 5: // Image
                 return !!(formData.image?.photoBase64);
@@ -317,8 +333,10 @@ export const UnifiedFormProvider: React.FC<{ children: React.ReactNode }> = ({ c
                     civil_status: restPersonalInfo.civil_status || null,
                     religion: restPersonalInfo.religion || null,
                     other_religion: restPersonalInfo.other_religion || null,
-                    is_solo_parent: restPersonalInfo.is_solo_parent || null,
-                    is_indigenous_group: restPersonalInfo.is_indigenous_group || null,
+                    is_solo_parent: restPersonalInfo.is_solo_parent || 'No',
+                    is_pwd: restPersonalInfo.is_pwd || 'No',
+                    pwd_id_no: restPersonalInfo.pwd_id_no || '',
+                    is_indigenous_group: restPersonalInfo.is_indigenous_group || 'No',
                     indigenous_group: restPersonalInfo.indigenous_group || null,
                     school_last_attended: restPersonalInfo.school_last_attended || null,
                     type_of_school: restPersonalInfo.type_of_school || null,
@@ -367,10 +385,8 @@ export const UnifiedFormProvider: React.FC<{ children: React.ReactNode }> = ({ c
                     household_monthly_income: formData.homeAndFamilyBackground.household_monthly_income,
                     nature_of_residence: formData.homeAndFamilyBackground.nature_of_residence,
                 },
-                // health table - all fields NOT NULL (pwd_id_no, specify_sped need empty string if not provided)
+                // health table - all fields NOT NULL (specify_sped needs empty string if not provided)
                 health: {
-                    is_pwd: formData.health.is_pwd,
-                    pwd_id_no: formData.health.pwd_id_no || '',
                     is_sped: formData.health.is_sped,
                     specify_sped: formData.health.specify_sped || '',
                     has_siblings_studying_in_chmsu: formData.health.has_siblings_studying_in_chmsu,

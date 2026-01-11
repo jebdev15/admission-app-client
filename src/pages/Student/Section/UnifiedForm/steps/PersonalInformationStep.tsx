@@ -17,6 +17,8 @@ import {
     AlertTitle,
     List,
     ListItem,
+    FormControlLabel,
+    Checkbox,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -39,6 +41,12 @@ const PersonalInformationStep: React.FC = () => {
     const handleChangeSelect = (event: SelectChangeEvent<string>) => {
         updateFormData('personalInformation', {
             [event.target.name]: event.target.value
+        } as Partial<PersonalInformationType>);
+    };
+
+    const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        updateFormData('personalInformation', {
+            [event.target.name]: event.target.checked ? 'Yes' : 'No'
         } as Partial<PersonalInformationType>);
     };
 
@@ -192,10 +200,10 @@ const PersonalInformationStep: React.FC = () => {
                 <Grid container size={12}>
                     <Grid size={"grow"}>
                         <FormControl fullWidth>
-                            <InputLabel id="label-select-religion">Religion</InputLabel>
+                            <InputLabel id="label-select-religion">Religious Affiliation</InputLabel>
                             <Select
                                 labelId="label-select-religion"
-                                label="Religion"
+                                label="Religious Affiliation"
                                 name="religion"
                                 value={personalInformation.religion}
                                 onChange={handleChangeSelect}
@@ -231,44 +239,62 @@ const PersonalInformationStep: React.FC = () => {
                     )}
                 </Grid>
                 <Grid container size={12}>
-                    <Grid size={{ xs: 12, sm: 12, md: 2 }}>
-                        <FormControl fullWidth>
-                            <InputLabel id="label-select-soloParent">Solo Parent</InputLabel>
-                            <Select
-                                labelId="label-select-soloParent"
-                                label="Solo Parent"
-                                name="is_solo_parent"
-                                value={personalInformation.is_solo_parent}
-                                onChange={handleChangeSelect}
-                                required
-                                sx={{ borderRadius: 2 }}
-                            >
-                                <MenuItem value=""><em>Select</em></MenuItem>
-                                <MenuItem value="Yes">Yes</MenuItem>
-                                <MenuItem value="No">No</MenuItem>
-                            </Select>
-                        </FormControl>
+                    <Grid size={{ xs: 12 }}>
+                        <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 'bold' }}>Are you (Please check all that applies)</Typography>
                     </Grid>
-                    <Grid size={{ xs: 12, sm: "grow", md: "grow" }}>
-                        <FormControl fullWidth>
-                            <InputLabel id="label-select-isIndigenousGroup">Are you part of an Indigenous Group?</InputLabel>
-                            <Select
-                                labelId="label-select-isIndigenousGroup"
-                                label="Are you part of an Indigenous Group?"
-                                name="is_indigenous_group"
-                                value={personalInformation.is_indigenous_group}
-                                onChange={handleChangeSelect}
-                                required
-                                sx={{ borderRadius: 2 }}
-                            >
-                                <MenuItem value=""><em>Select</em></MenuItem>
-                                <MenuItem value="Yes">Yes</MenuItem>
-                                <MenuItem value="No">No</MenuItem>
-                            </Select>
-                        </FormControl>
+                    <Grid size={{ xs: 12 }}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    name="is_solo_parent"
+                                    checked={personalInformation.is_solo_parent === 'Yes'}
+                                    onChange={handleCheckboxChange}
+                                />
+                            }
+                            label="A child of a solo parent"
+                        />
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    name="is_pwd"
+                                    checked={personalInformation.is_pwd === 'Yes'}
+                                    onChange={handleCheckboxChange}
+                                />
+                            }
+                            label="A person with disability"
+                        />
+                    </Grid>
+                    {personalInformation.is_pwd === 'Yes' && (
+                        <Grid size={{ xs: 12, md: 6 }}>
+                            <FormControl fullWidth>
+                                <TextField
+                                    name="pwd_id_no"
+                                    label="PWD ID Number"
+                                    value={personalInformation.pwd_id_no}
+                                    onChange={handleChange}
+                                    required
+                                    sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
+                                    slotProps={{ htmlInput: { maxLength: 20 } }}
+                                />
+                            </FormControl>
+                        </Grid>
+                    )}
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    name="is_indigenous_group"
+                                    checked={personalInformation.is_indigenous_group === 'Yes'}
+                                    onChange={handleCheckboxChange}
+                                />
+                            }
+                            label="A member of indigenous group"
+                        />
                     </Grid>
                     {personalInformation.is_indigenous_group === 'Yes' && (
-                        <Grid size={{ xs: 12, sm: 6, md: 6 }}>
+                        <Grid size={{ xs: 12, md: 6 }}>
                             <FormControl fullWidth>
                                 <TextField
                                     name="indigenous_group"
@@ -287,7 +313,7 @@ const PersonalInformationStep: React.FC = () => {
                     <FormControl fullWidth>
                         <TextField
                             name="school_last_attended"
-                            label="School Last Attended"
+                            label="School Last Attended / Currently enrolled at"
                             value={personalInformation.school_last_attended}
                             onChange={handleChange}
                             required

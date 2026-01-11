@@ -17,6 +17,8 @@ export interface PersonalInformationType {
     religion: string;
     other_religion: string;
     is_solo_parent: string;
+    is_pwd: string;
+    pwd_id_no: string;
     is_indigenous_group: string;
     indigenous_group: string;
     school_last_attended: string;
@@ -72,8 +74,6 @@ export interface HomeAndFamilyBackgroundType {
 }
 
 export interface HealthType {
-    is_pwd: string;
-    pwd_id_no: string;
     is_sped: string;
     specify_sped: string;
     has_siblings_studying_in_chmsu: string;

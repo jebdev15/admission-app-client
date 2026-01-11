@@ -379,7 +379,7 @@ const Register = () => {
                                                             <MenuItem value="Talisay" sx={{ whiteSpace: "normal" }}>Talisay (Main) Campus</MenuItem>
                                                         </Select>
                                                         {/* </Tooltip> */}
-                                                        <FormHelperText>**You may choose the exam venue nearest you regardless of your preferred to enroll in.</FormHelperText>
+                                                        <FormHelperText>**You may choose the exam venue nearest you regardless of your preferred campus to enroll in.</FormHelperText>
                                                     </FormControl>
                                                 </Grid>
 

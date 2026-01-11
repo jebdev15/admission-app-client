@@ -126,10 +126,10 @@ const HomeAndFamilyBackgroundStep: React.FC = () => {
                 )}
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <FormControl fullWidth>
-                        <InputLabel id="label-first-gen">Are you a first generation college student?</InputLabel>
+                        <InputLabel id="label-first-gen">Are you the first person in your family to attend college?</InputLabel>
                         <Select
                             labelId="label-first-gen"
-                            label="Are you a first generation college student?"
+                            label="Are you the first person in your family to attend college?"
                             name="is_first_gen_student"
                             value={homeAndFamily.is_first_gen_student}
                             onChange={handleChangeSelect}

@@ -30,6 +30,8 @@ export interface SubmissionData {
         strand?: string | null;
         track?: string | null;
         is_solo_parent?: string | null;
+        is_pwd?: string | null;
+        pwd_id_no?: string | null;
         is_indigenous_group?: string | null;
         indigenous_group?: string | null;
         school_last_attended?: string | null;
@@ -77,8 +79,6 @@ export interface SubmissionData {
         nature_of_residence?: string;
     };
     health?: {
-        is_pwd?: string;
-        pwd_id_no?: string;
         is_sped?: string;
         specify_sped?: string;
         has_siblings_studying_in_chmsu?: string;

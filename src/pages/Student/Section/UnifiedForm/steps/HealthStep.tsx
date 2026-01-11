@@ -51,39 +51,6 @@ const HealthStep: React.FC = () => {
             <Grid container spacing={2} rowSpacing={3}>
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <FormControl fullWidth>
-                        <InputLabel id="label-pwd">Are you a person with disability (PWD)?</InputLabel>
-                        <Select
-                            labelId="label-pwd"
-                            label="Are you a person with disability (PWD)?"
-                            name="is_pwd"
-                            value={health.is_pwd}
-                            onChange={handleChangeSelect}
-                            required
-                            sx={{ borderRadius: 2 }}
-                        >
-                            <MenuItem value=""><em>Select</em></MenuItem>
-                            <MenuItem value="Yes">Yes</MenuItem>
-                            <MenuItem value="No">No</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Grid>
-                {health.is_pwd === 'Yes' && (
-                    <Grid size={{ xs: 12, sm: 6 }}>
-                        <FormControl fullWidth>
-                            <TextField
-                                name="pwd_id_no"
-                                label="PWD ID Number"
-                                value={health.pwd_id_no}
-                                onChange={handleChange}
-                                required
-                                sx={{ '& .MuiInputBase-root': { borderRadius: 2 } }}
-                                slotProps={{ htmlInput: { maxLength: 20 } }}
-                            />
-                        </FormControl>
-                    </Grid>
-                )}
-                <Grid size={{ xs: 12, sm: 6 }}>
-                    <FormControl fullWidth>
                         <InputLabel id="label-sped">Do you have a special education needs?</InputLabel>
                         <Select
                             labelId="label-sped"

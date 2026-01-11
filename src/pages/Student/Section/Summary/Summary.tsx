@@ -5,7 +5,7 @@ import { Celebration } from '@mui/icons-material'
 import { Alert, AlertTitle, Box, Button, Card, CardMedia, CircularProgress, List, ListItem, Paper, Typography } from '@mui/material'
 import { FormatDateUtil } from '@utils/formatDate'
 import { VITE_API_URL } from '@constants/index'
-// import { QRCodeSVG } from 'qrcode.react'
+import { QRCodeSVG } from 'qrcode.react'
 
 interface SummaryInfo {
     name: string
@@ -51,8 +51,8 @@ const Summary = () => {
             setImageSrc(fullImageUrl); // Set the constructed URL as the image source
         }
     }
-    // const domain = window.location.hostname;
-    // const qrValue = `${domain}/home/${uuid}`; // Replace with your value
+    const domain = window.location.hostname;
+    const qrValue = `${domain}/home/${uuid}`; // Replace with your value
     const containerRef = React.useRef<HTMLDivElement | null>(null);
 
     const handleDownload = () => {
@@ -74,7 +74,10 @@ const Summary = () => {
             const url = canvas.toDataURL('image/png');
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${applicantSummaryInfo?.name}-QRCode.png`;
+            const fileName = applicantSummaryInfo.name && applicantSummaryInfo.name.trim() !== '' 
+                ? `${applicantSummaryInfo.name}-QRCode.png` 
+                : `CHMSU-Admission-QRCode.png`;
+            a.download = fileName;
             a.click();
         };
 
@@ -115,14 +118,13 @@ const Summary = () => {
                         <Celebration sx={{ color: 'primary.main', fontSize: 50, mb: -1 }} />
                         <Typography variant="h6" color="primary" align="center" sx={{ mb: 3 }}>Admission Test slot reserved!</Typography>
                         <Alert severity="info" sx={{ width: '100%', p: 2, borderRadius: 2 }}>Please take a screenshot of this page or download your QR code for entry.</Alert>
-                        <Button variant="contained" color="primary" fullWidth sx={{ my: 2, color: 'white' }} onClick={handleDownload}>Download QR Code</Button>
-                        {/* <div
+                        <Button variant="contained" color="primary" fullWidth sx={{ mb: 3, color: 'white' }} onClick={handleDownload}>Download QR Code</Button>
+                        {/* Hidden QR Code for download - positioned absolutely off-screen */}
+                        <div
                             style={{
-                                height: "auto",
-                                margin: "16px auto",
-                                maxWidth: 128, // Restrict the maximum width of the QR code
-                                width: "100%", // Make it responsive
-                                visibility: "hidden"
+                                position: "absolute",
+                                left: "-9999px",
+                                top: "-9999px",
                             }}
                             ref={containerRef}
                         >
@@ -131,14 +133,9 @@ const Summary = () => {
                                 size={256}
                                 bgColor="#ffffff"
                                 fgColor="#000000"
-                            // imageSettings={{
-                            //     src: "../../assets/chmsu-small.jpg/150", // Replace with your logo URL
-                            //     height: 50, // Logo height
-                            //     width: 50, // Logo width
-                            //     excavate: true, // Ensures the logo does not block important parts of the QR code
-                            // }}
                             />
-                        </div> */}
+                        </div>
+                        
                         <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                             {imageSrc ? (
                                 <Box
@@ -205,6 +202,8 @@ const Summary = () => {
                                 <Typography variant="body1" color="initial"><strong>Reminder:</strong> Arrive at your assigned testing room at least 45 minutes before the test start time.</Typography>
                                 <Typography variant="body1" color="initial"><strong>Contact and Support:</strong> For questions and clarifications, send a message to the CHMSU Compassion Facebook Page. You may also contact the <strong>CHMSU Office of the Guidance Services</strong> by email at <strong>guidance.talisay@chmsu.edu.ph or by phone at (034) 454 0529 / 454 0529 / (034) 454-584, local 136.</strong></Typography>
                             </fieldset>
+                            
+                            
 
                         </Box>
                     </Box>
