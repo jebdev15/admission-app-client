@@ -17,7 +17,6 @@ import {
     Logout,
     AccountCircle as AccountCircleIcon,
 } from "@mui/icons-material";
-import chmsuLogo from "@assets/chmsu.jpg";
 import { ProtectedRouteContext } from '../ProtectedRoute';
 import { jwtDecode } from 'jwt-decode';
 interface DecodedToken {
@@ -60,7 +59,7 @@ const Header = () => {
                     }}
                 >
                     <Box sx={{ display: "flex" }}>
-                        <img src={chmsuLogo} alt="CHMSU Logo" width={50} height={50} className="logo" />
+                        <img src="/optimizedLogo.png" alt="CHMSU Logo" width={50} height={50} className="logo" />
                     </Box>
                     <Typography className="systemName" variant="h6" component="div" sx={{ color: "primary.dark", flexGrow: 1, lineHeight: "1" }}>
                         <span></span>

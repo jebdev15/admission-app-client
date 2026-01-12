@@ -1,5 +1,5 @@
 import React from "react";
-import { Person } from "@mui/icons-material";
+import { Person, Refresh } from "@mui/icons-material";
 import {
     Box,
     FormControl,
@@ -18,36 +18,41 @@ import {
     ListItem,
     Tooltip,
     FormHelperText,
+    CircularProgress,
+    Skeleton,
+    LinearProgress,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { AuthContext } from "@context/Auth/AuthContext";
 import CustomCircularProgress from "@components/CustomCircularProgress";
+import RegistrationQueueDialog from "@components/RegistrationQueueDialog";
+import { NotificationDialog, ConfirmationDialog } from "@components/NotificationDialog";
 // Import JSON data
 import useMediaQuery from "@mui/material/useMediaQuery";
 import collegesJsonData from "../colleges.json"; // Adjust the path as needed
 import { Colleges } from "./type";
 // import DataPrivacyPolicyModal from "./DataPrivacyPolicyModal";
 import dayjs from "dayjs";
-import { checkApiUrl } from "@utils/checkApiUrl";
-const collegesJson: Colleges = collegesJsonData;
+import { SystemConfigService, SystemStatus } from "@services/systemConfigService";
 
-const isWithinBusinessHours = (): boolean => {
-    const now = dayjs();
-    const startOfBusiness = now.set('hour', 8).set('minute', 0).set('second', 0).set('millisecond', 0);
-    const endOfBusiness = now.set('hour', 18).set('minute', 0).set('second', 0).set('millisecond', 0);
-    return now.isAfter(startOfBusiness) && now.isBefore(endOfBusiness);
-};
+const collegesJson: Colleges = collegesJsonData;
 
 const Register = () => {
     const theme = useTheme();
     const belowMediumScreenSize = useMediaQuery(theme.breakpoints.down("md"));
     const context = React.useContext(AuthContext);
-    const { disableFormContent } = context;
+    const { disableFormContent, queueStatus, clearQueueStatus, notification, confirmation, closeNotification, closeConfirmation } = context;
     const { submitForm, handleChange } = context.register.actions;
     const { email } = context.register.data;
     const { loadingButton } = context.register;
+
+    // System status state - fetched from backend
+    const [systemStatus, setSystemStatus] = React.useState<SystemStatus | null>(null);
+    const [loadingStatus, setLoadingStatus] = React.useState<boolean>(true);
+    const [statusError, setStatusError] = React.useState<string | null>(null);
+    const [refreshing, setRefreshing] = React.useState<boolean>(false);
 
     // State for form fields
     const [selectedCollege, setSelectedCollege] = React.useState<string>("");
@@ -56,6 +61,51 @@ const Register = () => {
     const [availableCampuses, setAvailableCampuses] = React.useState<string[]>([]);
     const [selectedCampus, setSelectedCampus] = React.useState<string>("");
     const [selectedCampusToTakeExam, setSelectedCampusToTakeExam] = React.useState<string>("");
+
+    // Fetch system status on mount and periodically
+    const fetchSystemStatus = React.useCallback(async (isRefresh = false) => {
+        try {
+            if (isRefresh) {
+                setRefreshing(true);
+                SystemConfigService.clearCache();
+            } else {
+                setLoadingStatus(true);
+            }
+            setStatusError(null);
+            
+            const status = await SystemConfigService.getSystemStatus(isRefresh);
+            setSystemStatus(status);
+        } catch (error) {
+            console.error('Failed to fetch system status:', error);
+            setStatusError('Unable to check registration availability. Please refresh.');
+        } finally {
+            setLoadingStatus(false);
+            setRefreshing(false);
+        }
+    }, []);
+
+    React.useEffect(() => {
+        fetchSystemStatus();
+        
+        // Add jitter (randomness) to refresh interval to prevent thundering herd
+        // With 10k-20k visitors, synchronized refreshes can overload the server
+        // Base: 60s, Jitter: ±15s = 45-75s random interval per user
+        const baseInterval = 60000; // 60 seconds
+        const jitter = Math.random() * 30000 - 15000; // ±15 seconds
+        const refreshInterval = baseInterval + jitter;
+        
+        const interval = setInterval(() => {
+            fetchSystemStatus(true);
+        }, refreshInterval);
+
+        return () => clearInterval(interval);
+    }, [fetchSystemStatus]);
+
+    // Derived state from system status (used for conditional rendering)
+    const withinBusinessHours = systemStatus?.withinBusinessHours ?? false;
+    const areSlotsFull = systemStatus?.areSlotsFull ?? true;
+    const isHolidayBreak = systemStatus?.isHolidayBreak ?? false;
+    const isLastDayOfRegistration = systemStatus?.isLastDayOfRegistration ?? false;
 
     // Handle college selection and update courses
     const handleCollegeChange = (event: SelectChangeEvent<string>) => {
@@ -91,22 +141,73 @@ const Register = () => {
         setSelectedCampusToTakeExam(event.target.value);
     };
 
+    const handleRefreshStatus = () => {
+        fetchSystemStatus(true);
+    };
+
     const [tooltipOpen1, setTooltipOpen1] = React.useState(false);
-    const withInBusinessHours = isWithinBusinessHours();
     const defaultDate = dayjs('2006-01-01'); // Set default date
-    const areSlotsFull = false;
-    const isHolidayBreak = false;
-    const apiUrl = checkApiUrl();
-    const serverIsBusy = true;
-    const lastDayOfRegistration = false;
-    console.log({
-        isHolidayBreak,
-        withInBusinessHours,
-        areSlotsFull,
-        apiUrl,
-        serverIsBusy,
-        lastDayOfRegistration
-    })
+
+    // Loading state
+    if (loadingStatus) {
+        return (
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: { xs: 0, sm: 2 },
+                    gap: 1,
+                }}
+            >
+                <Paper sx={{ width: { xs: "100%", sm: "500px", md: "60%" }, maxWidth: "700px", borderRadius: { xs: 0, sm: 2 }, p: 4 }}>
+                    <LinearProgress sx={{ mb: 3 }} />
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                        <CircularProgress size={48} />
+                        <Typography variant="body1" color="textSecondary">
+                            Checking registration availability...
+                        </Typography>
+                    </Box>
+                    <Box sx={{ mt: 3 }}>
+                        <Skeleton variant="rectangular" height={60} sx={{ borderRadius: 2, mb: 2 }} />
+                        <Skeleton variant="rectangular" height={60} sx={{ borderRadius: 2, mb: 2 }} />
+                        <Skeleton variant="rectangular" height={60} sx={{ borderRadius: 2 }} />
+                    </Box>
+                </Paper>
+            </Box>
+        );
+    }
+
+    // Error state
+    if (statusError) {
+        return (
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: { xs: 0, sm: 2 },
+                    gap: 1,
+                }}
+            >
+                <Paper sx={{ width: { xs: "100%", sm: "500px", md: "60%" }, maxWidth: "700px", borderRadius: { xs: 0, sm: 2 }, p: 4 }}>
+                    <Alert 
+                        severity="error"
+                        action={
+                            <Button color="inherit" size="small" onClick={handleRefreshStatus} startIcon={<Refresh />}>
+                                Retry
+                            </Button>
+                        }
+                    >
+                        {statusError}
+                    </Alert>
+                </Paper>
+            </Box>
+        );
+    }
+
     return (
         <React.Suspense fallback={<CustomCircularProgress />}>
             <Box
@@ -119,8 +220,9 @@ const Register = () => {
                     gap: 1,
                 }}
             >
-                <Paper sx={{ width: { xs: "100%", sm: "500px", md: "60%" }, maxWidth: "700px", borderRadius: { xs: 0, sm: 2 } }}>
-                    {(lastDayOfRegistration)
+                <Paper sx={{ width: { xs: "100%", sm: "500px", md: "60%" }, maxWidth: "700px", borderRadius: { xs: 0, sm: 2 }, position: 'relative', overflow: 'hidden' }}>
+                    {refreshing && <LinearProgress sx={{ position: 'absolute', top: 0, left: 0, right: 0 }} />}
+                    {(isLastDayOfRegistration)
                     ? (
                         <Box
                             sx={{
@@ -150,11 +252,20 @@ const Register = () => {
                                     
                                     <Typography variant="body1" color="initial">Holiday Advisory: Admission Portal Closure</Typography>
                                     <Typography variant="body1" color="initial">Dear Users,</Typography>
-                                    <Typography variant="body1" color="initial">In observance of the 3-day non-working holidays please note that the Admission Portal will be temporarily unavailable from December 30, 2024 to January 1, 2025. We will resume normal operations on January 2, 2025, starting at 8:00 AM.</Typography>
-                                    <Typography variant="body1" color="initial">We wish you a joyful holiday season and a Happy New Year! Thank you for your understanding.</Typography>
+                                    <Typography variant="body1" color="initial">{systemStatus?.messages?.holiday || 'The Admission Portal is temporarily unavailable.'}</Typography>
+                                    <Typography variant="body1" color="initial">Thank you for your understanding.</Typography>
+                                    <Button 
+                                        variant="outlined" 
+                                        startIcon={<Refresh />} 
+                                        onClick={handleRefreshStatus}
+                                        disabled={refreshing}
+                                        sx={{ mt: 2 }}
+                                    >
+                                        Check Status
+                                    </Button>
                                 </Box>
                             )
-                            :(withInBusinessHours)
+                            :(withinBusinessHours)
                                 ? (areSlotsFull)
                                     ? (
                                         <Box
@@ -168,7 +279,9 @@ const Register = () => {
                                                 width: "100%",
                                             }}
                                         >
-                                            <Typography variant="body1" component={"p"} color="initial">We’re sorry to inform you that the daily reservation limit has been reached. Registration will reopen at 8:00 AM. Thank you for your patience and understanding.</Typography>
+                                            <Typography variant="body1" component={"p"} color="initial">
+                                                {systemStatus?.messages?.slotsFull || "We're sorry to inform you that the daily reservation limit has been reached. Registration will reopen at 8:00 AM. Thank you for your patience and understanding."}
+                                            </Typography>
                                         </Box>
                                     ) 
                                     :(
@@ -373,10 +486,20 @@ const Register = () => {
                                                             }}
                                                             disabled={disableFormContent}
                                                         >
-                                                            <MenuItem value="Alijis" sx={{ whiteSpace: "normal" }}>Alijis Campus</MenuItem>
-                                                            <MenuItem value="Binalbagan" sx={{ whiteSpace: "normal" }}>Binalbagan Campus</MenuItem>
-                                                            <MenuItem value="Fortune Towne" sx={{ whiteSpace: "normal" }}>Fortune Towne Campus</MenuItem>
-                                                            <MenuItem value="Talisay" sx={{ whiteSpace: "normal" }}>Talisay (Main) Campus</MenuItem>
+                                                            {systemStatus?.examVenues
+                                                                ?.filter(venue => venue.available)
+                                                                .map((venue) => (
+                                                                    <MenuItem key={venue.name} value={venue.name} sx={{ whiteSpace: "normal" }}>
+                                                                        {venue.name === "Talisay" ? `${venue.name} (Main) Campus` : `${venue.name} Campus`}
+                                                                    </MenuItem>
+                                                                )) || (
+                                                                <>
+                                                                    <MenuItem value="Alijis" sx={{ whiteSpace: "normal" }}>Alijis Campus</MenuItem>
+                                                                    <MenuItem value="Binalbagan" sx={{ whiteSpace: "normal" }}>Binalbagan Campus</MenuItem>
+                                                                    <MenuItem value="Fortune Towne" sx={{ whiteSpace: "normal" }}>Fortune Towne Campus</MenuItem>
+                                                                    <MenuItem value="Talisay" sx={{ whiteSpace: "normal" }}>Talisay (Main) Campus</MenuItem>
+                                                                </>
+                                                            )}
                                                         </Select>
                                                         {/* </Tooltip> */}
                                                         <FormHelperText>**You may choose the exam venue nearest you regardless of your preferred campus to enroll in.</FormHelperText>
@@ -418,6 +541,31 @@ const Register = () => {
                     }
                 </Paper>
             </Box>
+            
+            {/* Registration Queue Status Dialog */}
+            <RegistrationQueueDialog 
+                open={queueStatus !== null} 
+                status={queueStatus}
+                onClose={clearQueueStatus}
+            />
+
+            {/* Notification Dialog - Replaces all alert() calls */}
+            <NotificationDialog
+                open={notification.open}
+                type={notification.type}
+                message={notification.message}
+                title={notification.title}
+                onClose={closeNotification}
+            />
+
+            {/* Confirmation Dialog - Replaces all window.confirm() calls */}
+            <ConfirmationDialog
+                open={confirmation.open}
+                message={confirmation.message}
+                title={confirmation.title}
+                onConfirm={confirmation.onConfirm}
+                onClose={closeConfirmation}
+            />
         </React.Suspense>
     )
 }

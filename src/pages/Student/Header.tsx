@@ -1,7 +1,6 @@
 // import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import chmsuLogo from '../../assets/chmsu.jpg';
 import './header.css'
 
 export default function ButtonAppBar() {
@@ -21,10 +20,7 @@ export default function ButtonAppBar() {
         backgroundColor: '#fff'
       }} className='headerContent'>
         <Box sx={{ display: 'flex', flexDirection: {xs: 'row', md: 'row'}, alignContent: 'center', alignItems: 'center' }}>
-          <img src={chmsuLogo} alt="CHMSU Logo" width={50} height={50} className='logo' />
-          {/* <Typography variant={"h6"} component="div" color='primary' textAlign={'center'}>
-              CARLOS HILADO MEMORIAL STATE UNIVERSITY
-          </Typography> */}
+          <img src="/optimizedLogo.png" alt="CHMSU Logo" width={50} height={50} className='logo' />
           <Typography
               className="systemName"
               variant="h6"
@@ -37,9 +33,6 @@ export default function ButtonAppBar() {
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignContent: 'center', alignItems: 'center' }} className='admissionText'>
           <Typography variant="h6" textAlign={'end'} sx={{color: "primary.dark", textWrap: 'balance', lineHeight: "1"}}>GREAT futures await you!</Typography>
-          {/* <Typography variant="body2" component="div" color='primary' textAlign={'end'} sx={{ mt: -0.75, color: "primary.dark" }}>
-              A.Y 2025-2026
-          </Typography> */}
         </Box>
     </Box>
   );

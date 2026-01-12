@@ -307,7 +307,7 @@ export const UnifiedFormProvider: React.FC<{ children: React.ReactNode }> = ({ c
     // Submit the complete form
     const submitForm = useCallback(async () => {
         if (!uuid) {
-            alert('Invalid session. Please try again.');
+            console.error('Invalid session: UUID is missing');
             return;
         }
 

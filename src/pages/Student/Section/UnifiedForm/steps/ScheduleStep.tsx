@@ -1,6 +1,7 @@
 /**
  * Schedule Step Component
  * Part of the unified multi-step form
+ * Optimized with loading indicators and retry logic
  */
 
 import React from 'react';
@@ -14,24 +15,20 @@ import {
     ListItemText,
     CircularProgress,
     Alert,
+    LinearProgress,
+    Skeleton,
+    Chip,
+    Button,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { Schedule } from '@mui/icons-material';
+import { Schedule, Refresh, Cached } from '@mui/icons-material';
 import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import dayjs, { Dayjs } from 'dayjs';
 import { useParams } from 'react-router';
 import { useUnifiedForm } from '../UnifiedFormContext';
-import { SchedulesService } from '@services/schedulesService';
-
-interface ScheduleData {
-    schedule_date: string;
-    schedule_time_start: string;
-    schedule_time_end: string;
-    slots_remaining: number;
-    campus: string;
-}
+import { SchedulesService, ScheduleData } from '@services/schedulesService';
 
 interface AccumulatorItem {
     date: string;
@@ -47,7 +44,12 @@ const ScheduleStep: React.FC = () => {
         formData.schedule.schedule_date ? dayjs(formData.schedule.schedule_date) : null
     );
     const [loading, setLoading] = React.useState(true);
+    const [refreshing, setRefreshing] = React.useState(false);
+    const [error, setError] = React.useState<string | null>(null);
+    const [fromCache, setFromCache] = React.useState(false);
     const [campusName, setCampusName] = React.useState<string>('');
+    const [retryCount, setRetryCount] = React.useState(0);
+    const maxRetries = 3;
 
     // Format campus name for display
     const formatCampusName = (campus: string) => {
@@ -56,6 +58,45 @@ const ScheduleStep: React.FC = () => {
         }
         return `${campus} Campus`;
     };
+
+    // Fetch schedules function (reusable for retry)
+    const fetchSchedules = React.useCallback(async (isRefresh = false) => {
+        try {
+            if (isRefresh) {
+                setRefreshing(true);
+            } else {
+                setLoading(true);
+            }
+            setError(null);
+            
+            const { data, fromCache: cached } = await SchedulesService.getSchedules(uuid);
+            setFromCache(cached);
+            
+            if (data?.length > 0) {
+                setAvailableSchedules(data);
+                // Extract campus name from first schedule
+                if (data[0]?.campus) {
+                    setCampusName(data[0].campus);
+                }
+            } else if (data?.length === 0) {
+                setError('No available schedules found for your campus.');
+            }
+            setRetryCount(0);
+        } catch (err) {
+            console.error('Error fetching schedules:', err);
+            
+            // Retry logic
+            if (retryCount < maxRetries) {
+                setRetryCount(prev => prev + 1);
+                setTimeout(() => fetchSchedules(isRefresh), 1000 * (retryCount + 1)); // Exponential backoff
+            } else {
+                setError('Unable to load schedules. Please check your connection and try again.');
+            }
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
+        }
+    }, [uuid, retryCount]);
 
     // Group schedules by date
     const availableDates = React.useMemo(() => {
@@ -109,32 +150,18 @@ const ScheduleStep: React.FC = () => {
         });
     };
 
-    // Fetch schedules
+    const handleRefresh = () => {
+        fetchSchedules(true);
+    };
+
+    // Initial fetch
     const hasFetched = React.useRef(false);
     React.useEffect(() => {
-        const fetchSchedules = async () => {
-            try {
-                setLoading(true);
-                const { data } = await SchedulesService.getSchedules(uuid);
-                if (data?.length > 0) {
-                    setAvailableSchedules(data);
-                    // Extract campus name from first schedule
-                    if (data[0]?.campus) {
-                        setCampusName(data[0].campus);
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching schedules:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         if (uuid && !hasFetched.current) {
             hasFetched.current = true;
             fetchSchedules();
         }
-    }, [uuid]);
+    }, [uuid, fetchSchedules]);
 
     // Initialize available times if date was already selected
     React.useEffect(() => {
@@ -148,31 +175,105 @@ const ScheduleStep: React.FC = () => {
         }
     }, [availableDates, selectedDate]);
 
+    // Loading state with skeleton
     if (loading) {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-                <CircularProgress />
+            <Box sx={{ width: '100%' }}>
+                {/* Progress bar at top */}
+                <LinearProgress sx={{ mb: 2 }} />
+                
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', py: 4 }}>
+                    <CircularProgress size={48} sx={{ mb: 2 }} />
+                    <Typography variant="body1" color="textSecondary">
+                        Loading available schedules...
+                    </Typography>
+                    {retryCount > 0 && (
+                        <Typography variant="caption" color="textSecondary" sx={{ mt: 1 }}>
+                            Retry attempt {retryCount} of {maxRetries}...
+                        </Typography>
+                    )}
+                </Box>
+                
+                {/* Skeleton for calendar and times */}
+                <Grid container spacing={2} sx={{ mt: 2 }}>
+                    <Grid size={{ xs: 12, md: 7 }}>
+                        <Skeleton variant="rectangular" height={350} sx={{ borderRadius: 2 }} />
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 5 }}>
+                        <Skeleton variant="rectangular" height={350} sx={{ borderRadius: 2 }} />
+                    </Grid>
+                </Grid>
+            </Box>
+        );
+    }
+
+    // Error state
+    if (error && availableSchedules.length === 0) {
+        return (
+            <Box sx={{ width: '100%', py: 4 }}>
+                <Alert 
+                    severity="error" 
+                    action={
+                        <Button 
+                            color="inherit" 
+                            size="small" 
+                            onClick={() => {
+                                setRetryCount(0);
+                                hasFetched.current = false;
+                                fetchSchedules();
+                            }}
+                            startIcon={<Refresh />}
+                        >
+                            Retry
+                        </Button>
+                    }
+                >
+                    {error}
+                </Alert>
             </Box>
         );
     }
 
     return (
         <Box sx={{ width: '100%' }}>
+            {/* Refresh indicator */}
+            {refreshing && <LinearProgress sx={{ position: 'absolute', top: 0, left: 0, right: 0 }} />}
+            
             <Box sx={{ display: 'flex', flexDirection: { xs: 'column-reverse', sm: 'row' }, rowGap: 2, alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                 <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, columnGap: 1, alignItems: 'center' }}>
                     <Schedule sx={{ color: 'primary.main', fontSize: '3rem' }} />
                     <Typography variant="h6" color="primary">Schedules</Typography>
+                    {fromCache && (
+                        <Chip 
+                            icon={<Cached />} 
+                            label="Cached" 
+                            size="small" 
+                            color="success" 
+                            variant="outlined"
+                            sx={{ ml: 1 }}
+                        />
+                    )}
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0, alignItems: { xs: 'center', sm: 'flex-end' } }}>
                     <Typography variant="body1" color='textSecondary' sx={{ fontWeight: 'bold' }}>CHMSU Admission Portal</Typography>
                     <Typography variant="body1" color='textSecondary' sx={{ fontWeight: 'bold' }}>Academic Year 2026 - 2027</Typography>
+                    <Button 
+                        size="small" 
+                        startIcon={refreshing ? <CircularProgress size={14} /> : <Refresh />}
+                        onClick={handleRefresh}
+                        disabled={refreshing}
+                        sx={{ mt: 0.5 }}
+                    >
+                        {refreshing ? 'Refreshing...' : 'Refresh Schedules'}
+                    </Button>
                 </Box>
             </Box>
             <Alert sx={{ ml: 'auto', mb: 2 }} severity="info">Choose a test date and time that doesn't conflict with any personal commitments or school activities. Once you click Register, your admission test appointment is final and cannot be rescheduled.</Alert>
 
             <Grid container spacing={2}>
                 <Grid size={{ xs: 12, md: 7 }}>
-                    <Paper variant="outlined" sx={{ borderRadius: 2 }}>
+                    <Paper variant="outlined" sx={{ borderRadius: 2, position: 'relative', overflow: 'hidden' }}>
+                        {refreshing && <LinearProgress sx={{ position: 'absolute', top: 0, left: 0, right: 0 }} />}
                         <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DemoContainer
@@ -186,6 +287,7 @@ const ScheduleStep: React.FC = () => {
                                             minDate={dayjs('2026-02-09')}
                                             maxDate={dayjs('2026-03-07')}
                                             shouldDisableDate={(date) => !isAvailableDate(date)}
+                                            disabled={refreshing}
                                             sx={{
                                                 '& .MuiPickersDay-root': {
                                                     fontWeight: '500',

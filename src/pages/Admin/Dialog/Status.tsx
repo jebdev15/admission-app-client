@@ -3,6 +3,14 @@ import React from 'react'
 import axiosInstance from '@api/index'
 import axios from 'axios';
 import { ProtectedRouteContext } from '../ProtectedRoute';
+import { NotificationDialog, NotificationType } from '@components/NotificationDialog';
+
+interface NotificationState {
+    open: boolean;
+    type: NotificationType;
+    message: string;
+    title?: string;
+}
 
 const Status = (data: any) => {
     const { accessToken, refreshApplicants } = React.useContext(ProtectedRouteContext)
@@ -12,6 +20,20 @@ const Status = (data: any) => {
     const [admissionStatus, setAdmissionStatus] = React.useState('pending');
     const [programStatus, setProgramStatus] = React.useState('pending');
     const [loading, setLoading] = React.useState(true);
+    const [notification, setNotification] = React.useState<NotificationState>({
+        open: false,
+        type: 'info',
+        message: '',
+    });
+
+    const showNotification = (type: NotificationType, message: string, title?: string) => {
+        setNotification({ open: true, type, message, title });
+    };
+
+    const closeNotification = () => {
+        setNotification(prev => ({ ...prev, open: false }));
+    };
+
     const handleOpenReservationLink = (link: string) => window.open(link, "_blank", `width=800,height=600,left=${(window.screen.width - 800) / 2},top=${(window.screen.height - 600) / 2}`)
     const handleChange = (event: SelectChangeEvent<string>) => {
         if (action === "Admission") {
@@ -34,7 +56,7 @@ const Status = (data: any) => {
                         },
                     }
                 );
-                alert(response.data.message);
+                showNotification('success', response.data.message, 'Status Updated');
             } else if (action === "Program") {
                 const response = await axiosInstance.put(`/admin/program-status/${uuid}`,
                     {
@@ -46,14 +68,31 @@ const Status = (data: any) => {
                         },
                     }
                 );
-                alert(response.data.message);
+                showNotification('success', response.data.message, 'Status Updated');
+                setTimeout(() => {
+                    refreshApplicants();
+                    onClose();
+                }, 1000);
+            } else if (action === "Program") {
+                const response = await axiosInstance.put(`/admin/program-status/${uuid}`,
+                    {
+                        programStatus
+                    },
+                    {
+                        headers: {
+                            "Authorization": `Bearer ${accessToken}`
+                        },
+                    }
+                );
+                showNotification('success', response.data.message, 'Status Updated');
+                setTimeout(() => {
+                    refreshApplicants();
+                    onClose();
+                }, 1000);
             }
-            refreshApplicants()
-            onClose();
         } catch (error: any) {
             console.error('Error updating status:', error);
-            alert(error.response.data.message);
-            onClose();
+            showNotification('error', error.response?.data?.message || 'Failed to update status', 'Error');
         }
     }
 
@@ -151,7 +190,7 @@ const Status = (data: any) => {
                                     </Typography>
                                 )}
                             </Card>
-                            <Button onClick={() => handleOpenReservationLink(`https://admission2025.chmsu.edu.ph/home/${uuid}`)}>
+                            <Button onClick={() => handleOpenReservationLink(`https://admission2026.chmsu.edu.ph/home/${uuid}`)}>
                                 <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
                                     {name}
                                 </Typography>
@@ -212,6 +251,15 @@ const Status = (data: any) => {
                         </>
                     )}
                 </DialogContent>
+
+                {/* Notification Dialog */}
+                <NotificationDialog
+                    open={notification.open}
+                    type={notification.type}
+                    message={notification.message}
+                    title={notification.title}
+                    onClose={closeNotification}
+                />
             </Dialog>
         </React.Suspense>
     )

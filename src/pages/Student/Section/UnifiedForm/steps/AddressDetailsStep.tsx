@@ -66,10 +66,10 @@ const AddressDetailsStep: React.FC = () => {
                     citiesModule,
                     barangaysModule
                 ] = await Promise.all([
-                    import('../../AddressDetails/AddressJson/regions.json'),
-                    import('../../AddressDetails/AddressJson/provinces.json'),
-                    import('../../AddressDetails/AddressJson/cities-municipalities.json'),
-                    import('../../AddressDetails/AddressJson/barangays.json')
+                    import('../AddressJson/regions.json'),
+                    import('../AddressJson/provinces.json'),
+                    import('../AddressJson/cities-municipalities.json'),
+                    import('../AddressJson/barangays.json')
                 ]);
 
                 // In Vite/ESM, JSON imports provide the data in the 'default' property

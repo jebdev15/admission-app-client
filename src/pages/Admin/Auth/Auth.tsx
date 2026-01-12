@@ -1,17 +1,39 @@
 import React from "react";
 import { Box, Container, Paper, Typography } from "@mui/material";
-import chmsuLogo from "@assets/chmsu.jpg";
 import "@assets/style.css";
 import { GoogleLogin } from "@react-oauth/google";
 import axiosInstance from "@api/index";
 import { useNavigate } from "react-router";
 import { useCookies } from "react-cookie";
 import CustomCircularProgress from "@components/CustomCircularProgress";
+import { NotificationDialog } from "@components/NotificationDialog";
+import { NotificationType } from "@components/NotificationDialog";
+
+interface NotificationState {
+    open: boolean;
+    type: NotificationType;
+    message: string;
+    title?: string;
+}
 
 const Auth: React.FC = () => {
     const [cookie, setCookie] = useCookies(['token']);
     const navigate = useNavigate()
     const [loading, setLoading] = React.useState<boolean>(false);
+    const [notification, setNotification] = React.useState<NotificationState>({
+        open: false,
+        type: 'info',
+        message: '',
+    });
+
+    const showNotification = (type: NotificationType, message: string, title?: string) => {
+        setNotification({ open: true, type, message, title });
+    };
+
+    const closeNotification = () => {
+        setNotification(prev => ({ ...prev, open: false }));
+    };
+
     const login = async (credentialsResponse: any) => {
         setLoading(true)
         try {
@@ -29,13 +51,13 @@ const Auth: React.FC = () => {
             setLoading(false)
         } catch (error: any) {
             if(error.response) {
-                alert("User doesn't recognized by the system. Please contact ICT-MIS")
+                showNotification('error', "User doesn't recognized by the system. Please contact ICT-MIS", 'Authentication Failed');
                 console.error('Error Response: logging in:', error.response);
             } else if(error.request) {
-                alert("Unable to connect to the server. Please contact ICT-MIS")
+                showNotification('error', "Unable to connect to the server. Please contact ICT-MIS", 'Connection Error');
                 console.error('Error Request logging in:', error.request);
             } else {
-                alert("Something went wrong. Please contact ICT-MIS")
+                showNotification('error', "Something went wrong. Please contact ICT-MIS", 'Error');
                 console.error('Error logging in:', error);
             }
             setLoading(false)
@@ -62,7 +84,7 @@ const Auth: React.FC = () => {
                             elevation={8}
                         >
                             <Box className="signinMsg">
-                                <img className="chmsuLogo" src={chmsuLogo} alt="logo" />
+                                <img className="chmsuLogo" src="/optimizedLogo.png" alt="logo" />
                                 <Typography variant="h5" fontWeight={700} color="primary">
                                     Carlos Hilado<span>Memorial State University</span>
                                 </Typography>
@@ -110,6 +132,15 @@ const Auth: React.FC = () => {
                     </Box>
                 </Container>
             </Box>
+
+            {/* Notification Dialog */}
+            <NotificationDialog
+                open={notification.open}
+                type={notification.type}
+                message={notification.message}
+                title={notification.title}
+                onClose={closeNotification}
+            />
         </React.Suspense>
     );
 };

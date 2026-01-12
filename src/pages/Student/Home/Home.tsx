@@ -10,6 +10,39 @@ import { UnifiedFormProvider, UnifiedForm } from '../Section/UnifiedForm';
 
 const Header = React.lazy(() => import('../Header'))
 
+/**
+ * Retry function with exponential backoff
+ * For handling temporary network issues during high traffic
+ */
+const retryWithBackoff = async <T,>(
+  fn: () => Promise<T>,
+  maxRetries: number = 3,
+  baseDelay: number = 1000
+): Promise<T> => {
+  let lastError: Error | null = null;
+  
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error: any) {
+      lastError = error;
+      
+      // Don't retry on client errors (4xx) - only on server errors (5xx) or network errors
+      if (error.response && error.response.status >= 400 && error.response.status < 500) {
+        throw error;
+      }
+      
+      // If it's not the last attempt, wait and retry
+      if (attempt < maxRetries - 1) {
+        const delay = baseDelay * Math.pow(2, attempt) + Math.random() * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+  
+  throw lastError;
+};
+
 const Home = () => {
   const { forms_status } = useLoaderData() as LoaderData
   
@@ -62,7 +95,13 @@ const Home = () => {
 }
 export const loader = async ({ params }: any) => {
   try {
-    const { data } = await axiosInstance.get(`/applicants/${params.uuid}`);
+    // Use retry with backoff for resilience during high traffic
+    const { data } = await retryWithBackoff(
+      () => axiosInstance.get(`/applicants/${params.uuid}`),
+      3, // max 3 retries
+      1000 // 1 second base delay
+    );
+    
     return {
       apiMessage: data.message,
       isUuidExpired: data.isUuidExpired,
@@ -83,6 +122,13 @@ export const loader = async ({ params }: any) => {
         };
       }
     }
+    
+    // For network errors, throw a 500-like error
+    throw {
+      status: 500,
+      statusText: 'Network Error',
+      data: { message: 'Unable to connect to server. Please try again.' }
+    };
   }
 }
 export default Home

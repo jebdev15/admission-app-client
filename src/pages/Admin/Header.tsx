@@ -1,7 +1,6 @@
 // import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import chmsuLogo from '@assets/chmsu.jpg';
 import '@pages/Student/header.css';
 
 export default function ButtonAppBar() {
@@ -21,7 +20,7 @@ export default function ButtonAppBar() {
         backgroundColor: '#fff'
       }} className='headerContent'>
         <Box sx={{ display: 'flex', flexDirection: {xs: 'row', md: 'row'}, alignContent: 'center', alignItems: 'center' }}>
-          <img src={chmsuLogo} alt="CHMSU Logo" width={50} height={50} className='logo' />
+          <img src="/optimizedLogo.png" alt="CHMSU Logo" width={50} height={50} className='logo' />
           <Typography
               className="systemName"
               variant="h6"
