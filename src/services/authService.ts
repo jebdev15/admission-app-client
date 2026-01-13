@@ -68,7 +68,7 @@ export const AuthService = {
      */
     registerQueued: async (registrationData: RegistrationData): Promise<QueuedRegistrationResponse> => {
         try {
-            const { data } = await axiosInstance.post('/auth/register-queued', registrationData);
+            const { data } = await axiosInstance.post('/auth/register', registrationData);
             return data;
         } catch (error: any) {
             console.error('Error queueing registration:', error);

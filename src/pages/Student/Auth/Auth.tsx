@@ -1,5 +1,5 @@
 import React from "react";
-import { Person, Refresh } from "@mui/icons-material";
+import { Person } from "@mui/icons-material";
 import {
     Box,
     FormControl,
@@ -18,9 +18,6 @@ import {
     ListItem,
     Tooltip,
     FormHelperText,
-    CircularProgress,
-    Skeleton,
-    LinearProgress,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -29,15 +26,50 @@ import { AuthContext } from "@context/Auth/AuthContext";
 import CustomCircularProgress from "@components/CustomCircularProgress";
 import RegistrationQueueDialog from "@components/RegistrationQueueDialog";
 import { NotificationDialog, ConfirmationDialog } from "@components/NotificationDialog";
+import RegistrationClosedPage from "./RegistrationClosedPage";
 // Import JSON data
 import useMediaQuery from "@mui/material/useMediaQuery";
 import collegesJsonData from "../colleges.json"; // Adjust the path as needed
 import { Colleges } from "./type";
 // import DataPrivacyPolicyModal from "./DataPrivacyPolicyModal";
 import dayjs from "dayjs";
-import { SystemConfigService, SystemStatus } from "@services/systemConfigService";
 
 const collegesJson: Colleges = collegesJsonData;
+
+/**
+ * Static System Configuration
+ * Change these values to control registration availability
+ */
+const STATIC_CONFIG = {
+    // Set to true to close registration (last day message shown)
+    isLastDayOfRegistration: false,
+    
+    // Set to true to show holiday message
+    isHolidayBreak: false,
+    // holidayMessage: "We will resume the Admission Registration on January 06, 2026. Thank you!",
+    holidayMessage: "",
+    
+    // Business hours: 8 AM to 5 PM (24-hour format)
+    businessHoursStart: 8,
+    businessHoursEnd: 17,
+    
+    // Set to true when daily slots are full
+    areSlotsFull: false,
+    slotFullMessage: "We're sorry to inform you that the daily reservation limit has been reached. Registration will reopen at 8:00 AM. Thank you for your patience and understanding.",
+    
+    // Exam venues available for registration
+    examVenues: ["Alijis", "Binalbagan", "Fortune Towne", "Talisay"]
+};
+
+/**
+ * Check if current time is within business hours (Philippines timezone)
+ */
+const isWithinBusinessHours = (): boolean => {
+    const now = new Date();
+    const manilaTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+    const hour = manilaTime.getHours();
+    return hour >= STATIC_CONFIG.businessHoursStart && hour < STATIC_CONFIG.businessHoursEnd;
+};
 
 const Register = () => {
     const theme = useTheme();
@@ -48,11 +80,11 @@ const Register = () => {
     const { email } = context.register.data;
     const { loadingButton } = context.register;
 
-    // System status state - fetched from backend
-    const [systemStatus, setSystemStatus] = React.useState<SystemStatus | null>(null);
-    const [loadingStatus, setLoadingStatus] = React.useState<boolean>(true);
-    const [statusError, setStatusError] = React.useState<string | null>(null);
-    const [refreshing, setRefreshing] = React.useState<boolean>(false);
+    // Static configuration values
+    const withinBusinessHours = isWithinBusinessHours();
+    const areSlotsFull = STATIC_CONFIG.areSlotsFull;
+    const isHolidayBreak = STATIC_CONFIG.isHolidayBreak;
+    const isLastDayOfRegistration = STATIC_CONFIG.isLastDayOfRegistration;
 
     // State for form fields
     const [selectedCollege, setSelectedCollege] = React.useState<string>("");
@@ -61,51 +93,6 @@ const Register = () => {
     const [availableCampuses, setAvailableCampuses] = React.useState<string[]>([]);
     const [selectedCampus, setSelectedCampus] = React.useState<string>("");
     const [selectedCampusToTakeExam, setSelectedCampusToTakeExam] = React.useState<string>("");
-
-    // Fetch system status on mount and periodically
-    const fetchSystemStatus = React.useCallback(async (isRefresh = false) => {
-        try {
-            if (isRefresh) {
-                setRefreshing(true);
-                SystemConfigService.clearCache();
-            } else {
-                setLoadingStatus(true);
-            }
-            setStatusError(null);
-            
-            const status = await SystemConfigService.getSystemStatus(isRefresh);
-            setSystemStatus(status);
-        } catch (error) {
-            console.error('Failed to fetch system status:', error);
-            setStatusError('Unable to check registration availability. Please refresh.');
-        } finally {
-            setLoadingStatus(false);
-            setRefreshing(false);
-        }
-    }, []);
-
-    React.useEffect(() => {
-        fetchSystemStatus();
-        
-        // Add jitter (randomness) to refresh interval to prevent thundering herd
-        // With 10k-20k visitors, synchronized refreshes can overload the server
-        // Base: 60s, Jitter: ±15s = 45-75s random interval per user
-        const baseInterval = 60000; // 60 seconds
-        const jitter = Math.random() * 30000 - 15000; // ±15 seconds
-        const refreshInterval = baseInterval + jitter;
-        
-        const interval = setInterval(() => {
-            fetchSystemStatus(true);
-        }, refreshInterval);
-
-        return () => clearInterval(interval);
-    }, [fetchSystemStatus]);
-
-    // Derived state from system status (used for conditional rendering)
-    const withinBusinessHours = systemStatus?.withinBusinessHours ?? false;
-    const areSlotsFull = systemStatus?.areSlotsFull ?? true;
-    const isHolidayBreak = systemStatus?.isHolidayBreak ?? false;
-    const isLastDayOfRegistration = systemStatus?.isLastDayOfRegistration ?? false;
 
     // Handle college selection and update courses
     const handleCollegeChange = (event: SelectChangeEvent<string>) => {
@@ -141,70 +128,48 @@ const Register = () => {
         setSelectedCampusToTakeExam(event.target.value);
     };
 
-    const handleRefreshStatus = () => {
-        fetchSystemStatus(true);
-    };
-
     const [tooltipOpen1, setTooltipOpen1] = React.useState(false);
     const defaultDate = dayjs('2006-01-01'); // Set default date
 
-    // Loading state
-    if (loadingStatus) {
-        return (
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    padding: { xs: 0, sm: 2 },
-                    gap: 1,
-                }}
-            >
-                <Paper sx={{ width: { xs: "100%", sm: "500px", md: "60%" }, maxWidth: "700px", borderRadius: { xs: 0, sm: 2 }, p: 4 }}>
-                    <LinearProgress sx={{ mb: 3 }} />
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-                        <CircularProgress size={48} />
-                        <Typography variant="body1" color="textSecondary">
-                            Checking registration availability...
-                        </Typography>
-                    </Box>
-                    <Box sx={{ mt: 3 }}>
-                        <Skeleton variant="rectangular" height={60} sx={{ borderRadius: 2, mb: 2 }} />
-                        <Skeleton variant="rectangular" height={60} sx={{ borderRadius: 2, mb: 2 }} />
-                        <Skeleton variant="rectangular" height={60} sx={{ borderRadius: 2 }} />
-                    </Box>
-                </Paper>
-            </Box>
-        );
-    }
+    // Determine if registration should be blocked and why
+    const getClosureReason = () => {
+        if (isLastDayOfRegistration) return 'registration_closed';
+        if (isHolidayBreak) return 'holiday_break';
+        if (!withinBusinessHours) return 'outside_business_hours';
+        if (areSlotsFull) return 'slots_full';
+        return null;
+    };
 
-    // Error state
-    if (statusError) {
+    const closureReason = getClosureReason();
+
+    // Show the closed page if there's a closure reason
+    if (closureReason) {
         return (
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    padding: { xs: 0, sm: 2 },
-                    gap: 1,
-                }}
-            >
-                <Paper sx={{ width: { xs: "100%", sm: "500px", md: "60%" }, maxWidth: "700px", borderRadius: { xs: 0, sm: 2 }, p: 4 }}>
-                    <Alert 
-                        severity="error"
-                        action={
-                            <Button color="inherit" size="small" onClick={handleRefreshStatus} startIcon={<Refresh />}>
-                                Retry
-                            </Button>
-                        }
-                    >
-                        {statusError}
-                    </Alert>
-                </Paper>
-            </Box>
+            <React.Suspense fallback={<CustomCircularProgress />}>
+                <RegistrationClosedPage
+                    reason={closureReason}
+                    holidayMessage={STATIC_CONFIG.holidayMessage}
+                    slotFullMessage={STATIC_CONFIG.slotFullMessage}
+                    businessHoursStart={STATIC_CONFIG.businessHoursStart}
+                    businessHoursEnd={STATIC_CONFIG.businessHoursEnd}
+                />
+                {/* Dialogs */}
+                <NotificationDialog
+                    open={notification.open}
+                    type={notification.type}
+                    title={notification.title}
+                    message={notification.message}
+                    onClose={closeNotification}
+                    onConfirm={notification.onConfirm}
+                />
+                <ConfirmationDialog
+                    open={confirmation.open}
+                    title={confirmation.title}
+                    message={confirmation.message}
+                    onClose={closeConfirmation}
+                    onConfirm={confirmation.onConfirm}
+                />
+            </React.Suspense>
         );
     }
 
@@ -220,91 +185,26 @@ const Register = () => {
                     gap: 1,
                 }}
             >
-                <Paper sx={{ width: { xs: "100%", sm: "500px", md: "60%" }, maxWidth: "700px", borderRadius: { xs: 0, sm: 2 }, position: 'relative', overflow: 'hidden' }}>
-                    {refreshing && <LinearProgress sx={{ position: 'absolute', top: 0, left: 0, right: 0 }} />}
-                    {(isLastDayOfRegistration)
-                    ? (
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                padding: { xs: 2, sm: 4 },
-                                gap: 1,
-                                width: "100%",
-                            }}
-                        >
-                            <Typography variant="body1" component={"p"} color="initial">The Admission Portal is officially closed. For further updates and information, please visit the CHMSU Official Page on Facebook: <a href="https://www.facebook.com/@chmsuofficialpage">CHMSU Official Page</a></Typography>
-                        </Box>
-                    ) 
-                    :(isHolidayBreak)
-                            ? (
-                                <Box
-                                    sx={{
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        padding: { xs: 2, sm: 4 },
-                                        gap: 1,
-                                        width: "100%",
-                                    }}
-                                >
-                                    
-                                    <Typography variant="body1" color="initial">Holiday Advisory: Admission Portal Closure</Typography>
-                                    <Typography variant="body1" color="initial">Dear Users,</Typography>
-                                    <Typography variant="body1" color="initial">{systemStatus?.messages?.holiday || 'The Admission Portal is temporarily unavailable.'}</Typography>
-                                    <Typography variant="body1" color="initial">Thank you for your understanding.</Typography>
-                                    <Button 
-                                        variant="outlined" 
-                                        startIcon={<Refresh />} 
-                                        onClick={handleRefreshStatus}
-                                        disabled={refreshing}
-                                        sx={{ mt: 2 }}
-                                    >
-                                        Check Status
-                                    </Button>
-                                </Box>
-                            )
-                            :(withinBusinessHours)
-                                ? (areSlotsFull)
-                                    ? (
-                                        <Box
-                                            sx={{
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                justifyContent: "center",
-                                                alignItems: "center",
-                                                padding: { xs: 2, sm: 4 },
-                                                gap: 1,
-                                                width: "100%",
-                                            }}
-                                        >
-                                            <Typography variant="body1" component={"p"} color="initial">
-                                                {systemStatus?.messages?.slotsFull || "We're sorry to inform you that the daily reservation limit has been reached. Registration will reopen at 8:00 AM. Thank you for your patience and understanding."}
-                                            </Typography>
-                                        </Box>
-                                    ) 
-                                    :(
-                                        <Box
-                                            component="form"
-                                            sx={{
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                justifyContent: "center",
-                                                alignItems: "center",
-                                                padding: { xs: 2, sm: 4 },
-                                                gap: 1,
-                                                width: "100%",
-                                            }}
-                                            onSubmit={submitForm}
-
-                                        >
-                                            <Typography variant={belowMediumScreenSize ? "h6" : "h6"} color="primary" textAlign={"center"} sx={{ mb: 0, mt: { xs: 1, sm: 0 } }}>
-                                                Welcome to the CHMSU Admission Portal
-                                            </Typography>
-                                            <Typography variant={belowMediumScreenSize ? "h6" : "h6"} color="primary" textAlign={"center"} sx={{ mb: 2, mt: -1 }}>
-                                                Academic Year 2026-2027
-                                            </Typography>
+                <Paper sx={{ width: { xs: "100%", sm: "500px", md: "60%" }, maxWidth: "700px", borderRadius: { xs: 0, sm: 2 } }}>
+                    <Box
+                        component="form"
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            padding: { xs: 2, sm: 4 },
+                            gap: 1,
+                            width: "100%",
+                        }}
+                        onSubmit={submitForm}
+                    >
+                        <Typography variant={belowMediumScreenSize ? "h6" : "h6"} color="primary" textAlign={"center"} sx={{ mb: 0, mt: { xs: 1, sm: 0 } }}>
+                            Welcome to the CHMSU Admission Portal
+                        </Typography>
+                        <Typography variant={belowMediumScreenSize ? "h6" : "h6"} color="primary" textAlign={"center"} sx={{ mb: 2, mt: -1 }}>
+                            Academic Year 2026-2027
+                        </Typography>
                                             <Alert severity="info" sx={{ width: "100%", p: 2, pb: 0, borderRadius: 2 }}>
                                                 <AlertTitle>We Value your Data Privacy</AlertTitle>
                                                 <List sx={{ pt: 0 }}>
@@ -486,20 +386,11 @@ const Register = () => {
                                                             }}
                                                             disabled={disableFormContent}
                                                         >
-                                                            {systemStatus?.examVenues
-                                                                ?.filter(venue => venue.available)
-                                                                .map((venue) => (
-                                                                    <MenuItem key={venue.name} value={venue.name} sx={{ whiteSpace: "normal" }}>
-                                                                        {venue.name === "Talisay" ? `${venue.name} (Main) Campus` : `${venue.name} Campus`}
-                                                                    </MenuItem>
-                                                                )) || (
-                                                                <>
-                                                                    <MenuItem value="Alijis" sx={{ whiteSpace: "normal" }}>Alijis Campus</MenuItem>
-                                                                    <MenuItem value="Binalbagan" sx={{ whiteSpace: "normal" }}>Binalbagan Campus</MenuItem>
-                                                                    <MenuItem value="Fortune Towne" sx={{ whiteSpace: "normal" }}>Fortune Towne Campus</MenuItem>
-                                                                    <MenuItem value="Talisay" sx={{ whiteSpace: "normal" }}>Talisay (Main) Campus</MenuItem>
-                                                                </>
-                                                            )}
+                                                            {STATIC_CONFIG.examVenues.map((venue) => (
+                                                                <MenuItem key={venue} value={venue} sx={{ whiteSpace: "normal" }}>
+                                                                    {venue === "Talisay" ? `${venue} (Main) Campus` : `${venue} Campus`}
+                                                                </MenuItem>
+                                                            ))}
                                                         </Select>
                                                         {/* </Tooltip> */}
                                                         <FormHelperText>**You may choose the exam venue nearest you regardless of your preferred campus to enroll in.</FormHelperText>
@@ -521,24 +412,7 @@ const Register = () => {
                                                 </FormControl>
                                             </Grid>
                                             {/* <DataPrivacyPolicyModal /> */}
-                                        </Box>
-                                    )
-                                : (
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            padding: { xs: 2, sm: 4 },
-                                            gap: 1,
-                                            width: "100%",
-                                        }}
-                                    >
-                                        <Typography variant="body1" component={"p"} color="initial">The system is currently unavailable. Registration will reopen at 8:00 AM. Thank you for your patience and understanding.</Typography>
                                     </Box>
-                                )
-                    }
                 </Paper>
             </Box>
             

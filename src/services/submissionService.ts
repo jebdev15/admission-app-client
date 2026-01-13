@@ -1,6 +1,6 @@
 /**
  * Submission Service
- * Handles queued form submissions with batch processing support
+ * Handles direct form submissions
  */
 
 import axiosInstance from "@api/index";
@@ -91,50 +91,22 @@ export interface SubmissionData {
     image?: ImageData | null;
 }
 
-export interface QueueResponse {
+export interface SubmissionResponse {
     success: boolean;
     message: string;
-    jobId?: string;
-    position?: number;
-    estimatedWaitTime?: number;
     uuid?: string;
+    errors?: string[];
     error?: string;
-}
-
-export interface JobStatus {
-    success: boolean;
-    jobId: string;
-    status: 'pending' | 'processing' | 'completed' | 'failed';
-    position?: number;
-    createdAt?: string;
-    result?: {
-        success: boolean;
-        message: string;
-        uuid: string;
-    };
-    error?: string;
-}
-
-export interface QueueStats {
-    success: boolean;
-    queueLength: number;
-    processing: boolean;
-    processedCount: number;
-    failedCount: number;
-    batchSize: number;
-    maxQueueSize: number;
-    uptime: number;
 }
 
 /**
- * SubmissionService - handles queued and direct form submissions
+ * SubmissionService - handles direct form submissions
  */
 export const SubmissionService = {
     /**
-     * Submit complete application form with queue support
-     * Used for high-traffic scenarios
+     * Submit complete application form
      */
-    submitApplicationQueued: async (data: SubmissionData): Promise<QueueResponse> => {
+    submitApplication: async (data: SubmissionData): Promise<SubmissionResponse> => {
         try {
             const response = await axiosInstance.post('/submissions/submit', data);
             return response.data;
@@ -144,151 +116,6 @@ export const SubmissionService = {
             }
             throw error;
         }
-    },
-
-    /**
-     * Submit complete application form directly
-     * Used for lower-traffic scenarios
-     */
-    submitApplicationDirect: async (data: SubmissionData): Promise<QueueResponse> => {
-        try {
-            const response = await axiosInstance.post('/submissions/submit-direct', data);
-            return response.data;
-        } catch (error: any) {
-            if (error.response) {
-                return error.response.data;
-            }
-            throw error;
-        }
-    },
-
-    /**
-     * Get job status by job ID
-     */
-    getJobStatus: async (jobId: string): Promise<JobStatus> => {
-        try {
-            const response = await axiosInstance.get(`/submissions/job/${jobId}`);
-            return response.data;
-        } catch (error: any) {
-            if (error.response) {
-                return error.response.data;
-            }
-            throw error;
-        }
-    },
-
-    /**
-     * Get current queue statistics
-     */
-    getQueueStats: async (): Promise<QueueStats> => {
-        try {
-            const response = await axiosInstance.get('/submissions/queue/stats');
-            return response.data;
-        } catch (error: any) {
-            if (error.response) {
-                return error.response.data;
-            }
-            throw error;
-        }
-    },
-
-    /**
-     * Poll for job completion with timeout
-     * @param jobId - The job ID to poll
-     * @param maxAttempts - Maximum polling attempts
-     * @param intervalMs - Polling interval in milliseconds
-     */
-    pollJobCompletion: async (
-        jobId: string, 
-        maxAttempts: number = 60, 
-        intervalMs: number = 2000,
-        onStatusUpdate?: (status: JobStatus) => void
-    ): Promise<JobStatus> => {
-        let attempts = 0;
-        let notFoundCount = 0;
-        const maxNotFoundAttempts = 3; // Stop after 3 consecutive "not found" errors
-
-        return new Promise((resolve, reject) => {
-            const poll = async () => {
-                try {
-                    attempts++;
-                    const status = await SubmissionService.getJobStatus(jobId);
-                    
-                    // Reset notFoundCount on successful response
-                    notFoundCount = 0;
-                    
-                    if (onStatusUpdate) {
-                        onStatusUpdate(status);
-                    }
-
-                    // Check if job was not found (success: false from API)
-                    if (status.success === false) {
-                        notFoundCount++;
-                        if (notFoundCount >= maxNotFoundAttempts) {
-                            reject(new Error(status.error || 'Job not found or already processed'));
-                            return;
-                        }
-                        setTimeout(poll, intervalMs);
-                        return;
-                    }
-
-                    if (status.status === 'completed' || status.status === 'failed') {
-                        resolve(status);
-                        return;
-                    }
-
-                    if (attempts >= maxAttempts) {
-                        reject(new Error('Polling timeout - job may still be processing'));
-                        return;
-                    }
-
-                    setTimeout(poll, intervalMs);
-                } catch (error: any) {
-                    // Handle 404 or other errors
-                    notFoundCount++;
-                    if (notFoundCount >= maxNotFoundAttempts) {
-                        reject(new Error(error.message || 'Job not found or already processed'));
-                        return;
-                    }
-                    
-                    if (attempts >= maxAttempts) {
-                        reject(error);
-                        return;
-                    }
-                    setTimeout(poll, intervalMs);
-                }
-            };
-
-            poll();
-        });
-    },
-
-    /**
-     * Submit registration and poll for result
-     * Combines enqueue and polling into single operation
-     */
-    submitAndWait: async (
-        data: SubmissionData,
-        onStatusUpdate?: (status: JobStatus | QueueResponse) => void
-    ): Promise<JobStatus> => {
-        // First, submit to queue
-        const queueResponse = await SubmissionService.submitApplicationQueued(data);
-        
-        if (!queueResponse.success || !queueResponse.jobId) {
-            throw new Error(queueResponse.message || 'Failed to queue submission');
-        }
-
-        if (onStatusUpdate) {
-            onStatusUpdate(queueResponse);
-        }
-
-        // Then poll for completion
-        return await SubmissionService.pollJobCompletion(
-            queueResponse.jobId,
-            120, // 2 minute timeout (120 * 2s = 240s)
-            2000,
-            onStatusUpdate
-        );
     }
 };
 

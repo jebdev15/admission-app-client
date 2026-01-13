@@ -18,7 +18,7 @@ import {
     SubmissionStatus,
     TOTAL_STEPS,
 } from './types';
-import SubmissionService, { JobStatus, QueueResponse } from '@services/submissionService';
+import SubmissionService from '@services/submissionService';
 import { PersonalInformationService } from '@services/personalInformationService';
 
 // Initial state for each form section
@@ -284,26 +284,6 @@ export const UnifiedFormProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
     }, [formData]);
 
-    // Handle status updates from polling
-    const handleStatusUpdate = useCallback((status: JobStatus | QueueResponse) => {
-        if ('status' in status) {
-            setSubmissionStatus({
-                success: status.status === 'completed',
-                message: status.result?.message || '',
-                jobId: status.jobId,
-                status: status.status,
-                error: status.error,
-            });
-        } else {
-            setSubmissionStatus({
-                success: status.success,
-                message: status.message,
-                jobId: status.jobId,
-                position: status.position,
-            });
-        }
-    }, []);
-
     // Submit the complete form
     const submitForm = useCallback(async () => {
         if (!uuid) {
@@ -396,16 +376,13 @@ export const UnifiedFormProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 image: formData.image, // Base64 image data
             };
 
-            // Submit and wait for result
-            const result = await SubmissionService.submitAndWait(
-                submissionData,
-                handleStatusUpdate
-            );
+            // Submit directly
+            const result = await SubmissionService.submitApplication(submissionData);
 
-            if (result.status === 'completed' && result.result?.success) {
+            if (result.success) {
                 setSubmissionStatus({
                     success: true,
-                    message: result.result.message || 'Application submitted successfully!',
+                    message: result.message || 'Application submitted successfully!',
                     status: 'completed',
                 });
                 // Navigate to summary page after successful submission
@@ -413,7 +390,7 @@ export const UnifiedFormProvider: React.FC<{ children: React.ReactNode }> = ({ c
             } else {
                 setSubmissionStatus({
                     success: false,
-                    message: result.error || 'Submission failed',
+                    message: result.error || result.message || 'Submission failed',
                     status: 'failed',
                     error: result.error,
                 });
@@ -430,7 +407,7 @@ export const UnifiedFormProvider: React.FC<{ children: React.ReactNode }> = ({ c
         } finally {
             setIsSubmitting(false);
         }
-    }, [uuid, formData, navigate, handleStatusUpdate]);
+    }, [uuid, formData, navigate]);
 
     const contextValue: UnifiedFormContextType = {
         currentStep,
