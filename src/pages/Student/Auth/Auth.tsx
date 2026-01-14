@@ -63,12 +63,19 @@ const STATIC_CONFIG = {
 
 /**
  * Check if current time is within business hours (Philippines timezone)
+ * Business hours: Weekdays (Monday-Friday) only, 8 AM to 5 PM
  */
 const isWithinBusinessHours = (): boolean => {
     const now = new Date();
     const manilaTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
     const hour = manilaTime.getHours();
-    return hour >= STATIC_CONFIG.businessHoursStart && hour < STATIC_CONFIG.businessHoursEnd;
+    const day = manilaTime.getDay(); // 0 = Sunday, 6 = Saturday
+    
+    // Check if it's a weekday (Monday to Friday) and within business hours
+    const isWeekday = day >= 1 && day <= 5;
+    const isWithinHours = hour >= STATIC_CONFIG.businessHoursStart && hour < STATIC_CONFIG.businessHoursEnd;
+    
+    return isWeekday && isWithinHours;
 };
 
 const Register = () => {

@@ -82,9 +82,9 @@ const RegistrationClosedPage: React.FC<RegistrationClosedPageProps> = ({
                                     {formatTime(businessHoursStart)} - {formatTime(businessHoursEnd)}
                                 </Typography>
                             </Box>
-                            {/* <Typography variant="body2" color="text.secondary">
+                            <Typography variant="body2" color="text.secondary">
                                 Monday to Friday (Philippine Standard Time)
-                            </Typography> */}
+                            </Typography>
                             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                                 Please come back during our operating hours to complete your registration.
                             </Typography>
