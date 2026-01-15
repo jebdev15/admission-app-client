@@ -57,10 +57,10 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
     const pendingFormRef = React.useRef<HTMLFormElement | null>(null);
 
     // Helper functions defined outside state
-    const showNotificationFn = (message: string, type?: NotificationType, title?: string) => {
+    const showNotificationFn = (message: string, type?: NotificationType, title?: string, onConfirm?: () => void) => {
         setContext((prevState) => ({
             ...prevState,
-            notification: { open: true, type: type || 'info', message, title }
+            notification: { open: true, type: type || 'info', message, title, onConfirm }
         }));
     };
 
@@ -169,7 +169,7 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
                 register: { ...prevState.register, loadingButton: false }
             }));
             
-            // Don't auto-reload - let user close dialog first
+            // Don't auto-reload - let user close dialog first (refresh handled in RegistrationQueueDialog)
             return;
         } catch (error: any) {
             console.error(error);
@@ -178,16 +178,33 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps) => {
                 console.log('Falling back to direct registration...');
                 const { data, status } = await axiosInstance.post("/auth/register", formData);
                 if (status === 201) {
-                    showNotificationFn(data.message || 'Registration successful!', 'success', 'Success');
-                    // Don't auto-refresh - user can refresh manually after seeing the success message
+                    // Show success notification with page refresh callback
+                    showNotificationFn(
+                        data.message || 'Registration successful!', 
+                        'success', 
+                        'Success',
+                        data.shouldRefresh ? () => window.location.reload() : undefined
+                    );
                 } else {
-                    showNotificationFn(data.message || 'Registration submitted.', 'info', 'Notice');
+                    // Check if backend indicates refresh is needed (e.g., slots full)
+                    showNotificationFn(
+                        data.message || 'Registration submitted.', 
+                        'info', 
+                        'Notice',
+                        data.shouldRefresh ? () => window.location.reload() : undefined
+                    );
                 }
             } catch (fallbackError: any) {
                 console.error(fallbackError);
                 const errorMessage = fallbackError?.response?.data?.message || 
                     "Server is busy. The system is currently processing volume of requests. Please try again";
-                showNotificationFn(errorMessage, 'error', 'Registration Error');
+                const shouldRefresh = fallbackError?.response?.data?.shouldRefresh;
+                showNotificationFn(
+                    errorMessage, 
+                    'error', 
+                    'Registration Error',
+                    shouldRefresh ? () => window.location.reload() : undefined
+                );
             }
             // Reset loading state for fallback errors
             setContext((prevState: AuthContextInterface) => ({

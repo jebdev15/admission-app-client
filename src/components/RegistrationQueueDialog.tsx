@@ -38,6 +38,19 @@ const RegistrationQueueDialog: React.FC<RegistrationQueueDialogProps> = ({
     status,
     onClose,
 }) => {
+    /**
+     * Handle dialog close with optional page refresh
+     * Refreshes the page if backend indicates shouldRefresh (e.g., slots full, successful registration)
+     */
+    const handleClose = () => {
+        if (onClose) {
+            onClose();
+        }
+        // Check if backend indicates page should refresh
+        if (status?.shouldRefresh) {
+            window.location.reload();
+        }
+    };
     const getStatusStep = () => {
         if (!status) return 0;
         
@@ -201,7 +214,7 @@ const RegistrationQueueDialog: React.FC<RegistrationQueueDialogProps> = ({
                     <Button 
                         variant="contained" 
                         color={status?.status === 'completed' ? 'success' : 'primary'}
-                        onClick={onClose}
+                        onClick={handleClose}
                         fullWidth
                     >
                         {status?.status === 'completed' ? 'Done' : 'Close'}

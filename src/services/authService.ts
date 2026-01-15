@@ -31,6 +31,7 @@ export interface JobStatusResponse {
     estimatedWaitTime?: number;
     uuid?: string;
     hasBeenSaved?: boolean;
+    shouldRefresh?: boolean; // Indicates if client should refresh the page (e.g., slots full, successful registration)
 }
 
 export const AuthService = {
