@@ -54,8 +54,8 @@ const STATIC_CONFIG = {
     businessHoursEnd: 17,
     
     // Set to true when daily slots are full
-    areSlotsFull: false,
-    slotFullMessage: "We're sorry to inform you that the daily reservation limit has been reached. Registration will reopen at 8:00 AM. Thank you for your patience and understanding.",
+    areSlotsFull: true,
+    slotFullMessage: "We're sorry to inform you that the daily reservation limit has been reached. Registration will reopen at 8:00 AM, Monday to Friday (Philippine Standard Time). Thank you for your patience and understanding.",
     
     // Exam venues available for registration
     examVenues: ["Alijis", "Binalbagan", "Fortune Towne", "Talisay"]

@@ -95,8 +95,8 @@ const RegistrationClosedPage: React.FC<RegistrationClosedPageProps> = ({
             case 'slots_full':
                 return {
                     icon: <HourglassEmpty sx={{ fontSize: 80, color: 'info.main' }} />,
-                    title: 'Slots are Full for Today',
-                    subtitle: 'Please Try Again Tomorrow',
+                    title: 'Slots are full for today',
+                    subtitle: 'Please try again during business hours',
                     color: theme.palette.info.main,
                     bgGradient: `linear-gradient(135deg, ${alpha(theme.palette.info.light, 0.1)} 0%, ${alpha(theme.palette.info.main, 0.05)} 100%)`,
                     content: (
@@ -118,15 +118,6 @@ const RegistrationClosedPage: React.FC<RegistrationClosedPageProps> = ({
                                     {slotFullMessage || "We're sorry to inform you that the daily reservation limit has been reached."}
                                 </Typography>
                             </Box>
-                            <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-                                Registration will reopen at:
-                            </Typography>
-                            <Typography variant="h5" color="info.main" fontWeight="bold" sx={{ mb: 2 }}>
-                                {formatTime(businessHoursStart)} Tomorrow
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Thank you for your patience and understanding.
-                            </Typography>
                         </>
                     ),
                 };
