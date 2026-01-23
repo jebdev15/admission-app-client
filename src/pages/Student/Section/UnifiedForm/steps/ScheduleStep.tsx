@@ -285,7 +285,7 @@ const ScheduleStep: React.FC = () => {
                                             value={selectedDate}
                                             onChange={handleDateChange}
                                             minDate={dayjs('2026-02-09')}
-                                            maxDate={dayjs('2026-03-07')}
+                                            maxDate={dayjs('2026-03-31')}
                                             shouldDisableDate={(date) => !isAvailableDate(date)}
                                             disabled={refreshing}
                                             sx={{
