@@ -19,6 +19,9 @@ const Home = React.lazy(() => import('@pages/Student/Home/Home'))
 // Lazy load Admin pages
 const AdminAuth = React.lazy(() => import('@pages/Admin/Layout'))
 const AdminMain = React.lazy(() => import('@pages/Admin/Main/Main'))
+const AdminReports = React.lazy(() => import('@pages/Admin/Main/Reports'))
+const ScheduleManagement = React.lazy(() => import('@pages/Admin/Main/ScheduleManagement'))
+const StudentApplicants = React.lazy(() => import('@pages/Admin/Main/StudentApplicants'))
 const ProtectedRoute = React.lazy(() => import('@pages/Admin/ProtectedRoute'))
 
 // Suspense wrapper for lazy components
@@ -77,6 +80,51 @@ export const router = createBrowserRouter([
             <SuspenseWrapper>
                 <ProtectedRoute>
                     <AdminMain />
+                </ProtectedRoute>
+            </SuspenseWrapper>
+        ),
+        errorElement: (
+            <SuspenseWrapper>
+                <AdminErrorPage />
+            </SuspenseWrapper>
+        ),
+    },
+    {
+        path: '/admin/reports',
+        element: (
+            <SuspenseWrapper>
+                <ProtectedRoute>
+                    <AdminReports />
+                </ProtectedRoute>
+            </SuspenseWrapper>
+        ),
+        errorElement: (
+            <SuspenseWrapper>
+                <AdminErrorPage />
+            </SuspenseWrapper>
+        ),
+    },
+    {
+        path: '/admin/schedules',
+        element: (
+            <SuspenseWrapper>
+                <ProtectedRoute>
+                    <ScheduleManagement />
+                </ProtectedRoute>
+            </SuspenseWrapper>
+        ),
+        errorElement: (
+            <SuspenseWrapper>
+                <AdminErrorPage />
+            </SuspenseWrapper>
+        ),
+    },
+    {
+        path: '/admin/applicants',
+        element: (
+            <SuspenseWrapper>
+                <ProtectedRoute>
+                    <StudentApplicants />
                 </ProtectedRoute>
             </SuspenseWrapper>
         ),

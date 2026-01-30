@@ -16,9 +16,11 @@ import {
     Home as HomeIcon,
     Logout,
     AccountCircle as AccountCircleIcon,
+    Dashboard as DashboardIcon,
 } from "@mui/icons-material";
 import { ProtectedRouteContext } from '../ProtectedRoute';
 import { jwtDecode } from 'jwt-decode';
+import { useNavigate, useLocation } from 'react-router-dom';
 interface DecodedToken {
     name: string;
     picture: string;
@@ -30,7 +32,11 @@ const Header = () => {
     const { accessToken, handleLogout } = React.useContext(ProtectedRouteContext);
     const token: string = accessToken || '';
     const decodedToken: DecodedToken = jwtDecode(token || '') || { name: '', picture: '', role: '', campus: '' };
-    const [menuAnchor, setMenuAnchor] = React.useState(null);
+    const [menuAnchor, setMenuAnchor] = React.useState<HTMLElement | null>(null);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const isMainPage = location.pathname === '/admin/main';
 
     return (
         <Box
@@ -61,13 +67,22 @@ const Header = () => {
                     <Box sx={{ display: "flex" }}>
                         <img src="/optimizedLogo.png" alt="CHMSU Logo" width={50} height={50} className="logo" />
                     </Box>
+                    <Box sx={{ display: 'flex', gap: 2, mr: 2 }}>
+                        <Button
+                            variant={isMainPage ? "contained" : "outlined"}
+                            startIcon={<DashboardIcon />}
+                            onClick={() => navigate('/admin/main')}
+                        >
+                            Dashboard
+                        </Button>
+                    </Box>
                     <Typography className="systemName" variant="h6" component="div" sx={{ color: "primary.dark", flexGrow: 1, lineHeight: "1" }}>
                         <span></span>
                         <span></span>
                     </Typography>
                     <Button
                         color="primary"
-                        onClick={(e) => setMenuAnchor(e.currentTarget as any)}
+                        onClick={(e) => setMenuAnchor(e.currentTarget)}
                         sx={{
                             minWidth: "unset",
                             borderRadius: "50%",
