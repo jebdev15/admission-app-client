@@ -30,6 +30,18 @@ export interface ApplicantDetails {
     schedule_time_start: string;
     schedule_time_end: string;
     schedule_time: string;
+    image_name?: string;
     forms_submitted: string;
     created_at: string;
 }
+
+export type StudentApplicantsType = Pick<
+  ApplicantDetails,
+  | "_id"
+  | "full_name"
+  | "campus_to_take_exam"
+  | "schedule_location"
+  | "schedule_date"
+  | "schedule_time_start"
+  | "image_name"
+>;

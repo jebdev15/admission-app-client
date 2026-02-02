@@ -19,14 +19,12 @@ import { adminApplicantService } from '@services/adminApplicantService';
 import {
     Download as DownloadIcon,
     People as PeopleIcon,
-    Visibility as VisibilityIcon,
     PhotoCamera as PhotoCameraIcon
 } from '@mui/icons-material';
 import CustomCircularProgress from '@components/CustomCircularProgress';
 import Header from './Header';
 import { FormatDateUtil } from '@/utils/formatDate';
-import { ApplicantDetails } from './type';
-const StudentApplicantDialog = React.lazy(() => import('@/components/Student/StudentApplicantDialog'));
+import { StudentApplicantsType } from './type';
 const StudentImageDialog = React.lazy(() => import('@/components/Student/StudentImageDialog'));
 
 interface DecodedToken extends JwtPayload {
@@ -38,80 +36,34 @@ interface DecodedToken extends JwtPayload {
 
 
 
-// In-memory cache lives across component mounts during the SPA session
-let inMemoryApplicantsCache: { key: string; timestamp: number; data: ApplicantDetails[] } | null = null;
-
 const StudentApplicants: React.FC = () => {
     const [cookie] = useCookies(['token']);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [applicants, setApplicants] = useState<ApplicantDetails[]>([]);
-    const [selectedApplicant, setSelectedApplicant] = useState<ApplicantDetails | null>(null);
-    const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
+    const [applicants, setApplicants] = useState<StudentApplicantsType[]>([]);
     const [imageDialogOpen, setImageDialogOpen] = useState(false);
-    const [imageDialogData, setImageDialogData] = useState<{ uuid?: string | null; name?: string; email?: string } | null>(null);
+    const [imageDialogData, setImageDialogData] = useState<{ image_name?: string | null; name?: string; } | null>(null);
     
     const [paginationModel, setPaginationModel] = useState({
         page: 0,
-        pageSize: 25,
+        pageSize: 10,
     });
 
     const decodedToken = jwtDecode<DecodedToken>(cookie.token || '');
     const { office, campus, name } = decodedToken;
 
-    const CACHE_KEY_BASE = 'applicants_cache_v1';
-    const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+    const addRowIds = (data: StudentApplicantsType[]) => {
+        return data.map((item, idx) => ({ _id: idx + 1, ...item }));
+    }
 
-        const addRowIds = (data: ApplicantDetails[]) => {
-            return data.map((item, idx) => ({ ...item, _id: idx + 1 }));
-        }
-
-    const loadApplicants = useCallback(async (forceRefresh = false) => {
+    const loadApplicants = useCallback(async () => {
         setError(null);
-        const tokenSuffix = cookie.token ? `_${cookie.token.slice(0, 10)}` : '_anon';
-        const CACHE_KEY = `${CACHE_KEY_BASE}${tokenSuffix}`;
-
-        // Try in-memory cache first
-        if (!forceRefresh && inMemoryApplicantsCache && inMemoryApplicantsCache.key === CACHE_KEY) {
-            if ((Date.now() - inMemoryApplicantsCache.timestamp) < CACHE_TTL) {
-                setApplicants(inMemoryApplicantsCache.data);
-                return;
-            }
-            // expired -> drop
-            inMemoryApplicantsCache = null;
-        }
-
-        // Try persistent cache next
-        if (!forceRefresh) {
-            try {
-                const raw = localStorage.getItem(CACHE_KEY);
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    if (parsed.timestamp && (Date.now() - parsed.timestamp) < CACHE_TTL && Array.isArray(parsed.data)) {
-                        // populate in-memory cache for faster reuse
-                        const withIds = addRowIds(parsed.data as ApplicantDetails[]);
-                        inMemoryApplicantsCache = { key: CACHE_KEY, timestamp: parsed.timestamp, data: withIds };
-                        setApplicants(withIds);
-                        return;
-                    }
-                }
-            } catch (e) {
-                // ignore cache parse errors
-            }
-        }
-
         setLoading(true);
         try {
             const response = await adminApplicantService.getAllApplicantsWithDetails(cookie.token);
             if (response.success) {
-                const withIds = addRowIds(response.data as ApplicantDetails[]);
+                const withIds = addRowIds(response.data as StudentApplicantsType[]);
                 setApplicants(withIds);
-                try {
-                    localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data: withIds }));
-                    inMemoryApplicantsCache = { key: CACHE_KEY, timestamp: Date.now(), data: withIds };
-                } catch (e) {
-                    // ignore storage errors
-                }
             }
         } catch (err) {
             setError((err as Error).message || 'Failed to load applicants');
@@ -124,48 +76,10 @@ const StudentApplicants: React.FC = () => {
         loadApplicants();
     }, [loadApplicants]);
 
-    const handleViewDetails = (applicant: ApplicantDetails) => {
-        setSelectedApplicant(applicant);
-        setDetailsDialogOpen(true);
-    };
 
-    const handleViewImage = (applicant: ApplicantDetails) => {
-        setImageDialogData({ uuid: applicant.uuid, name: applicant.full_name, email: applicant.email });
+    const handleViewImage = (applicant: StudentApplicantsType) => {
+        setImageDialogData({ image_name: applicant.image_name, name: applicant.full_name });
         setImageDialogOpen(true);
-    };
-
-    const handleExamStatusUpdate = async (uuid: string, passed: boolean) => {
-        try {
-            const response = await adminApplicantService.updateExamPassedStatus(
-                uuid,
-                passed,
-                cookie.token
-            );
-            if (response.success) {
-                loadApplicants();
-                setDetailsDialogOpen(false);
-                alert('Exam status updated successfully');
-            }
-        } catch (err) {
-            alert((err as Error).message || 'Failed to update exam status');
-        }
-    };
-
-    const handleEnrollmentUpdate = async (uuid: string, enrolled: boolean) => {
-        try {
-            const response = await adminApplicantService.updateEnrolledStatus(
-                uuid,
-                enrolled,
-                cookie.token
-            );
-            if (response.success) {
-                loadApplicants();
-                setDetailsDialogOpen(false);
-                alert('Enrollment status updated successfully');
-            }
-        } catch (err) {
-            alert((err as Error).message || 'Failed to update enrollment status');
-        }
     };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -202,9 +116,9 @@ const StudentApplicants: React.FC = () => {
 
     const applicantColumns: GridColDef[] = [
         { field: '_id', headerName: 'No.', width: 100 },
-        { field: 'full_name', headerName: 'Full Name', width: 250 },
-        { field: 'campus_to_take_exam', headerName: 'Campus', width: 130 },
-        { field: 'schedule_date', headerName: 'Exam Date', width: 120 },
+        { field: 'full_name', headerName: 'Fullname', width: 250 },
+        { field: 'campus_to_take_exam', headerName: 'Exam venue', width: 130 },
+        { field: 'schedule_date', headerName: 'Exam date', width: 120 },
         { 
             field: 'schedule_time_start', 
             headerName: 'Time', 
@@ -222,10 +136,7 @@ const StudentApplicants: React.FC = () => {
             flex: 1,
             renderCell: (params: GridRenderCellParams) => (
                     <>
-                        <Button size="small" startIcon={<VisibilityIcon />} onClick={() => handleViewDetails(params.row as ApplicantDetails)}>
-                            View
-                        </Button>
-                        <Button size="small" sx={{ ml: 1 }} startIcon={<PhotoCameraIcon />} onClick={() => handleViewImage(params.row as ApplicantDetails)}>
+                        <Button size="small" sx={{ ml: 1 }} startIcon={<PhotoCameraIcon />} onClick={() => handleViewImage(params.row as StudentApplicantsType)}>
                             Photo
                         </Button>
                     </>
@@ -267,7 +178,7 @@ const StudentApplicants: React.FC = () => {
                             <Box sx={{ display: 'flex', gap: 1 }}>
                                 <Button
                                     variant="outlined"
-                                    onClick={() => loadApplicants(true)}
+                                    onClick={() => loadApplicants()}
                                 >
                                     Refresh
                                 </Button>
@@ -304,20 +215,11 @@ const StudentApplicants: React.FC = () => {
                         )}
                     </Paper>
 
-                    {/* Student Details Dialog */}
-                    <StudentApplicantDialog 
-                        open={detailsDialogOpen}
-                        onClose={() => setDetailsDialogOpen(false)}
-                        applicant={selectedApplicant} 
-                        onExamStatusUpdate={handleExamStatusUpdate}
-                        onEnrollmentUpdate={handleEnrollmentUpdate}
-                    />
                     <StudentImageDialog
                         open={imageDialogOpen}
                         onClose={() => setImageDialogOpen(false)}
-                        uuid={imageDialogData?.uuid}
                         name={imageDialogData?.name}
-                        email={imageDialogData?.email}
+                        imageName={imageDialogData?.image_name ?? ''}
                     />
                 </Box>
             </Box>
