@@ -53,12 +53,10 @@ interface ScheduleDetails extends Schedule {
     applicant_ids: string[];
 }
 
-// In-memory cache for schedules during SPA session
-let inMemorySchedulesCache: { key: string; timestamp: number; data: Schedule[] } | null = null;
-
 const ScheduleManagement: React.FC = () => {
     const [cookie] = useCookies(['token']);
     const [loading, setLoading] = useState(false);
+    const [exportLoading, setExportLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [schedules, setSchedules] = useState<Schedule[]>([]);
     const [selectedSchedule, setSelectedSchedule] = useState<ScheduleDetails | null>(null);
@@ -66,57 +64,19 @@ const ScheduleManagement: React.FC = () => {
     
     const [paginationModel, setPaginationModel] = useState({
         page: 0,
-        pageSize: 25,
+        pageSize: 10,
     });
 
     const decodedToken = jwtDecode<DecodedToken>(cookie.token || '');
     const { office, campus, name } = decodedToken;
 
-    const CACHE_KEY_BASE = 'schedules_cache_v1';
-    const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
-
     const loadSchedules = useCallback(async (forceRefresh = false) => {
         setError(null);
-        const tokenSuffix = cookie.token ? `_${cookie.token.slice(0, 10)}` : '_anon';
-        const CACHE_KEY = `${CACHE_KEY_BASE}${tokenSuffix}`;
-
-        // in-memory cache
-        if (!forceRefresh && inMemorySchedulesCache && inMemorySchedulesCache.key === CACHE_KEY) {
-            if ((Date.now() - inMemorySchedulesCache.timestamp) < CACHE_TTL) {
-                setSchedules(inMemorySchedulesCache.data);
-                return;
-            }
-            inMemorySchedulesCache = null;
-        }
-
-        // persistent cache
-        if (!forceRefresh) {
-            try {
-                const raw = localStorage.getItem(CACHE_KEY);
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    if (parsed.timestamp && (Date.now() - parsed.timestamp) < CACHE_TTL && Array.isArray(parsed.data)) {
-                        inMemorySchedulesCache = { key: CACHE_KEY, timestamp: parsed.timestamp, data: parsed.data };
-                        setSchedules(parsed.data);
-                        return;
-                    }
-                }
-            } catch (e) {
-                // ignore cache errors
-            }
-        }
-
         setLoading(true);
         try {
-            const response = await adminScheduleService.getAllSchedules(cookie.token);
+            const response = await adminScheduleService.getAllSchedules(cookie.token, forceRefresh);
             if (response.success) {
                 setSchedules(response.data);
-                try {
-                    localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data: response.data }));
-                    inMemorySchedulesCache = { key: CACHE_KEY, timestamp: Date.now(), data: response.data };
-                } catch (e) {
-                    // ignore storage errors
-                }
             }
         } catch (err) {
             setError((err as Error).message || 'Failed to load schedules');
@@ -134,6 +94,20 @@ const ScheduleManagement: React.FC = () => {
         const schedule = schedules.find((s) => s.schedule_id === scheduleId) || null;
         setSelectedSchedule(schedule as ScheduleDetails | null);
         setDetailsDialogOpen(true);
+    };
+
+    const handleExportSchedules = async () => {
+        setExportLoading(true);
+        try {
+            const response = await adminScheduleService.exportSchedulesForCSV(cookie.token);
+            if (response.success && response.data) {
+                exportToCSV(response.data, 'examination_schedules');
+            }
+        } catch (err) {
+            setError((err as Error).message || 'Failed to export schedules');
+        } finally {
+            setExportLoading(false);
+        }
     };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -218,20 +192,6 @@ const ScheduleManagement: React.FC = () => {
                 />
             )
         },
-        {
-            field: 'actions',
-            headerName: 'Actions',
-            width: 120,
-            renderCell: (params: GridRenderCellParams) => (
-                <Button
-                    size="small"
-                    startIcon={<VisibilityIcon />}
-                    onClick={() => handleViewDetails(params.row.schedule_id)}
-                >
-                    View
-                </Button>
-            ),
-        },
     ];
 
     return (
@@ -266,13 +226,14 @@ const ScheduleManagement: React.FC = () => {
                         <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Typography variant="h6">Examination Schedules</Typography>
                             <Box sx={{ display: 'flex', gap: 1 }}>
-                                <Button variant="outlined" onClick={() => loadSchedules(true)}>Refresh</Button>
+                                <Button variant="outlined" onClick={() => loadSchedules(true)} disabled={loading}>Refresh</Button>
                                 <Button
                                     variant="contained"
-                                    startIcon={<DownloadIcon />}
-                                    onClick={() => exportToCSV(schedules, 'schedules')}
+                                    startIcon={exportLoading ? <CircularProgress size={20} color="inherit" /> : <DownloadIcon />}
+                                    onClick={handleExportSchedules}
+                                    disabled={exportLoading || loading}
                                 >
-                                    Export to CSV
+                                    {exportLoading ? 'Exporting...' : 'Export to CSV'}
                                 </Button>
                             </Box>
                         </Box>
@@ -290,12 +251,12 @@ const ScheduleManagement: React.FC = () => {
                                 pageSizeOptions={[10, 25, 50, 100]}
                                 paginationModel={paginationModel}
                                 onPaginationModelChange={setPaginationModel}
-                                slots={{ toolbar: GridToolbar }}
-                                slotProps={{
-                                    toolbar: {
-                                        showQuickFilter: true,
-                                    },
-                                }}
+                                // slots={{ toolbar: GridToolbar }}
+                                // slotProps={{
+                                //     toolbar: {
+                                //         showQuickFilter: true,
+                                //     },
+                                // }}
                                 disableRowSelectionOnClick
                             />
                         )}

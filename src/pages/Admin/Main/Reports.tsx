@@ -92,25 +92,25 @@ const AdminReportsPage: React.FC = () => {
     const decodedToken = jwtDecode<DecodedToken>(cookie.token || '');
     const { office, campus, name } = decodedToken;
 
-    const loadData = useCallback(async () => {
+    const loadData = useCallback(async (forceRefresh = false) => {
         setLoading(true);
         setError(null);
         try {
             if (activeTab === 0) {
                 // Load scheduled exam reports
-                const response = await adminReportService.getScheduledExamReport(cookie.token);
+                const response = await adminReportService.getScheduledExamReport(cookie.token, forceRefresh);
                 if (response.success) {
                     setScheduleReports(response.data);
                 }
             } else if (activeTab === 1) {
                 // Load slots summary
-                const response = await adminReportService.getSlotsSummary(cookie.token);
+                const response = await adminReportService.getSlotsSummary(cookie.token, forceRefresh);
                 if (response.success) {
                     setSlotsSummary(response.data);
                 }
             } else if (activeTab === 2) {
                 // Load statistics
-                const response = await adminReportService.getStatisticsSummary(cookie.token);
+                const response = await adminReportService.getStatisticsSummary(cookie.token, forceRefresh);
                 if (response.success) {
                     setStatistics(response.data);
                 }
@@ -304,13 +304,22 @@ const AdminReportsPage: React.FC = () => {
                                         <Box>
                                             <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
                                                 <Typography variant="h6">Scheduled Exam Report</Typography>
-                                                <Button
-                                                    variant="contained"
-                                                    startIcon={<DownloadIcon />}
-                                                    onClick={() => exportToCSV(scheduleReports, 'schedule_report')}
-                                                >
-                                                    Export to CSV
-                                                </Button>
+                                                <Box sx={{ display: 'flex', gap: 1 }}>
+                                                    <Button
+                                                        variant="outlined"
+                                                        onClick={() => loadData(true)}
+                                                        disabled={loading}
+                                                    >
+                                                        Refresh
+                                                    </Button>
+                                                    <Button
+                                                        variant="contained"
+                                                        startIcon={<DownloadIcon />}
+                                                        onClick={() => exportToCSV(scheduleReports, 'schedule_report')}
+                                                    >
+                                                        Export to CSV
+                                                    </Button>
+                                                </Box>
                                             </Box>
                                             <DataGrid
                                                 rows={scheduleReports.map((row, index) => ({ id: index, ...row }))}
@@ -333,13 +342,22 @@ const AdminReportsPage: React.FC = () => {
                                         <Box>
                                             <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
                                                 <Typography variant="h6">Slots Summary by Campus</Typography>
-                                                <Button
-                                                    variant="contained"
-                                                    startIcon={<DownloadIcon />}
-                                                    onClick={() => exportToCSV(slotsSummary, 'slots_summary')}
-                                                >
-                                                    Export to CSV
-                                                </Button>
+                                                <Box sx={{ display: 'flex', gap: 1 }}>
+                                                    <Button
+                                                        variant="outlined"
+                                                        onClick={() => loadData(true)}
+                                                        disabled={loading}
+                                                    >
+                                                        Refresh
+                                                    </Button>
+                                                    <Button
+                                                        variant="contained"
+                                                        startIcon={<DownloadIcon />}
+                                                        onClick={() => exportToCSV(slotsSummary, 'slots_summary')}
+                                                    >
+                                                        Export to CSV
+                                                    </Button>
+                                                </Box>
                                             </Box>
                                             <DataGrid
                                                 rows={slotsSummary.map((row, index) => ({ id: index, ...row }))}
@@ -362,9 +380,18 @@ const AdminReportsPage: React.FC = () => {
 
                                     {activeTab === 2 && (
                                         <Box>
-                                            <Typography variant="h6" sx={{ mb: 3 }}>
-                                                Statistics Overview
-                                            </Typography>
+                                            <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <Typography variant="h6" sx={{ mb: 0 }}>
+                                                    Statistics Overview
+                                                </Typography>
+                                                <Button
+                                                    variant="outlined"
+                                                    onClick={() => loadData(true)}
+                                                    disabled={loading}
+                                                >
+                                                    Refresh
+                                                </Button>
+                                            </Box>
                                             {renderStatisticsCards()}
                                         </Box>
                                     )}

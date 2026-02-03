@@ -10,7 +10,6 @@ import {
 import {
     DataGrid,
     GridColDef,
-    GridToolbar,
     GridRenderCellParams
 } from '@mui/x-data-grid';
 import { useCookies } from 'react-cookie';
@@ -39,10 +38,13 @@ interface DecodedToken extends JwtPayload {
 const StudentApplicants: React.FC = () => {
     const [cookie] = useCookies(['token']);
     const [loading, setLoading] = useState(false);
+    const [exportLoading, setExportLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [applicants, setApplicants] = useState<StudentApplicantsType[]>([]);
+    const [totalRows, setTotalRows] = useState(0);
     const [imageDialogOpen, setImageDialogOpen] = useState(false);
     const [imageDialogData, setImageDialogData] = useState<{ image_name?: string | null; name?: string; } | null>(null);
+    const loadingRef = React.useRef(false);
     
     const [paginationModel, setPaginationModel] = useState({
         page: 0,
@@ -52,29 +54,33 @@ const StudentApplicants: React.FC = () => {
     const decodedToken = jwtDecode<DecodedToken>(cookie.token || '');
     const { office, campus, name } = decodedToken;
 
-    const addRowIds = (data: StudentApplicantsType[]) => {
-        return data.map((item, idx) => ({ _id: idx + 1, ...item }));
-    }
-
-    const loadApplicants = useCallback(async () => {
+    const loadApplicants = useCallback(async (page: number = paginationModel.page, pageSize: number = paginationModel.pageSize, forceRefresh = false) => {
+        // Prevent multiple simultaneous requests
+        if (loadingRef.current) {
+            return;
+        }
+        
+        loadingRef.current = true;
         setError(null);
         setLoading(true);
         try {
-            const response = await adminApplicantService.getAllApplicantsWithDetails(cookie.token);
+            const response = await adminApplicantService.getAllApplicantsWithDetails(cookie.token, page, pageSize, forceRefresh);
             if (response.success) {
-                const withIds = addRowIds(response.data as StudentApplicantsType[]);
-                setApplicants(withIds);
+                setApplicants(response.data as StudentApplicantsType[]);
+                setTotalRows(response.pagination?.totalRows || 0);
             }
         } catch (err) {
             setError((err as Error).message || 'Failed to load applicants');
         } finally {
             setLoading(false);
+            loadingRef.current = false;
         }
-    }, [cookie.token]);
+    }, [cookie.token, paginationModel.page, paginationModel.pageSize]);
 
     useEffect(() => {
-        loadApplicants();
-    }, [loadApplicants]);
+        loadApplicants(paginationModel.page, paginationModel.pageSize);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [paginationModel.page, paginationModel.pageSize]);
 
 
     const handleViewImage = (applicant: StudentApplicantsType) => {
@@ -82,23 +88,53 @@ const StudentApplicants: React.FC = () => {
         setImageDialogOpen(true);
     };
 
+    const handleExportAll = async () => {
+        setExportLoading(true);
+        try {
+            const response = await adminApplicantService.exportApplicantsForCSV(cookie.token);
+            if (response.success && response.data) {
+                exportToCSV(response.data, 'applicants_report');
+            }
+        } catch (err) {
+            setError((err as Error).message || 'Failed to export data');
+        } finally {
+            setExportLoading(false);
+        }
+    };
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const exportToCSV = (data: any[], filename: string) => {
         if (data.length === 0) return;
 
         const headers = Object.keys(data[0]);
+        
+        // Create friendly column headers
+        const headerMapping: { [key: string]: string } = {
+            'full_name': 'Full Name',
+            'campus': 'Campus',
+            'exam_date': 'Exam Date',
+            'exam_time': 'Exam Time',
+            'exam_location': 'Location'
+        };
+
+        const friendlyHeaders = headers.map(h => headerMapping[h] || h);
+
         const csvContent = [
-            headers.join(','),
+            friendlyHeaders.join(','),
             ...data.map(row =>
                 headers.map(header => {
                     const value = row[header];
+                    if (value === null || value === undefined) {
+                        return '""';
+                    }
                     if (Array.isArray(value)) {
                         return `"${value.join('; ')}"`;
                     }
-                    if (typeof value === 'object' && value !== null) {
+                    if (typeof value === 'object') {
                         return `"${JSON.stringify(value)}"`;
                     }
-                    return `"${value}"`;
+                    // Escape quotes and wrap in quotes
+                    return `"${String(value).replace(/"/g, '""')}"`;
                 }).join(',')
             )
         ].join('\n');
@@ -117,8 +153,17 @@ const StudentApplicants: React.FC = () => {
     const applicantColumns: GridColDef[] = [
         { field: '_id', headerName: 'No.', width: 100 },
         { field: 'full_name', headerName: 'Fullname', width: 250 },
-        { field: 'campus_to_take_exam', headerName: 'Exam venue', width: 130 },
-        { field: 'schedule_date', headerName: 'Exam date', width: 120 },
+        { field: 'campus_to_take_exam', headerName: 'Campus', width: 130 },
+        { 
+            field: 'schedule_date', 
+            headerName: 'Exam date', 
+            width: 120,
+            renderCell: (params: GridRenderCellParams) => (
+                <span>
+                    {FormatDateUtil.formatDateOnly(params.value)}
+                </span>
+            ),
+        },
         { 
             field: 'schedule_time_start', 
             headerName: 'Time', 
@@ -133,7 +178,6 @@ const StudentApplicants: React.FC = () => {
             field: 'actions',
             headerName: 'Actions',
             width: 150,
-            flex: 1,
             renderCell: (params: GridRenderCellParams) => (
                     <>
                         <Button size="small" sx={{ ml: 1 }} startIcon={<PhotoCameraIcon />} onClick={() => handleViewImage(params.row as StudentApplicantsType)}>
@@ -174,20 +218,27 @@ const StudentApplicants: React.FC = () => {
 
                     <Paper sx={{ width: '100%', p: 3 }}>
                         <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Typography variant="h6">All Student Applicants</Typography>
+                            <Box>
+                                <Typography variant="h6">All Student Applicants</Typography>
+                                <Typography variant="caption" color="textSecondary">
+                                    Showing {applicants.length > 0 ? paginationModel.page * paginationModel.pageSize + 1 : 0} - {Math.min((paginationModel.page + 1) * paginationModel.pageSize, totalRows)} of {totalRows} applicants
+                                </Typography>
+                            </Box>
                             <Box sx={{ display: 'flex', gap: 1 }}>
                                 <Button
                                     variant="outlined"
-                                    onClick={() => loadApplicants()}
+                                    onClick={() => loadApplicants(paginationModel.page, paginationModel.pageSize, true)}
+                                    disabled={loading}
                                 >
                                     Refresh
                                 </Button>
                                 <Button
                                     variant="contained"
-                                    startIcon={<DownloadIcon />}
-                                    onClick={() => exportToCSV(applicants, 'applicants_report')}
+                                    startIcon={exportLoading ? <CircularProgress size={20} /> : <DownloadIcon />}
+                                    onClick={handleExportAll}
+                                    disabled={exportLoading}
                                 >
-                                    Export to CSV
+                                    {exportLoading ? 'Exporting...' : 'Export to CSV'}
                                 </Button>
                             </Box>
                         </Box>
@@ -198,17 +249,15 @@ const StudentApplicants: React.FC = () => {
                             </Box>
                         ) : (
                             <DataGrid
-                                rows={applicants.map((row) => ({ id: row._id ?? 0, ...row }))}
+                                rows={applicants.map((row, index) => ({ id: paginationModel.page * paginationModel.pageSize + index + 1, _id: paginationModel.page * paginationModel.pageSize + index + 1, ...row }))}
                                 columns={applicantColumns}
                                 autoHeight
+                                rowCount={totalRows}
                                 pageSizeOptions={[10, 25, 50, 100]}
                                 paginationModel={paginationModel}
-                                onPaginationModelChange={setPaginationModel}
-                                slots={{ toolbar: GridToolbar }}
-                                slotProps={{
-                                    toolbar: {
-                                        showQuickFilter: true,
-                                    },
+                                paginationMode="server"
+                                onPaginationModelChange={(newModel) => {
+                                    setPaginationModel(newModel);
                                 }}
                                 disableRowSelectionOnClick
                             />
