@@ -6,6 +6,8 @@ import {
     Button,
     CircularProgress,
     Alert,
+    TextField,
+    InputAdornment,
 } from '@mui/material';
 import {
     DataGrid,
@@ -18,7 +20,8 @@ import { adminApplicantService } from '@services/adminApplicantService';
 import {
     Download as DownloadIcon,
     People as PeopleIcon,
-    PhotoCamera as PhotoCameraIcon
+    PhotoCamera as PhotoCameraIcon,
+    Search as SearchIcon
 } from '@mui/icons-material';
 import CustomCircularProgress from '@components/CustomCircularProgress';
 import Header from './Header';
@@ -44,7 +47,9 @@ const StudentApplicants: React.FC = () => {
     const [totalRows, setTotalRows] = useState(0);
     const [imageDialogOpen, setImageDialogOpen] = useState(false);
     const [imageDialogData, setImageDialogData] = useState<{ image_name?: string | null; name?: string; } | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
     const loadingRef = React.useRef(false);
+    const searchTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
     
     const [paginationModel, setPaginationModel] = useState({
         page: 0,
@@ -54,7 +59,7 @@ const StudentApplicants: React.FC = () => {
     const decodedToken = jwtDecode<DecodedToken>(cookie.token || '');
     const { office, campus, name } = decodedToken;
 
-    const loadApplicants = useCallback(async (page: number = paginationModel.page, pageSize: number = paginationModel.pageSize, forceRefresh = false) => {
+    const loadApplicants = useCallback(async (page: number = paginationModel.page, pageSize: number = paginationModel.pageSize, search: string = '', forceRefresh = false) => {
         // Prevent multiple simultaneous requests
         if (loadingRef.current) {
             return;
@@ -64,7 +69,7 @@ const StudentApplicants: React.FC = () => {
         setError(null);
         setLoading(true);
         try {
-            const response = await adminApplicantService.getAllApplicantsWithDetails(cookie.token, page, pageSize, forceRefresh);
+            const response = await adminApplicantService.getAllApplicantsWithDetails(cookie.token, page, pageSize, search, forceRefresh);
             if (response.success) {
                 setApplicants(response.data as StudentApplicantsType[]);
                 setTotalRows(response.pagination?.totalRows || 0);
@@ -78,10 +83,32 @@ const StudentApplicants: React.FC = () => {
     }, [cookie.token, paginationModel.page, paginationModel.pageSize]);
 
     useEffect(() => {
-        loadApplicants(paginationModel.page, paginationModel.pageSize);
+        loadApplicants(paginationModel.page, paginationModel.pageSize, searchQuery);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [paginationModel.page, paginationModel.pageSize]);
 
+    // Debounced search effect - triggers 1.5 seconds after user stops typing
+    useEffect(() => {
+        // Clear any existing timeout
+        if (searchTimeoutRef.current) {
+            clearTimeout(searchTimeoutRef.current);
+        }
+
+        // Set new timeout for 1.5 seconds
+        searchTimeoutRef.current = setTimeout(() => {
+            // Reset to first page when searching
+            setPaginationModel(prev => ({ ...prev, page: 0 }));
+            loadApplicants(0, paginationModel.pageSize, searchQuery);
+        }, 1500);
+
+        // Cleanup function
+        return () => {
+            if (searchTimeoutRef.current) {
+                clearTimeout(searchTimeoutRef.current);
+            }
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchQuery]);
 
     const handleViewImage = (applicant: StudentApplicantsType) => {
         setImageDialogData({ image_name: applicant.image_name, name: applicant.full_name });
@@ -203,7 +230,7 @@ const StudentApplicants: React.FC = () => {
                     <Paper sx={{ p: 3, mb: 3 }}>
                         <Typography variant="h4" gutterBottom>
                             <PeopleIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-                            Student Applicants Management
+                            Registered Applicants
                         </Typography>
                         <Typography variant="subtitle1" color="textSecondary">
                             Welcome, {name} | Office: {office} | Campus Access: {campus}
@@ -217,9 +244,26 @@ const StudentApplicants: React.FC = () => {
                     )}
 
                     <Paper sx={{ width: '100%', p: 3 }}>
+                        <Box sx={{ mb: 3 }}>
+                            <TextField
+                                fullWidth
+                                placeholder="Search by name, campus, or location..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                size="small"
+                            />
+                        </Box>
+
                         <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Box>
-                                <Typography variant="h6">All Student Applicants</Typography>
+                                <Typography variant="h6">Applicant Records</Typography>
                                 <Typography variant="caption" color="textSecondary">
                                     Showing {applicants.length > 0 ? paginationModel.page * paginationModel.pageSize + 1 : 0} - {Math.min((paginationModel.page + 1) * paginationModel.pageSize, totalRows)} of {totalRows} applicants
                                 </Typography>
@@ -227,7 +271,7 @@ const StudentApplicants: React.FC = () => {
                             <Box sx={{ display: 'flex', gap: 1 }}>
                                 <Button
                                     variant="outlined"
-                                    onClick={() => loadApplicants(paginationModel.page, paginationModel.pageSize, true)}
+                                    onClick={() => loadApplicants(paginationModel.page, paginationModel.pageSize, searchQuery, true)}
                                     disabled={loading}
                                 >
                                     Refresh
@@ -236,7 +280,7 @@ const StudentApplicants: React.FC = () => {
                                     variant="contained"
                                     startIcon={exportLoading ? <CircularProgress size={20} /> : <DownloadIcon />}
                                     onClick={handleExportAll}
-                                    disabled={exportLoading}
+                                    disabled={exportLoading || loading}
                                 >
                                     {exportLoading ? 'Exporting...' : 'Export to CSV'}
                                 </Button>

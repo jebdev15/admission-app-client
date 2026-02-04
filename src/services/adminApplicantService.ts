@@ -7,8 +7,8 @@ const CACHE_TTL = {
 };
 
 export const adminApplicantService = {
-    getAllApplicantsWithDetails: async (token: string, page: number = 0, pageSize: number = 10, forceRefresh = false) => {
-        const cacheKey = `admin-applicants-page-${page}-size-${pageSize}`;
+    getAllApplicantsWithDetails: async (token: string, page: number = 0, pageSize: number = 10, search: string = '', forceRefresh = false) => {
+        const cacheKey = `admin-applicants-page-${page}-size-${pageSize}-search-${search}`;
         
         // Check cache if not forcing refresh
         if (!forceRefresh) {
@@ -18,9 +18,9 @@ export const adminApplicantService = {
             }
         }
 
-        // Fetch from API with pagination parameters
+        // Fetch from API with pagination and search parameters
         const response = await axios.get('/admin/applicants-management/all', {
-            params: { page, pageSize },
+            params: { page, pageSize, search },
             headers: {
                 Authorization: `Bearer ${token}`
             }

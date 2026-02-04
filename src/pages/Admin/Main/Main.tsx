@@ -27,14 +27,14 @@ const Dashboard: React.FC = () => {
 
     const dashboardCards: DashboardCard[] = [
         {
-            title: "Entrance Examination Schedules",
-            description: "View entrance examination schedules by campus, including available dates, time slots, and the current status of exam slots.",
+            title: "Examination Schedules",
+            description: "View and monitor entrance examination schedules based on your assigned campus access. Check available dates, time slots, venue locations, and track slot availability (reserved and remaining).",
             icon: <EventNoteIcon sx={{ fontSize: 48, color: 'primary.main' }} />,
             path: "/admin/schedules"
         },
         {
-            title: "Student Applicants",
-            description: "View all student applicants with detailed information. Access comprehensive student profiles, application status, and examination details in a centralized dashboard.",
+            title: "Registered Applicants",
+            description: "Access comprehensive records of all registered applicants. Search by name, campus, or location. View applicant details including examination schedules, photos, and export data to CSV.",
             icon: <PeopleIcon sx={{ fontSize: 48, color: 'primary.main' }} />,
             path: "/admin/applicants"
         },

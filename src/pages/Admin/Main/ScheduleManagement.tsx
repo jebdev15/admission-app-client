@@ -11,7 +11,6 @@ import {
 import {
     DataGrid,
     GridColDef,
-    GridToolbar,
     GridRenderCellParams
 } from '@mui/x-data-grid';
 import { useCookies } from 'react-cookie';
@@ -20,12 +19,10 @@ import { adminScheduleService } from '@services/adminScheduleService';
 import {
     Download as DownloadIcon,
     EventAvailable as EventAvailableIcon,
-    Visibility as VisibilityIcon
 } from '@mui/icons-material';
 import CustomCircularProgress from '@components/CustomCircularProgress';
 import Header from './Header';
 import { FormatDateUtil } from '@utils/formatDate';
-import ScheduleManagementDialog from '@/components/Student/ScheduleManagementDialog';
 
 interface DecodedToken extends JwtPayload {
     office: string;
@@ -47,20 +44,12 @@ interface Schedule {
     slots_reserved: number;
 }
 
-interface ScheduleDetails extends Schedule {
-    student_names: string[];
-    student_emails: string[];
-    applicant_ids: string[];
-}
-
 const ScheduleManagement: React.FC = () => {
     const [cookie] = useCookies(['token']);
     const [loading, setLoading] = useState(false);
     const [exportLoading, setExportLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [schedules, setSchedules] = useState<Schedule[]>([]);
-    const [selectedSchedule, setSelectedSchedule] = useState<ScheduleDetails | null>(null);
-    const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
     
     const [paginationModel, setPaginationModel] = useState({
         page: 0,
@@ -89,12 +78,6 @@ const ScheduleManagement: React.FC = () => {
         loadSchedules();
     }, [loadSchedules]);
 
-    const handleViewDetails = (scheduleId: number) => {
-        // Find the schedule from already-fetched schedules and open dialog
-        const schedule = schedules.find((s) => s.schedule_id === scheduleId) || null;
-        setSelectedSchedule(schedule as ScheduleDetails | null);
-        setDetailsDialogOpen(true);
-    };
 
     const handleExportSchedules = async () => {
         setExportLoading(true);
@@ -209,7 +192,7 @@ const ScheduleManagement: React.FC = () => {
                     <Paper sx={{ p: 3, mb: 3 }}>
                         <Typography variant="h4" gutterBottom>
                             <EventAvailableIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-                            Schedule Management
+                            Examination Schedules
                         </Typography>
                         <Typography variant="subtitle1" color="textSecondary">
                             Welcome, {name} | Office: {office} | Campus Access: {campus}
@@ -224,7 +207,7 @@ const ScheduleManagement: React.FC = () => {
 
                     <Paper sx={{ width: '100%', p: 3 }}>
                         <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Typography variant="h6">Examination Schedules</Typography>
+                            <Typography variant="h6">Schedule Overview</Typography>
                             <Box sx={{ display: 'flex', gap: 1 }}>
                                 <Button variant="outlined" onClick={() => loadSchedules(true)} disabled={loading}>Refresh</Button>
                                 <Button
@@ -261,13 +244,6 @@ const ScheduleManagement: React.FC = () => {
                             />
                         )}
                     </Paper>
-
-                    {/* Schedule Details Dialog */}
-                    <ScheduleManagementDialog
-                        open={detailsDialogOpen}
-                        onClose={() => setDetailsDialogOpen(false)}
-                        selectedSchedule={selectedSchedule}
-                    />
                 </Box>
             </Box>
         </React.Suspense>
