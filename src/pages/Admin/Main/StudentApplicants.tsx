@@ -27,6 +27,7 @@ import CustomCircularProgress from '@components/CustomCircularProgress';
 import Header from './Header';
 import { FormatDateUtil } from '@/utils/formatDate';
 import { StudentApplicantsType } from './type';
+import ColumnSelectionDialog from '@components/Admin/ColumnSelectionDialog';
 const StudentImageDialog = React.lazy(() => import('@/components/Student/StudentImageDialog'));
 
 interface DecodedToken extends JwtPayload {
@@ -48,6 +49,7 @@ const StudentApplicants: React.FC = () => {
     const [imageDialogOpen, setImageDialogOpen] = useState(false);
     const [imageDialogData, setImageDialogData] = useState<{ image_name?: string | null; name?: string; } | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [columnDialogOpen, setColumnDialogOpen] = useState(false);
     const loadingRef = React.useRef(false);
     const searchTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
     
@@ -58,6 +60,8 @@ const StudentApplicants: React.FC = () => {
 
     const decodedToken = jwtDecode<DecodedToken>(cookie.token || '');
     const { office, campus, name } = decodedToken;
+
+
 
     const loadApplicants = useCallback(async (page: number = paginationModel.page, pageSize: number = paginationModel.pageSize, search: string = '', forceRefresh = false) => {
         // Prevent multiple simultaneous requests
@@ -115,10 +119,14 @@ const StudentApplicants: React.FC = () => {
         setImageDialogOpen(true);
     };
 
-    const handleExportAll = async () => {
+    const handleOpenColumnDialog = () => {
+        setColumnDialogOpen(true);
+    };
+
+    const handleExportWithColumns = async (selectedColumns: string[]) => {
         setExportLoading(true);
         try {
-            const response = await adminApplicantService.exportApplicantsForCSV(cookie.token);
+            const response = await adminApplicantService.exportApplicantsForCSV(cookie.token, selectedColumns);
             if (response.success && response.data) {
                 exportToCSV(response.data, 'applicants_report');
             }
@@ -129,44 +137,49 @@ const StudentApplicants: React.FC = () => {
         }
     };
 
+    const handleExportAll = async () => {
+        // Open column selection dialog instead of directly exporting
+        handleOpenColumnDialog();
+    };
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const exportToCSV = (data: any[], filename: string) => {
         if (data.length === 0) return;
 
+        // The API returns rows whose keys are already the friendly alias names
+        // (e.g. "Fullname", "Email", "Contact Number") so we use them directly.
         const headers = Object.keys(data[0]);
-        
-        // Create friendly column headers
-        const headerMapping: { [key: string]: string } = {
-            'full_name': 'Full Name',
-            'campus': 'Campus',
-            'exam_date': 'Exam Date',
-            'exam_time': 'Exam Time',
-            'exam_location': 'Location'
+
+        // Format a single cell value for CSV output.
+        // Pure-digit strings that are long (≥10 chars, e.g. LRN: 12, contact: 11)
+        // or that start with '0' (e.g. '09123456789') must be written as the
+        // Excel formula ="value" so Excel displays them as text instead of
+        // converting to scientific notation or stripping the leading zero.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const formatCell = (value: any): string => {
+            if (value === null || value === undefined) return '""';
+            if (Array.isArray(value)) return `"${value.join('; ')}"`;
+            if (typeof value === 'object') return `"${JSON.stringify(value)}"`;
+            const str = String(value);
+            if (/^\d+$/.test(str) && (str.length >= 10 || str[0] === '0')) {
+                // No outer CSV quotes needed — pure digits contain no special chars.
+                // Excel interprets the leading = as a formula and displays the
+                // quoted digits as plain text.
+                return `="${str}"`;
+            }
+            return `"${str.replace(/"/g, '""')}"`;
         };
 
-        const friendlyHeaders = headers.map(h => headerMapping[h] || h);
-
         const csvContent = [
-            friendlyHeaders.join(','),
+            headers.join(','),
             ...data.map(row =>
-                headers.map(header => {
-                    const value = row[header];
-                    if (value === null || value === undefined) {
-                        return '""';
-                    }
-                    if (Array.isArray(value)) {
-                        return `"${value.join('; ')}"`;
-                    }
-                    if (typeof value === 'object') {
-                        return `"${JSON.stringify(value)}"`;
-                    }
-                    // Escape quotes and wrap in quotes
-                    return `"${String(value).replace(/"/g, '""')}"`;
-                }).join(',')
+                headers.map(header => formatCell(row[header])).join(',')
             )
         ].join('\n');
 
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        // Prepend UTF-8 BOM (\uFEFF) so Excel opens the file as UTF-8 instead of
+        // ANSI/Latin-1, which would corrupt characters like ₱ and ñ.
+        const blob = new Blob(['﻿', csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
@@ -200,6 +213,16 @@ const StudentApplicants: React.FC = () => {
                     {FormatDateUtil.formatTimeTo12Hour(params.value)}
                 </span>
             ),
+        },
+        {
+            field: 'email_address',
+            headerName: 'Email Address',
+            width: 200,
+        },
+        {
+            field: 'contact_number',
+            headerName: 'Contact Number',
+            width: 150,
         },
         {
             field: 'actions',
@@ -313,6 +336,12 @@ const StudentApplicants: React.FC = () => {
                         onClose={() => setImageDialogOpen(false)}
                         name={imageDialogData?.name}
                         imageName={imageDialogData?.image_name ?? ''}
+                    />
+
+                    <ColumnSelectionDialog
+                        open={columnDialogOpen}
+                        onClose={() => setColumnDialogOpen(false)}
+                        onExport={handleExportWithColumns}
                     />
                 </Box>
             </Box>

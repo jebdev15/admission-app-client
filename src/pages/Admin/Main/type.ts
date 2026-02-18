@@ -44,4 +44,7 @@ export type StudentApplicantsType = Pick<
   | "schedule_date"
   | "schedule_time_start"
   | "image_name"
->;
+> & {
+  email_address?: string;
+  contact_number?: string;
+};

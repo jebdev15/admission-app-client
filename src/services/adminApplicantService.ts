@@ -50,9 +50,19 @@ export const adminApplicantService = {
     /**
      * Export applicants with selected columns only for CSV
      * Returns optimized data with only essential columns
+     * @param token - Authorization token
+     * @param selectedColumns - Array of column keys to include in the export
      */
-    exportApplicantsForCSV: async (token: string) => {
+    exportApplicantsForCSV: async (token: string, selectedColumns?: string[]) => {
+        const params: { columns?: string } = {};
+        
+        // If columns are specified, send them as comma-separated string
+        if (selectedColumns && selectedColumns.length > 0) {
+            params.columns = selectedColumns.join(',');
+        }
+
         const response = await axios.get('/admin/applicants-management/export-csv', {
+            params,
             headers: {
                 Authorization: `Bearer ${token}`
             }
