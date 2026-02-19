@@ -20,9 +20,15 @@ interface ColumnOption {
     label: string;
 }
 
+interface SubGroup {
+    subCategory: string;
+    columns: ColumnOption[];
+}
+
 interface ColumnGroup {
     category: string;
-    columns: ColumnOption[];
+    columns?: ColumnOption[];
+    subGroups?: SubGroup[];
 }
 
 // All available columns mirroring the availableColumns object in
@@ -53,16 +59,26 @@ const COLUMN_GROUPS: ColumnGroup[] = [
     },
     {
         category: 'Address Information',
-        columns: [
-            { key: 'province',                        label: 'Province' },
-            { key: 'city',                            label: 'City/Municipality' },
-            { key: 'barangay',                        label: 'Barangay' },
-            { key: 'street',                          label: 'Street' },
-            { key: 'is_same_as_permanent_address',    label: 'Same as Permanent Address' },
-            { key: 'current_address_province',        label: 'Current Province' },
-            { key: 'current_address_city',            label: 'Current City/Municipality' },
-            { key: 'current_address_barangay',        label: 'Current Barangay' },
-            { key: 'current_address_street',          label: 'Current Street' },
+        subGroups: [
+            {
+                subCategory: 'Permanent Address',
+                columns: [
+                    { key: 'province',  label: 'Province' },
+                    { key: 'city',      label: 'City / Municipality' },
+                    { key: 'barangay',  label: 'Barangay' },
+                    { key: 'street',    label: 'Street' },
+                ],
+            },
+            {
+                subCategory: 'Current Address',
+                columns: [
+                    { key: 'is_same_as_permanent_address', label: 'Same as Permanent Address' },
+                    { key: 'current_address_province',     label: 'Province' },
+                    { key: 'current_address_city',         label: 'City / Municipality' },
+                    { key: 'current_address_barangay',     label: 'Barangay' },
+                    { key: 'current_address_street',       label: 'Street' },
+                ],
+            },
         ],
     },
     {
@@ -90,7 +106,7 @@ const COLUMN_GROUPS: ColumnGroup[] = [
     {
         category: 'Health Information',
         columns: [
-            { key: 'is_sped',                          label: 'SPED' },
+            { key: 'is_sped',                          label: 'Special Education (SPED)' },
             { key: 'sped_category',                    label: 'SPED Category' },
             { key: 'has_siblings_studying_in_chmsu',   label: 'Siblings Studying in CHMSU' },
             { key: 'has_relatives_working_in_chmsu',   label: 'Relatives Working in CHMSU' },
@@ -126,7 +142,11 @@ const DEFAULT_SELECTED_COLUMNS = [
     'schedule_time_start',
 ];
 
-const ALL_COLUMN_KEYS = COLUMN_GROUPS.flatMap(g => g.columns.map(c => c.key));
+const ALL_COLUMN_KEYS = COLUMN_GROUPS.flatMap(g =>
+    g.subGroups
+        ? g.subGroups.flatMap(sg => sg.columns.map(c => c.key))
+        : (g.columns ?? []).map(c => c.key)
+);
 const STORAGE_KEY = 'admin_csv_export_columns';
 
 interface ColumnSelectionDialogProps {
@@ -168,7 +188,7 @@ const ColumnSelectionDialog: React.FC<ColumnSelectionDialogProps> = ({
 
     const handleToggle = (key: string) => {
         const next = new Set(selectedColumns);
-        next.has(key) ? next.delete(key) : next.add(key);
+        if (next.has(key)) { next.delete(key); } else { next.add(key); }
         saveAndSet(next);
     };
 
@@ -209,28 +229,69 @@ const ColumnSelectionDialog: React.FC<ColumnSelectionDialogProps> = ({
                     </Alert>
                 )}
 
-                {COLUMN_GROUPS.map(({ category, columns }) => (
+                {COLUMN_GROUPS.map(({ category, columns, subGroups }) => (
                     <Box key={category} sx={{ mb: 2 }}>
                         <Typography variant="subtitle2" color="primary" sx={{ mb: 1, fontWeight: 'bold' }}>
                             {category}
                         </Typography>
-                        <FormGroup>
-                            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 0.5 }}>
-                                {columns.map(col => (
-                                    <FormControlLabel
-                                        key={col.key}
-                                        label={col.label}
-                                        control={
-                                            <Checkbox
-                                                size="small"
-                                                checked={selectedColumns.has(col.key)}
-                                                onChange={() => handleToggle(col.key)}
+
+                        {/* Flat columns (no sub-groups) */}
+                        {columns && (
+                            <FormGroup>
+                                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 0.5 }}>
+                                    {columns.map(col => (
+                                        <FormControlLabel
+                                            key={col.key}
+                                            label={col.label}
+                                            control={
+                                                <Checkbox
+                                                    size="small"
+                                                    checked={selectedColumns.has(col.key)}
+                                                    onChange={() => handleToggle(col.key)}
+                                                />
+                                            }
+                                        />
+                                    ))}
+                                </Box>
+                            </FormGroup>
+                        )}
+
+                        {/* Sub-grouped columns */}
+                        {subGroups && subGroups.map(({ subCategory, columns: subCols }, idx) => (
+                            <Box key={subCategory} sx={{ ml: 1, mb: idx < subGroups.length - 1 ? 1.5 : 0 }}>
+                                <Typography
+                                    variant="caption"
+                                    sx={{
+                                        display: 'block',
+                                        mb: 0.5,
+                                        fontWeight: 600,
+                                        color: 'text.secondary',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.05em',
+                                    }}
+                                >
+                                    {subCategory}
+                                </Typography>
+                                <FormGroup>
+                                    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 0.5 }}>
+                                        {subCols.map(col => (
+                                            <FormControlLabel
+                                                key={col.key}
+                                                label={col.label}
+                                                control={
+                                                    <Checkbox
+                                                        size="small"
+                                                        checked={selectedColumns.has(col.key)}
+                                                        onChange={() => handleToggle(col.key)}
+                                                    />
+                                                }
                                             />
-                                        }
-                                    />
-                                ))}
+                                        ))}
+                                    </Box>
+                                </FormGroup>
                             </Box>
-                        </FormGroup>
+                        ))}
+
                         <Divider sx={{ mt: 1 }} />
                     </Box>
                 ))}
